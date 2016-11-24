@@ -1,9 +1,10 @@
 ---
 published: true
 title: Using MetalKit part 2
+summary: Introducing 2D geometry and using more Metal objects - data buffer, library, function, render pipeline descriptor and state. Introducing the Metal Shading Language. Drawing a triangle on the screen.
 layout: post
 ---
-In the first part of this series we introduced the MetalKit framework. Let's reuse the project from part one and pick up where we left off. If you look again at the __render()__ function, it was looking like this:
+In the first part of this series we introduced the MetalKit framework. Let's reuse the project from `part 1` and pick up where we left off. If you look again at the __render()__ function, it was looking like this:
 
 {% highlight swift %} 
 func render() {

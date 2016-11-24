@@ -1,9 +1,10 @@
 ---
 published: true
 title: Using MetalKit part 6
+summary: Looking at the differences between using the Metal and MetalKit frameworks. MetalKit provides easy texture loading, a Metal-aware view and interfacing with Model I/O.  
 layout: post
 ---
-Few days ago I discussed with my `Metal` mentor and friend, [Warren](https://gum.co/metalbyexample), about the greatness of using the `MTKView` and since I haven't covered alternatives to using it, I feel like I owe it to our readers to explain what are the differences between using the newer `MetalKit` framework as opposed to using the earlier `Metal` framework. They are both still coexisting, however, `MetalKit` introduces a few powerful features such as: 
+Let's see what are the differences between using the newer `MetalKit` framework as opposed to using the earlier `Metal` framework. They are both still coexisting, however, `MetalKit` introduces a few powerful features such as: 
 
 - Easy `texture` loading (even asynchronous loading with a few lines of code).
 - Efficient data transfer between `Model I/O` meshes and `Metal` buffers.

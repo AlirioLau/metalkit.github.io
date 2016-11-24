@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 3
+summary: Using structs of vectors for the vertices. Introducing vector swizzling in MSL. Synchronizing struct data between the CPU and the GPU. Vertex and Fragment function syntax - function qualifiers, return types, address space qualifier, attributes. Interpolating color using the information stored in the triangle vertices.
 layout: post
 ---
 In the previous part I promised we will learn more about the `Metal shading language`. Before that, first let's do some code cleaning and structuring since we are already getting into the habit of doing this from previous episodes. Start by downloading the [source code](https://github.com/MetalKit/metal) from the previous episode. We want to refactor the huge __render()__ function, to start with. So let's take the _vertex buffer_ and the _render pipeline state_ outside of the function, and also create __3__ new smaller functions, so that our old function reduces to this:

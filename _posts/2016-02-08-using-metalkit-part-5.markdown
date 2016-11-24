@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 5
+summary: Introducing 2D/3D transforms - scaling, translation and rotation matrices. Using a Model matrix to combine all transforms and sending it to the GPU as a Uniform using a data buffer. Introducing argument tables for sending multiple data buffers to the GPU. Using the model matrix in the vertex shader for transformations.
 layout: post
 ---
 Last time we described the `graphics pipeline` and the `Metal pipeline`. It is time we looked deeper inside the pipeline, and understand how vertices are really processed at a lower level. For this, we need to learn a few `3D math` concepts such as __transformations__. 

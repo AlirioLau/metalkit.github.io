@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 7
+summary: Transient vs non-transient Metal objects. Making sure all the Metal objects are reused in multiple draw calls except for the command buffers and encoders. Creating a utilities class for separating responsibilities the view controller should not have.
 layout: post
 ---
 One of our readers contacted me about an apparently weird behavior he was seeing: when running the code from our tutorial the `MTLLibrary` returned nil after a few hundred draw calls. That made me realize I was not taking into consideration the fact that some of the `Metal` objects are transient and some are not, according to the [Metal documentation](http://apple.co/1KPOIsX). Thanks __Mike__ for bringing this to my attention!
@@ -97,6 +98,6 @@ struct Matrix {
 }
 {% endhighlight %}
 
-Run the program to make sure you are still seeing the glorious triangle as we have seen it in the previous part. We are now ready to move on to the next stage -- rendering 3D objects -- in the next part of this series. The [source code](https://github.com/MetalKit/metal) is posted on Github as usual.
+Run the program to make sure you are still seeing the glorious triangle as we have seen it in the previous part. The [source code](https://github.com/MetalKit/metal) is posted on Github as usual.
 
 Until next time!

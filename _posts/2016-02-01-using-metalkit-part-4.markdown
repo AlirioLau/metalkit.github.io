@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 4
+summary: Looking at the graphics pipeline in more detail. Building a Metal application in two stages - Initialization (get device, create command queue, create buffers/textures, create render pipeline, create view) and Drawing (get command buffer, start render pass, draw, commit command buffer). 
 layout: post
 ---
 Last time we looked at the `Metal Shading Language` basics. Before we look into more advanced topics, I just thought now is a good time to revisit what we have learned so far, especially about the _graphics pipeline_ which I admit, I might have gone too fast on that topic (thank you, anonymous reader, for your suggestion and valuable feedback!)
