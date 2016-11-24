@@ -1,9 +1,7 @@
 excerpt_separator: ""
-pygments: true
 markdown: kramdown
 url: http://MetalKit.github.io
 title: The Metal Framework
-email: 
 author: MetalKit
 description: Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
 paginate: 5
