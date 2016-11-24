@@ -1,38 +1,25 @@
 ---
-layout: default
+# You don't need to edit this file, it's empty on purpose.
+# Edit theme's home layout instead if you wanna make some changes
+# See: https://jekyllrb.com/docs/themes/#overriding-theme-defaults
+layout: home
 ---
 
 <div class="home">
 
-  <div class="posts">
+  <div class="posts"><br />
     {% for post in paginator.posts %}
       <div class="post">
         <a href="{{ post.url | prepend: site.baseurl }}" class="post-link">
           <p class="post-meta">{{ post.date | date: "%b %-d, %Y" }}</p>
           <h3 class="h2 post-title">{{ post.title }}</h3>
-          <p class="post-summary">{{ post.summary }}</p>
+          <p class="post-meta">{{ post.summary }}</p>
         </a>
-      </div>
+      </div><hr><br />
     {% endfor %}
   </div>
 
   {% include pagination.html %}
 
   <br /><br /><br />
-  <!-- Begin MailChimp Signup Form --><p>
-  	<link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
-	<style type="text/css">
-		#mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
-	</style>
-	<div id="mc_embed_signup">
-		<form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
-		    <div id="mc_embed_signup_scroll">
-			<label for="mce-EMAIL">Subscribe to the newsletter to get new articles</label>
-			<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
-		    <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
-		    <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
-		    </div>
-		</form>
-	</div>
-  </p><!--End mc_embed_signup-->
 </div>
