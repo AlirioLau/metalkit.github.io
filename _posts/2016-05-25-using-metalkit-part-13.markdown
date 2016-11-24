@@ -4,7 +4,7 @@ title: Using MetalKit part 13
 summary: Learn about animating a basic diffuse (Lambertian) light and about drawing 3D objects using MSL in a compute shader. 
 layout: post
 ---
-Let's pick up where we left off in [Part 12](http://mhorga.org/2016/05/18/using-metalkit-part-12.html). Using the same playground we worked on last time, we will learn about lighting and `3D` objects today. Remember the sun eclipse we worked on a couple of weeks ago? It's back! Well, we are going to remove the sun and just focus on the planet this time.
+Let's pick up where we left off in [Part 12](http://metalkit.org/2016/05/18/using-metalkit-part-12.html). Using the same playground we worked on last time, we will learn about lighting and `3D` objects today. Remember the sun eclipse we worked on a couple of weeks ago? It's back! Well, we are going to remove the sun and just focus on the planet this time.
 
 First, let's clean our kernel to only include this code:
 
@@ -71,4 +71,3 @@ By using the `cos` and `sin` functions, we gave the light source a circular move
 We how have a good looking, illuminated object in the scene (planet in the sky), however, the object still presents a homogeneous surface. We can make it look more realistic in two ways: either apply a texture to it, or add some noise to the `planet` color. The [source code](https://github.com/MetalKit/metal) is posted on Github as usual.
 
 Until next time!
- 

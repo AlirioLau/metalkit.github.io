@@ -3,7 +3,7 @@ published: true
 title: Using MetalKit part 9
 layout: post
 ---
-I bet many of you missed the `MetalKit` series, so today we are returning back to it, and we will learn how to draw 3D content in `Metal`. Let's continue working on our playground and pick up where we left off in [part 8](https://github.com/MetalKit/metal) of the series. 
+I bet many of you missed the `MetalKit` series, so today we are returning back to it, and we will learn how to draw 3D content in `Metal`. Let's continue working on our playground and pick up where we left off in [part 8](http://metalkit.org/2016/03/07/using-metalkit-part-8.html) of the series. 
 
 We will render a 3D cube by the end of this episode but first let's draw a 2D square and then we can re-use the square logic for all the other faces of the cube. Let's modify the `vertex_data` array so that it holds __4__ vertices instead of __3__ we needed for a triangle:
 

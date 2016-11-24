@@ -3,7 +3,7 @@ published: true
 title: Using MetalKit part 11
 layout: post
 ---
-Let's continue our journey into the wonderful world of shaders using the `Metal Shading Language (MSL)` by picking up where we left off in [Part 10](http://mhorga.org/2016/05/02/using-metalkit-part-10.html). Using the same playground we worked on last time, we will next try to get close to making art using `MSL` math functions such as `sin`, `cos`, `pow`, `abs`, `fmod`, `clamp`, `mix`, `step` and `smoothstep`. 
+Let's continue our journey into the wonderful world of shaders using the `Metal Shading Language (MSL)` by picking up where we left off in [Part 10](http://metalkit.org/2016/05/02/using-metalkit-part-10.html). Using the same playground we worked on last time, we will next try to get close to making art using `MSL` math functions such as `sin`, `cos`, `pow`, `abs`, `fmod`, `clamp`, `mix`, `step` and `smoothstep`. 
 
 First, let's look at our "sun eclipse" code from last time. Strangely enough, we start from the end of the functions list above because `smoothstep` is the function we need to fix an issue we had last time and we did not pay attention to it -- our output image has jaggies (is aliased) as you can see below if we zoom in enough to make it visible:
 
@@ -85,6 +85,6 @@ The `sin()` function is just the `sine` of an angle, the `cos()` function is obv
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter11_4.png?raw=true "4")
 
-Your assignment is to try to understand how the `magic` works here. If you have any questions, feel free to contact me either on this blog or on [Twitter](https://twitter.com/mhorga_), otherwise I will go over the "solution" to this assignment next week. The [source code](https://github.com/MetalKit/metal) is posted on Github as usual.
+Your assignment is to try to understand how the `magic` works here. If you have any questions, feel free to contact me using the Contact form on this blog. The [source code](https://github.com/MetalKit/metal) is posted on Github as usual.
 
 Until next time!

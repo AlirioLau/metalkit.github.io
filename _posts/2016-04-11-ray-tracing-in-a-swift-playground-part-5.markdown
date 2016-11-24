@@ -75,8 +75,8 @@ dispatch_apply(width, queue) { i in
 
 By using `Grand Central Dispatch` threading, the rendering finishes __3__ times faster! In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing.png "Raytracing")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing.png "Raytracing")
 
-This image was generated using a value of __ns = 50__, a sphere generator range from __-7..<7__ and an image resolution of __800 x 400__. The rendering took __752__ seconds to run so if you want a quick, __5__-second rendering I suggest using a value of __ns = 10__, a sphere generator range from __-2..<3__ and an image resolution of __400 x 200__. The [source code](https://github.com/mhorga/Raytracing5) is posted on Github as usual.
+This image was generated using a value of __ns = 50__, a sphere generator range from __-7..<7__ and an image resolution of __800 x 400__. The rendering took __752__ seconds to run so if you want a quick, __5__-second rendering I suggest using a value of __ns = 10__, a sphere generator range from __-2..<3__ and an image resolution of __400 x 200__. The [source code](https://github.com/MetalKit/raytracing) is posted on Github as usual.
 
 Until next time!

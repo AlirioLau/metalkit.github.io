@@ -4,7 +4,7 @@ title: Using MetalKit part 14
 summary: Learn how to generate basic value noise and then add it to the object's color by using MSL in a compute shader.
 layout: post
 ---
-Let's pick up where we left off in [Part 13](http://mhorga.org/2016/05/25/using-metalkit-part-13.html). Using the same playground we worked on last time, we will learn about __noise__ today. From _Wikipedia_:
+Let's pick up where we left off in [Part 13](http://metalkit.org/2016/05/25/using-metalkit-part-13.html). Using the same playground we worked on last time, we will learn about __noise__ today. From _Wikipedia_:
 
 > `Noise` refers to any random fluctuations of data that makes the perception of an expected signal, difficult. `Value noise` is a type of noise commonly used as a procedural texture primitive in computer graphics. This method consists of the creation of a lattice of points which are assigned random values. The noise function then returns the interpolated number based on the values of the surrounding lattice points. Multiple octaves of this noise can be generated and then summed together in order to create a form of fractal noise.
 

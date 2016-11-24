@@ -181,7 +181,7 @@ public func imageFromPixels(width: Int, _ height: Int) -> CIImage {
 
 In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing3.png "Raytracing 3")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing3.png "Raytracing 3")
 
 Nice! If you look closely you will notice the edges exhibit the `aliasing` effect, and this happens because we do not have any blending of colors for the pixels on the edge. To overcome this, we need to sample the color multiple times by randomly generating values that are within the range we want, so we can blend them together and achieve an `anti-aliasing` effect. 
 
@@ -232,7 +232,7 @@ public func imageFromPixels(width: Int, _ height: Int) -> CIImage {
 
 Notice that we use a variable named __ns__ and assign a value of __100__ to it so we can sample the color multiple times using randomly generated values as we discussed above. In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing4.png "Raytracing 4")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing4.png "Raytracing 4")
 
 Much better looking! However, we notice our rendering took __7 seconds__ which can be reduced by using a smaller sample value, such as __10__. Alright, now that we have multiple rays per pixel, we can finally think of creating `matte` (diffuse) materials. This kind of materials do not emit any light and usually absorb all the light that is directed towards them and blend it with their own color. The light that reflects of a diffuse material has its direction randomized. We can compute this with the following function inside `objects.swift`:
 
@@ -264,14 +264,14 @@ func color(r: ray, _ world: hitable) -> float3 {
 
 In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing5.png "Raytracing 5")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing5.png "Raytracing 5")
 
 If you forgot to decrease `ns` from `100` to `10` your rendering took somewhat around __18 seconds__! However, if you decreased the value, the rendering time is down to only about __1.9 seconds__ which is not too shabby for a basic matte surface ray tracer.
 
 This image looks great, however, we can also get rid of those small ripples easily. Notice that inside the `color` function we set `Tmin` to be __0.0__ and this seems to disturb some of the cases where the color needs to be computed correctly. If we set `Tmin` to be very small but still positive, something like __0.01__, you will notice that the difference is highly noticeable!
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing6.png "Raytracing 6")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing6.png "Raytracing 6")
 
-Now, this image looks gorgeous! Stay tuned for the next part of this series, where we will look into topics such as specular lights, transparency, refraction and reflection. The [source code](https://github.com/mhorga/Raytracing2) is posted on Github as usual.
+Now, this image looks gorgeous! Stay tuned for the next part of this series, where we will look into topics such as specular lights, transparency, refraction and reflection. The [source code](https://github.com/MetalKit/raytracing) is posted on Github as usual.
 
 Until next time!

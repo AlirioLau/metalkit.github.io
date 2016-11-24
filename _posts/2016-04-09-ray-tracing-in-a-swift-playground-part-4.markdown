@@ -57,7 +57,7 @@ object = sphere(c: float3(x: -1, y: 0, z: -1), r: 0.5, m: Dielectric())
 
 In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing8.png "Raytracing 8")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing8.png "Raytracing 8")
 
 Glass surfaces have reflectivity that varies with the angle. When you look at it perpendicularly, the reflectivity is the lowest possible, if any. The smaller the viewing angle gets, the higher the reflectivity is, and other objects from the world are mirrored more clearly by the glass surface. This effect can be computed with the Schlick polynomial approximation:
 
@@ -145,8 +145,8 @@ let cam = Camera(lookFrom: lookFrom, lookAt: lookAt, vup: vup, vfov: 50, aspect:
 
 In the main playground page, see the generated new image:
 
-![alt text](https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing9.png "Raytracing 9")
+![alt text](https://github.com/metalkit/images/raw/master/raytracing9.png "Raytracing 9")
 
-The [source code](https://github.com/mhorga/Raytracing4) is posted on Github as usual.
+The [source code](https://github.com/MetalKit/raytracing) is posted on Github as usual.
 
 Until next time!

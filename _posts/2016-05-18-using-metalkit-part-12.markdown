@@ -3,7 +3,7 @@ published: true
 title: Using MetalKit part 12
 layout: post
 ---
-Today we continue working on that beautiful fractal, so let's pick up where we left off in [Part 11](http://mhorga.org/2016/05/10/using-metalkit-part-11.html). Using the same playground we worked on last time, we will next see how to bring it to life, that is, animate it. For that, we will use `uniforms` again. We introduced them in [Part 5](http://mhorga.org/2016/02/08/using-metalkit-part-5.html) in case you want to read again why they are useful in cases such as this one. 
+Today we continue working on that beautiful fractal, so let's pick up where we left off in [Part 11](http://metalkit.org/2016/05/10/using-metalkit-part-11.html). Using the same playground we worked on last time, we will next see how to bring it to life, that is, animate it. For that, we will use `uniforms` again. We introduced them in [Part 5](http://metalkit.org/2016/02/08/using-metalkit-part-5.html) in case you want to read again why they are useful in cases such as this one. 
 
 First, at the top of the `MetalView.swift` file, let's create a global variable named __timer__ and a data buffer to hold it:
 
