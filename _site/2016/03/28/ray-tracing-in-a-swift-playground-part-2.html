@@ -256,7 +256,7 @@
 
 <p>In the main playground page, see the generated new image:</p>
 
-<p><img src="https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing3.png" alt="alt text" title="Raytracing 3" /></p>
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing3.png" alt="alt text" title="Raytracing 3" /></p>
 
 <p>Nice! If you look closely you will notice the edges exhibit the <code class="highlighter-rouge">aliasing</code> effect, and this happens because we do not have any blending of colors for the pixels on the edge. To overcome this, we need to sample the color multiple times by randomly generating values that are within the range we want, so we can blend them together and achieve an <code class="highlighter-rouge">anti-aliasing</code> effect.</p>
 
@@ -303,7 +303,7 @@
 
 <p>Notice that we use a variable named <strong>ns</strong> and assign a value of <strong>100</strong> to it so we can sample the color multiple times using randomly generated values as we discussed above. In the main playground page, see the generated new image:</p>
 
-<p><img src="https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing4.png" alt="alt text" title="Raytracing 4" /></p>
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing4.png" alt="alt text" title="Raytracing 4" /></p>
 
 <p>Much better looking! However, we notice our rendering took <strong>7 seconds</strong> which can be reduced by using a smaller sample value, such as <strong>10</strong>. Alright, now that we have multiple rays per pixel, we can finally think of creating <code class="highlighter-rouge">matte</code> (diffuse) materials. This kind of materials do not emit any light and usually absorb all the light that is directed towards them and blend it with their own color. The light that reflects of a diffuse material has its direction randomized. We can compute this with the following function inside <code class="highlighter-rouge">objects.swift</code>:</p>
 
@@ -331,24 +331,24 @@
 
 <p>In the main playground page, see the generated new image:</p>
 
-<p><img src="https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing5.png" alt="alt text" title="Raytracing 5" /></p>
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing5.png" alt="alt text" title="Raytracing 5" /></p>
 
 <p>If you forgot to decrease <code class="highlighter-rouge">ns</code> from <code class="highlighter-rouge">100</code> to <code class="highlighter-rouge">10</code> your rendering took somewhat around <strong>18 seconds</strong>! However, if you decreased the value, the rendering time is down to only about <strong>1.9 seconds</strong> which is not too shabby for a basic matte surface ray tracer.</p>
 
 <p>This image looks great, however, we can also get rid of those small ripples easily. Notice that inside the <code class="highlighter-rouge">color</code> function we set <code class="highlighter-rouge">Tmin</code> to be <strong>0.0</strong> and this seems to disturb some of the cases where the color needs to be computed correctly. If we set <code class="highlighter-rouge">Tmin</code> to be very small but still positive, something like <strong>0.01</strong>, you will notice that the difference is highly noticeable!</p>
 
-<p><img src="https://github.com/mhorga/mhorga.github.io/raw/master/images/raytracing6.png" alt="alt text" title="Raytracing 6" /></p>
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing6.png" alt="alt text" title="Raytracing 6" /></p>
 
-<p>Now, this image looks gorgeous! Stay tuned for the next part of this series, where we will look into topics such as specular lights, transparency, refraction and reflection. The <a href="https://github.com/mhorga/Raytracing2">source code</a> is posted on Github as usual.</p>
+<p>Now, this image looks gorgeous! Stay tuned for the next part of this series, where we will look into topics such as specular lights, transparency, refraction and reflection. The <a href="https://github.com/MetalKit/raytracing">source code</a> is posted on Github as usual.</p>
 
 <p>Until next time!</p>
 
   </div>
 
-  
+  <!-- 
     
 
-  
+   -->
 
   <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
     <a class="a2a_button_twitter"></a>

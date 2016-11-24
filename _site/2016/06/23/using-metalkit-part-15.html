@@ -97,7 +97,7 @@
   <div class="post-content" itemprop="articleBody">
     <p>At the end of <code class="highlighter-rouge">part 13</code> we concluded we can make our planet look more realistic in two ways: either apply a texture to it, or add some noise to the <code class="highlighter-rouge">planet</code> color. We showed how to add noise in <code class="highlighter-rouge">part 14</code>. This week we look at <strong>textures</strong> and <strong>samplers</strong>. Textures are useful because they can provide a greater level of detail to surfaces than color computing for each vertex could.</p>
 
-<p>Let’s pick up where we left off in <a href="http://mhorga.org/2016/05/25/using-metalkit-part-13.html">Part 13</a> since we do not need the noise code this time. First, in <code class="highlighter-rouge">MetalView.swift</code> let’s remove the <code class="highlighter-rouge">mouseDown</code> function as we are not going to need it anymore. Also remove the <code class="highlighter-rouge">mouseBuffer</code> and <code class="highlighter-rouge">pos</code> variables, as well as any references to them in the code. Then, create a new texture object:</p>
+<p>Let’s pick up where we left off in <a href="http://metalkit.org/2016/05/25/using-metalkit-part-13.html">Part 13</a> since we do not need the noise code this time. First, in <code class="highlighter-rouge">MetalView.swift</code> let’s remove the <code class="highlighter-rouge">mouseDown</code> function as we are not going to need it anymore. Also remove the <code class="highlighter-rouge">mouseBuffer</code> and <code class="highlighter-rouge">pos</code> variables, as well as any references to them in the code. Then, create a new texture object:</p>
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">var</span> <span class="nv">texture</span><span class="p">:</span> <span class="kt">MTLTexture</span><span class="o">!</span></code></pre></figure>
 
@@ -204,10 +204,10 @@
 
   </div>
 
-  
+  <!-- 
     
 
-  
+   -->
 
   <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
     <a class="a2a_button_twitter"></a>

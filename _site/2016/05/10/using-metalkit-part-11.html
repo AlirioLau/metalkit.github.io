@@ -95,7 +95,7 @@
   <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
 
   <div class="post-content" itemprop="articleBody">
-    <p>Let’s continue our journey into the wonderful world of shaders using the <code class="highlighter-rouge">Metal Shading Language (MSL)</code> by picking up where we left off in <a href="http://mhorga.org/2016/05/02/using-metalkit-part-10.html">Part 10</a>. Using the same playground we worked on last time, we will next try to get close to making art using <code class="highlighter-rouge">MSL</code> math functions such as <code class="highlighter-rouge">sin</code>, <code class="highlighter-rouge">cos</code>, <code class="highlighter-rouge">pow</code>, <code class="highlighter-rouge">abs</code>, <code class="highlighter-rouge">fmod</code>, <code class="highlighter-rouge">clamp</code>, <code class="highlighter-rouge">mix</code>, <code class="highlighter-rouge">step</code> and <code class="highlighter-rouge">smoothstep</code>.</p>
+    <p>Let’s continue our journey into the wonderful world of shaders using the <code class="highlighter-rouge">Metal Shading Language (MSL)</code> by picking up where we left off in <a href="http://metalkit.org/2016/05/02/using-metalkit-part-10.html">Part 10</a>. Using the same playground we worked on last time, we will next try to get close to making art using <code class="highlighter-rouge">MSL</code> math functions such as <code class="highlighter-rouge">sin</code>, <code class="highlighter-rouge">cos</code>, <code class="highlighter-rouge">pow</code>, <code class="highlighter-rouge">abs</code>, <code class="highlighter-rouge">fmod</code>, <code class="highlighter-rouge">clamp</code>, <code class="highlighter-rouge">mix</code>, <code class="highlighter-rouge">step</code> and <code class="highlighter-rouge">smoothstep</code>.</p>
 
 <p>First, let’s look at our “sun eclipse” code from last time. Strangely enough, we start from the end of the functions list above because <code class="highlighter-rouge">smoothstep</code> is the function we need to fix an issue we had last time and we did not pay attention to it – our output image has jaggies (is aliased) as you can see below if we zoom in enough to make it visible:</p>
 
@@ -170,16 +170,16 @@ smootherstep(X) = 6X^5 - 15X^4 + 10X^3</code></pre></figure>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter11_4.png?raw=true" alt="alt text" title="4" /></p>
 
-<p>Your assignment is to try to understand how the <code class="highlighter-rouge">magic</code> works here. If you have any questions, feel free to contact me either on this blog or on <a href="https://twitter.com/mhorga_">Twitter</a>, otherwise I will go over the “solution” to this assignment next week. The <a href="https://github.com/MetalKit/metal">source code</a> is posted on Github as usual.</p>
+<p>Your assignment is to try to understand how the <code class="highlighter-rouge">magic</code> works here. If you have any questions, feel free to contact me using the Contact form on this blog. The <a href="https://github.com/MetalKit/metal">source code</a> is posted on Github as usual.</p>
 
 <p>Until next time!</p>
 
   </div>
 
-  
+  <!-- 
     
 
-  
+   -->
 
   <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
     <a class="a2a_button_twitter"></a>

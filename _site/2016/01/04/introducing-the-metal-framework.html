@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Introducing the Metal framework</title>
-  <meta name="description" content="As I promised last time, I am starting today a new series about the Metal framework that was announced at the WWDC 2014 initially only for iOS, but later on ...">
+  <meta name="description" content="The Metal framework that was announced at WWDC 2014 for iOS and at WWDC 2015 also for OS X and tvOS. Metal is an interface for programming the Graphics Proce...">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
@@ -95,17 +95,17 @@
   <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
 
   <div class="post-content" itemprop="articleBody">
-    <p>As I promised last time, I am starting today a new series about the <a href="https://developer.apple.com/metal/"><strong>Metal framework</strong></a> that was announced at the <a href="https://developer.apple.com/videos/play/wwdc2014-603/"><strong>WWDC 2014</strong></a> initially only for <code class="highlighter-rouge">iOS</code>, but later on also for <code class="highlighter-rouge">OS X</code> and <code class="highlighter-rouge">tvOS</code>. <code class="highlighter-rouge">Metal</code> is an interface for accessing the <code class="highlighter-rouge">GPU (Graphics Processing Unit)</code> of your machine. The main advantages of using <code class="highlighter-rouge">Metal</code> are:</p>
+    <p>The <a href="https://developer.apple.com/metal/"><strong>Metal</strong></a>  framework that was announced at <a href="https://developer.apple.com/videos/play/wwdc2014-603/"><strong>WWDC 2014</strong></a> for <code class="highlighter-rouge">iOS</code> and at <code class="highlighter-rouge">WWDC 2015</code> also for <code class="highlighter-rouge">OS X</code> and <code class="highlighter-rouge">tvOS</code>. <code class="highlighter-rouge">Metal</code> is an interface for programming the <code class="highlighter-rouge">Graphics Processing Unit (GPU)</code> in your computer. The main advantages of using <code class="highlighter-rouge">Metal</code> are:</p>
 
 <ul>
   <li>provides the lowest overhead access to the <code class="highlighter-rouge">GPU</code>, hence it reduces all bottlenecks usually caused by data transferring between the <code class="highlighter-rouge">CPU</code> and <code class="highlighter-rouge">GPU</code> in other frameworks.</li>
-  <li>provides up to <strong>10</strong> times the number of draw calls compared to <code class="highlighter-rouge">OpenGL</code>. <code class="highlighter-rouge">Metal</code>, however, is not cross-platform as <code class="highlighter-rouge">OpenGL</code> is, so it is not meant to be a replacement for <code class="highlighter-rouge">OpenGL</code>.</li>
+  <li>provides up to <strong>10</strong> times the number of draw calls compared to <code class="highlighter-rouge">OpenGL</code>. <code class="highlighter-rouge">Metal</code>, however, is not cross-platform like <code class="highlighter-rouge">OpenGL</code> is, so it is not meant to be a replacement for <code class="highlighter-rouge">OpenGL</code>.</li>
   <li>allows to also run <code class="highlighter-rouge">compute</code> applications with performance levels comparable to similar technologies such as <code class="highlighter-rouge">CUDA</code> or <code class="highlighter-rouge">OpenCL</code>.</li>
-  <li>has custom shader language that allows shaders precompiling so they are a lot faster at run time.</li>
-  <li>has built-in memory and resource management, particularized to these platforms.</li>
+  <li>has a custom shader language that allows shaders precompiling so they are a lot faster at run time.</li>
+  <li>has built-in memory and resource management particularized to these platforms.</li>
 </ul>
 
-<p>Since <code class="highlighter-rouge">Metal</code> does not run on the <code class="highlighter-rouge">Xcode</code> simulator, and since we cannot assume all our readers have an <code class="highlighter-rouge">iOS</code> device that has an <strong>A7</strong> <code class="highlighter-rouge">CPU</code> or newer, we will rather create an <code class="highlighter-rouge">OS X</code> project instead. In <code class="highlighter-rouge">Xcode</code> create a <code class="highlighter-rouge">Cocoa Application</code>. In the storyboard, drag and drop a <code class="highlighter-rouge">Label</code> onto the <code class="highlighter-rouge">View Controller</code>. Center it, enlarge it so we can make sure we can display 2 lines of text, and set necessary constraints. When you’re done, the storyboard should look like this:</p>
+<p>Since <code class="highlighter-rouge">Metal</code> does not run in the <code class="highlighter-rouge">Xcode</code> simulator and since we cannot assume all our readers have an <code class="highlighter-rouge">iOS</code> device that has an <strong>A7</strong> processor or newer, we will rather create an <code class="highlighter-rouge">OS X</code> project instead. In <code class="highlighter-rouge">Xcode</code> create a <code class="highlighter-rouge">Cocoa Application</code>. In the storyboard, drag and drop a <code class="highlighter-rouge">Label</code> onto the <code class="highlighter-rouge">View Controller</code>. Center it, enlarge it, to make sure we can display 2 lines of text. Set necessary constraints. Your storyboard should look like this:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter01_1.png?raw=true" alt="alt text" title="1" /></p>
 
@@ -121,34 +121,35 @@
     <span class="k">override</span> <span class="kd">func</span> <span class="nf">viewDidLoad</span><span class="p">()</span> <span class="p">{</span>
         <span class="k">super</span><span class="o">.</span><span class="nf">viewDidLoad</span><span class="p">()</span>
 
-        <span class="k">if</span> <span class="k">let</span> <span class="nv">device</span> <span class="o">=</span> <span class="kt">MTLCreateSystemDefaultDevice</span><span class="p">()</span> <span class="p">{</span>
-            <span class="n">label</span><span class="o">.</span><span class="n">stringValue</span> <span class="o">=</span> <span class="s">"Your GPU name is:</span><span class="se">\n\(</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="o">!</span><span class="se">)</span><span class="s">"</span>
-        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-            <span class="n">label</span><span class="o">.</span><span class="n">stringValue</span> <span class="o">=</span> <span class="s">"Your GPU does not support Metal!"</span>
+        <span class="k">let</span> <span class="nv">devices</span> <span class="o">=</span> <span class="kt">MTLCopyAllDevices</span><span class="p">()</span>
+        <span class="k">guard</span> <span class="k">let</span> <span class="nv">_</span> <span class="o">=</span> <span class="n">devices</span><span class="o">.</span><span class="n">first</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nf">fatalError</span><span class="p">(</span><span class="s">"Your GPU does not support Metal!"</span><span class="p">)</span>
+        <span class="p">}</span>
+        <span class="n">label</span><span class="o">.</span><span class="n">stringValue</span> <span class="o">=</span> <span class="s">"Your system has the following GPU(s):</span><span class="se">\n</span><span class="s">"</span>
+        <span class="k">for</span> <span class="n">device</span> <span class="k">in</span> <span class="n">devices</span> <span class="p">{</span>
+            <span class="n">label</span><span class="o">.</span><span class="n">stringValue</span> <span class="o">+=</span> <span class="s">"</span><span class="se">\(</span><span class="n">device</span><span class="o">.</span><span class="n">name</span><span class="o">!</span><span class="se">)\n</span><span class="s">"</span>
         <span class="p">}</span>
     <span class="p">}</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>Let’s explain the lines of code above. First we need to <code class="highlighter-rouge">import Metal</code> because we are calling the <strong>MTLCreateSystemDefaultDevice()</strong> function which belongs to the <code class="highlighter-rouge">Metal</code> framework. However, since <code class="highlighter-rouge">Cocoa</code> already imports <code class="highlighter-rouge">Metal</code> itself, and since we need <code class="highlighter-rouge">Cocoa</code> in order to use <code class="highlighter-rouge">AppKit</code> elements such as <code class="highlighter-rouge">NSViewController</code>, we don’t need another import line just for <code class="highlighter-rouge">Metal</code>.</p>
+<p>Let’s go over the code above. First we need to <code class="highlighter-rouge">import Metal</code> because we are calling the <strong>MTLCopyAllDevices()</strong> function which belongs to the <code class="highlighter-rouge">Metal</code> framework. However, since <code class="highlighter-rouge">Cocoa</code> already imports <code class="highlighter-rouge">Metal</code> and the <code class="highlighter-rouge">AppKit</code> framework which lets us use classes such as <code class="highlighter-rouge">NSViewController</code>, we don’t need another import line just for <code class="highlighter-rouge">Metal</code>.</p>
 
-<p>Then, inside <strong>viewDidLoad()</strong> is where all the magic happens. We create a <code class="highlighter-rouge">Metal</code> device by calling <code class="highlighter-rouge">MTLCreateSystemDefaultDevice()</code> and then we simply query for its name so we can display it as the label text. A <code class="highlighter-rouge">device</code> is an abstraction of the <code class="highlighter-rouge">GPU</code> and provides us a few methods and properties, such as <strong>name</strong> which we used above.</p>
+<p>Then, inside <strong>viewDidLoad()</strong> is where all the magic happens. We create a <code class="highlighter-rouge">Metal</code> device by calling <code class="highlighter-rouge">MTLCopyAllDevices()</code> and then we simply query for its name so we can display it as the label text. Note that <code class="highlighter-rouge">MTLCopyAllDevices()</code> is only available in <code class="highlighter-rouge">OS X</code>. For <code class="highlighter-rouge">iOS/tvOS</code> devices use <code class="highlighter-rouge">MTLCreateSystemDefaultDevice()</code> instead. A <code class="highlighter-rouge">device</code> is an abstraction of the <code class="highlighter-rouge">GPU</code> and provides us a few methods and properties, such as <strong>name</strong> which we used above.</p>
 
 <p>If you run the project, you should be able to see the following output:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter01_2.png?raw=true" alt="alt text" title="2" /></p>
 
-<p>Yeah, I know, my GPU is a bit old but hey, it runs Metal! There is not much to see, but for now you learned how to “talk” to the <code class="highlighter-rouge">GPU</code> at the lowest possible level. In the next episode we will learn how we can send data to the <code class="highlighter-rouge">GPU</code> and get results back from it.</p>
-
-<p>I wanted to say a special <code class="highlighter-rouge">Thank You</code> to my good friend <a href="https://twitter.com/warrenm">@warrenm</a> without whose guidance and inspiration this series would not have existed. In his book, <a href="https://gum.co/metalbyexample">Metal by Example</a>, you can find a lot of high quality projects written in Objective-C. The <a href="https://github.com/MetalKit/metal">source code</a> for this article is posted on Github, as usual.</p>
+<p>There is not much to see, but for now you learned how to “talk” to the <code class="highlighter-rouge">GPU</code> at the lowest possible level. I want to thank <a href="https://twitter.com/warrenm">@warrenm</a> without whose guidance and inspiration these tutorials would not have existed. In his book, <a href="https://gum.co/metalbyexample">Metal by Example</a>, you can find a lot of high quality <code class="highlighter-rouge">Metal</code> projects written in Objective-C. The <a href="https://github.com/MetalKit/metal">source code</a> for this article is posted on Github.</p>
 
 <p>Until next time!</p>
 
   </div>
 
-  
+  <!-- 
     
 
-  
+   -->
 
   <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
     <a class="a2a_button_twitter"></a>
