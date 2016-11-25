@@ -1,18 +1,27 @@
 ---
-layout: page
-title: Send me a message
+layout: contact
+title: Contact me
 permalink: /contact.html
 ---
 
-<div class="py2">
-  <!--
-  <form action="https://getsimpleform.com/messages?form_api_token=2690242b31b4950f934dbd41d1f1a2ee" method="POST" class="form-stacked form-light">
-  -->
-  <form action="https://formspree.io/mhorga@gmail.com" method="POST" class="form-stacked form-light">
-    <input type="text" name="_replyto" class="input mobile-block" placeholder="Your Email Address"><br /><br />
-    <textarea type="text" name="content" class="input mobile-block" rows="5" placeholder="Your message here."></textarea><br /><br />
-    <input type="submit" class="button button-blue button-big mobile-block" value="Send">
-    <input type="hidden" name="_next" value="http://metalkit.org" />
-    <input type="hidden" name="_subject" value="The Metal Framework" />
-  </form>
+<div class="py2" align="center">
+
+  <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+  <style type="text/css">
+    #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+  </style>
+  <div id="mc_embed_signup">
+    <form action="https://formspree.io/mhorga@gmail.com" method="POST" class="validate" target="_blank" novalidate>
+      <div id="mc_embed_signup_scroll">
+        <div align="left" style="color: grey;"><h1>Contact me</h1></div>
+        <input type="text" name="_replyto" class="email" id="mce-EMAIL" placeholder="Your email address." required>
+        <textarea type="text" name="content" class="email" rows="10" placeholder="Your message here." style="display:block; padding:8px 0; margin:0 4% 10px 0; text-indent:5px; width:58%; min-width:130px;"></textarea>
+        <input type="hidden" name="_next" value="http://metalkit.org" />
+        <input type="hidden" name="_subject" value="The Metal Framework" />
+        <input type="submit" value="Send" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+      </div>
+    </form>
+  </div>
+  </p>
+
 </div>
