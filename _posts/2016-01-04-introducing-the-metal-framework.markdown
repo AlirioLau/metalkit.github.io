@@ -1,7 +1,7 @@
 ---
 published: true
 title: Introducing the Metal framework
-summary: <div><div style="display:inline-block; padding-right:.33em; padding-left:.1em;"><img src = "https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" alt="Metal" height="80" width="80"></div><div style="display:inline-block; width:85%; padding-right:.1em; padding-left:.33em; color:grey;">What is Metal? What are its advantages over other frameworks? Which GPUs are supported by Metal? How to initialize a Metal device.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter01_3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">What is Metal? What are its advantages over other frameworks? Which GPUs are supported by Metal? How to initialize a Metal device.</div></div>
 layout: post
 ---
 The [__Metal__](https://developer.apple.com/metal/)  framework that was announced at [__WWDC 2014__](https://developer.apple.com/videos/play/wwdc2014-603/) for `iOS` and at `WWDC 2015` also for `OS X` and `tvOS`. `Metal` is an interface for programming the `Graphics Processing Unit (GPU)` in your computer. The main advantages of using `Metal` are:

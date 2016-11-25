@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 1
-summary: Introducing MetalKit and its specialized Metal view - the MTKView. Using the Metal objects - command queue, render pass descriptor, command buffer, command encoder and drawable - to clear the screen to a custom color.
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter02-3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing MetalKit and its specialized Metal view - the MTKView. Using the Metal objects - command queue, render pass descriptor, command buffer, command encoder and drawable - to clear the screen to a custom color.</div></div>
 layout: post
 ---
 The [MetalKit](https://developer.apple.com/reference/metalkit) framework was announced at the [WWDC 2015](https://developer.apple.com/videos/wwdc2015/) and it brings a great deal of improvements and new features for `Metal`. Meet __MTKView__, a subclass of `NSView/UIView`. It comes with an embedded `Metal` layer, and it also manages the framebuffer and its render target attachments, as well as takes care of the draw loop.
