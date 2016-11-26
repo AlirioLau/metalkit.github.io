@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 4
-summary: Looking at the graphics pipeline in more detail. Building a Metal application in two stages - Initialization (get device, create command queue, create buffers/textures, create render pipeline, create view) and Drawing (get command buffer, start render pass, draw, commit command buffer). 
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/part4_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking at the graphics pipeline in more detail. Building a Metal application in two stages - Initialization (get device, create command queue, create buffers/textures, create render pipeline, create view) and Drawing (get command buffer, start render pass, draw, commit command buffer).</div></div> 
 layout: post
 ---
 Last time we looked at the `Metal Shading Language` basics. Before we look into more advanced topics, I just thought now is a good time to revisit what we have learned so far, especially about the _graphics pipeline_ which I admit, I might have gone too fast on that topic (thank you, anonymous reader, for your suggestion and valuable feedback!)
