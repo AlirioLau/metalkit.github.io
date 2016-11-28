@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 2
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing6_2.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Switching from our custom built data structures to the more performannt SIMD ones. Creating a timing function to monitor our rendering performance. Noticing that we can easily avoid copying large arrays. Creating two more structs (hit_record and camera). Creating a hitable protocol (with a hit function) and a hitable list. Implementing anti-aliasing and diffuse lighting.</div></div>
 layout: post
 ---
 Let's continue working on our `ray tracer` and pick up where we left off last week. I want to thank `Caroline`, `Jessy`, `Jeff` and `Mike` for providing valuable feedback and performance improvement suggestions while working on this project. 

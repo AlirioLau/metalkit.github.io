@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing2_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Raytracing. Creating the basic building blocks - a pixel struct and a ray struct. Populating an array of pixels with color and rendering into an image object. Overriding a few basic operators. Creating a hit function and using it in another function that is meant to determine color based on found intersections. Using the color function for each pixel in our view.</div></div>
 layout: post
 ---
 Today we are porting a `ray tracer` from [Peter Shirley's mini book](http://www.amazon.com/Ray-Tracing-Weekend-Peter-Shirley-ebook/dp/B01B5AODD8), into a `Swift` playground. Since I am not going to describe what __Ray Tracing__ is and how it works, I am inviting you to go ahead and read this book as it's free for Kindle subscribers. If you are not a subscriber, just buy the book like I did. Paying $2.99 is absolutely worth your every penny if you are interested in this topic.

@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 4
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing9_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a dielectric material. Using the Schlick polynomial approximation for higher reflectivity. Applying Snell's law to compute refraction. Tweaking the normals to get a hollow glass surface. Fixing the camera to get better views from different angles and distances.</div></div>
 layout: post
 ---
 Let's continue working on our `ray tracer` and pick up where we left off last week. First, as you are already used to, we'll do more code cleaning. I went ahead and replaced all classes with structs, and also used proper naming conventions (such as capitalization of types) this time. You can see the modified code in this week's repository. To keep this article short, I am not going over the cleaning procedure this time, but you will notice the transformations were rather minimal.

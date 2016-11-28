@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 5
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a random scene with a few dozen randomly textured and positioned spheres. Using Grand Central Dispatch threading to speed up rendering times or create images of higher quality by increasing the number of samples.</div></div>
 layout: post
 ---
 Let's continue working on our `ray tracer` and pick up where we left off last week. Now that we know how to generate spheres of different materials and know how to look at them from different angles, let's see how we can generate way more than just __3__ spheres. 
