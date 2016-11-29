@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Using MetalKit part 10</title>
-  <meta name="description" content="Today we will look at the only other type of shader function we have not used so far, the kernel function or compute shader. You will often hear a variation ...">
+  <meta name="description" content="Today we will look at the only other type of Metal function we have not used before, the kernel function or compute shader. You will often hear a variation o...">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
@@ -57,13 +57,13 @@
   <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
 
   <div class="post-content" itemprop="articleBody">
-    <p>Today we will look at the only other type of <code class="highlighter-rouge">shader function</code> we have not used so far, the <strong>kernel function</strong> or <strong>compute shader</strong>. You will often hear a variation of intermixed words from both of them. The kernel is used for <code class="highlighter-rouge">compute</code> tasks, that is, massively parallel computations done on the <code class="highlighter-rouge">GPU</code>. Some examples include: image processing, scientific simulations, and so on. A few important facts to keep in mind about kernels: there is no rendering pipeline, the function always returns <code class="highlighter-rouge">void</code> and its name always starts with the <strong>kernel</strong> keyword, like the other functions we used before were preceded by the <code class="highlighter-rouge">vertex</code> and <code class="highlighter-rouge">fragment</code> keyword.</p>
+    <p>Today we will look at the only other type of <code class="highlighter-rouge">Metal function</code> we have not used before, the <strong>kernel function</strong> or <strong>compute shader</strong>. You will often hear a variation of intermixed words from both of them. The kernel is used for <code class="highlighter-rouge">compute</code> tasks, that is, massively parallel computations done on the <code class="highlighter-rouge">GPU</code>. Some examples include: image processing, scientific simulations, and so on. A few important facts to keep in mind about kernels: there is no rendering pipeline, the function always returns <code class="highlighter-rouge">void</code> and its name always starts with the <strong>kernel</strong> keyword, just as the other functions we used before were preceded by the <code class="highlighter-rouge">vertex</code> and <code class="highlighter-rouge">fragment</code> keyword.</p>
 
-<p>Let’s start by stripping down the playground we used in <a href="http://metalkit.org/2016/03/07/using-metalkit-part-8.html">Part 8</a>. First, delete <code class="highlighter-rouge">MathUtils.swift</code> as we will not need it anymore. Then, in <code class="highlighter-rouge">MetalView.swift</code> delete the <code class="highlighter-rouge">createBuffers()</code> function, as well as its call inside the initializer, and the two variables for the buffers. Replace the <code class="highlighter-rouge">MTLRenderPipelineState</code> declaration with a <strong>MTLComputePipelineState</strong> declaration. Next, on to the <code class="highlighter-rouge">registerShaders()</code> function. Here are the differences between the old and the new version of it:</p>
+<p>Let’s start by stripping down the playground we used in <a href="http://metalkit.org/2016/03/07/using-metalkit-part-8.html">Part 8</a>. First, delete <code class="highlighter-rouge">MathUtils.swift</code> as we will not need it anymore. Then, in <code class="highlighter-rouge">MetalView.swift</code> delete the <code class="highlighter-rouge">createBuffers()</code> function, as well as its call inside the initializer, and the two buffers. Replace the <code class="highlighter-rouge">MTLRenderPipelineState</code> declaration with a <strong>MTLComputePipelineState</strong> declaration. Next, on to the <code class="highlighter-rouge">registerShaders()</code> function. Here are the differences between the old and the new version of it:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter10_1.png?raw=true" alt="alt text" title="1" /></p>
 
-<p>As you notice, we’re not using a <code class="highlighter-rouge">MTLRenderPipelineDescriptor</code> anymore and instead create our <code class="highlighter-rouge">MTLComputePipelineState</code> with the kernel function itself. Next, let’s see the differences for the <code class="highlighter-rouge">drawRect()</code> function:</p>
+<p>Notice, we’re not using a <code class="highlighter-rouge">descriptor</code> anymore and instead create our <code class="highlighter-rouge">MTLComputePipelineState</code> with the kernel function directly. Next, let’s see the differences for the <code class="highlighter-rouge">drawRect()</code> function:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter10_2.png?raw=true" alt="alt text" title="2" /></p>
 

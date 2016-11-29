@@ -1,15 +1,16 @@
 ---
 published: true
 title: Using MetalKit part 10
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter10_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing the compute pipeline and functions (kernels). Using MTLSize to determine the size of a threadgroup and the number of groups in a grid. Dispatching the threadgroups to do work in parallel. Using the thread_position_in_grid index to identify each thread. Working with the texture coordinates and dimensions. Introducing distance functions.</div></div>
 layout: post
 ---
-Today we will look at the only other type of `shader function` we have not used so far, the __kernel function__ or __compute shader__. You will often hear a variation of intermixed words from both of them. The kernel is used for `compute` tasks, that is, massively parallel computations done on the `GPU`. Some examples include: image processing, scientific simulations, and so on. A few important facts to keep in mind about kernels: there is no rendering pipeline, the function always returns `void` and its name always starts with the __kernel__ keyword, like the other functions we used before were preceded by the `vertex` and `fragment` keyword.
+Today we will look at the only other type of `Metal function` we have not used before, the __kernel function__ or __compute shader__. You will often hear a variation of intermixed words from both of them. The kernel is used for `compute` tasks, that is, massively parallel computations done on the `GPU`. Some examples include: image processing, scientific simulations, and so on. A few important facts to keep in mind about kernels: there is no rendering pipeline, the function always returns `void` and its name always starts with the __kernel__ keyword, just as the other functions we used before were preceded by the `vertex` and `fragment` keyword.
 
-Let's start by stripping down the playground we used in [Part 8](http://metalkit.org/2016/03/07/using-metalkit-part-8.html). First, delete `MathUtils.swift` as we will not need it anymore. Then, in `MetalView.swift` delete the `createBuffers()` function, as well as its call inside the initializer, and the two variables for the buffers. Replace the `MTLRenderPipelineState` declaration with a __MTLComputePipelineState__ declaration. Next, on to the `registerShaders()` function. Here are the differences between the old and the new version of it:
+Let's start by stripping down the playground we used in [Part 8](http://metalkit.org/2016/03/07/using-metalkit-part-8.html). First, delete `MathUtils.swift` as we will not need it anymore. Then, in `MetalView.swift` delete the `createBuffers()` function, as well as its call inside the initializer, and the two buffers. Replace the `MTLRenderPipelineState` declaration with a __MTLComputePipelineState__ declaration. Next, on to the `registerShaders()` function. Here are the differences between the old and the new version of it:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter10_1.png?raw=true "1")
 
-As you notice, we're not using a `MTLRenderPipelineDescriptor` anymore and instead create our `MTLComputePipelineState` with the kernel function itself. Next, let's see the differences for the `drawRect()` function:
+Notice, we're not using a `descriptor` anymore and instead create our `MTLComputePipelineState` with the kernel function directly. Next, let's see the differences for the `drawRect()` function:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter10_2.png?raw=true "2")
 

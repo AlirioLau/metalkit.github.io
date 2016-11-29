@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 12
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter12_3.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continue working on the fractal from the previous part. Using uniforms to send the GPU updated information about a timer and about the mouse click coordinates. Blending the color with the current coordinates to achieve new effects.</div></div>
 layout: post
 ---
 Today we continue working on that beautiful fractal, so let's pick up where we left off in [Part 11](http://metalkit.org/2016/05/10/using-metalkit-part-11.html). Using the same playground we worked on last time, we will next see how to bring it to life, that is, animate it. For that, we will use `uniforms` again. We introduced them in [Part 5](http://metalkit.org/2016/02/08/using-metalkit-part-5.html) in case you want to read again why they are useful in cases such as this one. 

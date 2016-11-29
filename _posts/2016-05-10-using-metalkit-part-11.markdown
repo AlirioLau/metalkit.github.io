@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 11
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter11_5.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Using MSL math functions such as sin, cos, pow, abs, fmod, clamp, mix, step and smoothstep. Understanding how smoothstep helps us fix graphics challenges and issues such as aliasing. Seeing how abs and fmod help us draw repetitive patterns such as lines of various slopes and thickness. Using trigonometric functions such sin, cos, fract, dot and pow to generate fractals.</div></div>
 layout: post
 ---
 Let's continue our journey into the wonderful world of shaders using the `Metal Shading Language (MSL)` by picking up where we left off in [Part 10](http://metalkit.org/2016/05/02/using-metalkit-part-10.html). Using the same playground we worked on last time, we will next try to get close to making art using `MSL` math functions such as `sin`, `cos`, `pow`, `abs`, `fmod`, `clamp`, `mix`, `step` and `smoothstep`. 
