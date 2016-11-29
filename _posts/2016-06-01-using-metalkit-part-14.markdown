@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 14
-summary: Learn how to generate basic value noise and then add it to the object's color by using MSL in a compute shader.
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter14_1.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Understanding basic value noise and how randomness plays an essential part in generating it. Creating a custom randomness function. Bilinearly interpolating a grid using a Cubic Hermite Spline and a Fractional Brownian Motion function. Add the timer uniform again to animate the noise content.</div></div>
 layout: post
 ---
 Let's pick up where we left off in [Part 13](http://metalkit.org/2016/05/25/using-metalkit-part-13.html). Using the same playground we worked on last time, we will learn about __noise__ today. From _Wikipedia_:

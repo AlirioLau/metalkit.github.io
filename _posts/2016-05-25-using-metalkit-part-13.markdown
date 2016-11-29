@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 13
-summary: Learn about animating a basic diffuse (Lambertian) light and about drawing 3D objects using MSL in a compute shader. 
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter13_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving on to 3D objects in the kernel function. Using the sphere equation to get distances to points in space. Calculating normals calculating and then the color at each normalized coordinate. Learning about diffuse (Lambertian) basic light. Using uniforms again to animate the light source position around the sphere.</div></div> 
 layout: post
 ---
 Let's pick up where we left off in [Part 12](http://metalkit.org/2016/05/18/using-metalkit-part-12.html). Using the same playground we worked on last time, we will learn about lighting and `3D` objects today. Remember the sun eclipse we worked on a couple of weeks ago? It's back! Well, we are going to remove the sun and just focus on the planet this time.
