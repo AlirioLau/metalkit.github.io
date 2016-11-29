@@ -1,7 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 6
-summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/mps_9.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how textures can provide object surfaces a greater level of detail. Using the texture loader function to import an image to be used as texture. Fixing the flipped upside-down texture. Introducing samplers that offer advanced control over texture coordinates through addressing modes and filtering methods.</div></div>
+summary: 
 layout: post
 ---
 Today, I am looking again at the `Ray Tracing` project because I wanted to see how it runs in an `iPad Playground`. There aren't any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app. 
