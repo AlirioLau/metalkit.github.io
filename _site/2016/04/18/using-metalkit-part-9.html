@@ -78,7 +78,7 @@
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter09_1.jpg?raw=true" alt="alt text" title="1" /></p>
 
-<p>So for the front face (square) we use vertices stored at positions <strong>0</strong> through <strong>3</strong> in the <code class="highlighter-rouge">vertex_buffer</code>. Later on we will add the other <strong>4</strong> vertices as well. The front face is made of two triangles. We first draw the triangle that uses vertices <strong>0</strong>, <strong>1</strong> and <strong>2</strong> and then we draw the triangle that uses vertices <strong>2</strong>, <strong>3</strong> and <strong>0</strong>. Notice that two of the vertices are re-used, as expected. Also notice that the drawing is done <strong>counterclockwise</strong>. This is the default rendering rule in <code class="highlighter-rouge">Metal</code> but it can be changed to <code class="highlighter-rouge">clockwise</code> as well.</p>
+<p>So for the front face (square) we use vertices stored at positions <strong>0</strong> through <strong>3</strong> in the <code class="highlighter-rouge">vertex_buffer</code>. Later on we will add the other <strong>4</strong> vertices as well. The front face is made of two triangles. We first draw the triangle that uses vertices <strong>0</strong>, <strong>1</strong> and <strong>2</strong> and then we draw the triangle that uses vertices <strong>2</strong>, <strong>3</strong> and <strong>0</strong>. Notice that two of the vertices are re-used, as expected. Also notice the drawing is done <strong>clockwise</strong>. This is the default front-facing winding order in <code class="highlighter-rouge">Metal</code> but it can be changed to <code class="highlighter-rouge">counterclockwise</code> as well.</p>
 
 <p>Then, we need to create the <strong>index_buffer</strong>:</p>
 
@@ -158,7 +158,7 @@
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter09_4.png?raw=true" alt="alt text" title="4" /></p>
 
-<p>Hmm… the cube almost looks right, but something is still missing. The next transformation the pixels need to go through is from <code class="highlighter-rouge">world space</code> to <code class="highlighter-rouge">camera space</code>. Everything we see on the screen is <code class="highlighter-rouge">viewed</code> by a virtual camera through a <strong>frustum</strong> (pyramidal shape) that has a <strong>near</strong> and <strong>far</strong> planes to limit the `view (camera) space:</p>
+<p>Hmm… the cube almost looks right, but something is still missing. The next transformation the pixels need to go through is from <code class="highlighter-rouge">world space</code> to <code class="highlighter-rouge">camera space</code>. Everything we see on the screen is <em>viewed</em> by a virtual camera through a <strong>frustum</strong> (pyramidal shape) that has a <strong>near</strong> and <strong>far</strong> planes to limit the view (camera) space:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/chapter09_5.png?raw=true" alt="alt text" title="5" /></p>
 

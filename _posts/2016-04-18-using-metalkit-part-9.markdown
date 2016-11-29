@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 9
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter09_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving to 3D rendering. Introducing index buffers that are useful for vertex reusing. Presenting the front-facing winding orders and the culling modes. Introducing the concept of depth. Building a model-view-projection matrix. Describing the viewing frustum. Using rotation updating each frame to create an animated spinning effect.</div></div>
 layout: post
 ---
 I bet many of you missed the `MetalKit` series, so today we are returning back to it, and we will learn how to draw 3D content in `Metal`. Let's continue working on our playground and pick up where we left off in [part 8](http://metalkit.org/2016/03/07/using-metalkit-part-8.html) of the series. 
@@ -28,7 +29,7 @@ To understand how these indexes are stored, let's look at this image below:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter09_1.jpg?raw=true "1")
 
-So for the front face (square) we use vertices stored at positions __0__ through __3__ in the `vertex_buffer`. Later on we will add the other __4__ vertices as well. The front face is made of two triangles. We first draw the triangle that uses vertices __0__, __1__ and __2__ and then we draw the triangle that uses vertices __2__, __3__ and __0__. Notice that two of the vertices are re-used, as expected. Also notice that the drawing is done __counterclockwise__. This is the default rendering rule in `Metal` but it can be changed to `clockwise` as well.
+So for the front face (square) we use vertices stored at positions __0__ through __3__ in the `vertex_buffer`. Later on we will add the other __4__ vertices as well. The front face is made of two triangles. We first draw the triangle that uses vertices __0__, __1__ and __2__ and then we draw the triangle that uses vertices __2__, __3__ and __0__. Notice that two of the vertices are re-used, as expected. Also notice the drawing is done __clockwise__. This is the default front-facing winding order in `Metal` but it can be changed to `counterclockwise` as well.
 
 Then, we need to create the __index_buffer__:
 
@@ -118,7 +119,7 @@ In the main playground page, see the generated new image:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter09_4.png?raw=true "4")
 
-Hmm... the cube almost looks right, but something is still missing. The next transformation the pixels need to go through is from `world space` to `camera space`. Everything we see on the screen is `viewed` by a virtual camera through a __frustum__ (pyramidal shape) that has a __near__ and __far__ planes to limit the `view (camera) space:
+Hmm... the cube almost looks right, but something is still missing. The next transformation the pixels need to go through is from `world space` to `camera space`. Everything we see on the screen is _viewed_ by a virtual camera through a __frustum__ (pyramidal shape) that has a __near__ and __far__ planes to limit the view (camera) space:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/chapter09_5.png?raw=true "5")
 
