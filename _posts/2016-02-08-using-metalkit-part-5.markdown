@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 5
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter05_5.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing 2D/3D transforms - scaling, translation and rotation matrices. Using a Model matrix to combine all transforms and sending it to the GPU as a Uniform using a data buffer. Introducing argument tables for sending multiple data buffers to the GPU. Using the model matrix in the vertex shader for transformations.</div></div>
 layout: post
 ---

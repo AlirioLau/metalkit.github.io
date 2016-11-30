@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 3
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing7.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating an abstract material protocol that has a scatter function. Creating a lambertian and a metallic class that conform to the material protocol. Recursively computing color definition until a given depth is reached.</div></div>
 layout: post
 ---

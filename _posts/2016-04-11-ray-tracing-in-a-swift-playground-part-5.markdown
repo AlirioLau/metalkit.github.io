@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 5
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a random scene with a few dozen randomly textured and positioned spheres. Using Grand Central Dispatch threading to speed up rendering times or create images of higher quality by increasing the number of samples.</div></div>
 layout: post
 ---

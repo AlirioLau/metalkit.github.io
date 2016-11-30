@@ -1,6 +1,7 @@
 ---
 published: true
 title: Beginning Metal - a new course
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://betamax-production.s3.amazonaws.com/attachments/collections/54/Metal-beg-FeaturedBanner%402x.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about the Metal API in the form of a video course that has no less than 15 chapters with well structured material, code samples and challenges to solve. Building your first game completely written in Swift and Metal.</div></div>
 layout: post
 ---

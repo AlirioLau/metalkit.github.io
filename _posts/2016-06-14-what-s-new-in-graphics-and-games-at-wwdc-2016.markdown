@@ -1,6 +1,7 @@
 ---
 published: true
 title: What's new in graphics and games at WWDC 2016
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/wwdc16.jpeg" alt="Metal" height="120" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Metal gets important updates such as Tessellation, Function Specialization, Resource Heaps, Memoryless Render Targets and the Metal System Trace. Also see what's new in Model I/O, SceneKit, SpriteKit, GameplayKit, ReplayKit, Accelerate and CoreImage.</div></div>
 layout: post
 ---

@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 7
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter07.png" alt="Metal" height="120" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Transient vs non-transient Metal objects. Making sure all the Metal objects are reused in multiple draw calls except for the command buffers and encoders. Creating a utilities class for separating responsibilities the view controller should not have.</div></div>
 layout: post
 ---

@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 2
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter03_3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing 2D geometry and using more Metal objects - data buffer, library, function, render pipeline descriptor and state. Introducing the Metal Shading Language. Drawing a triangle on the screen.</div></div>
 layout: post
 ---

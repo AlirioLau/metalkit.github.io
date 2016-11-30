@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing2_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Raytracing. Creating the basic building blocks - a pixel struct and a ray struct. Populating an array of pixels with color and rendering into an image object. Overriding a few basic operators. Creating a hit function and using it in another function that is meant to determine color based on found intersections. Using the color function for each pixel in our view.</div></div>
 layout: post
 ---

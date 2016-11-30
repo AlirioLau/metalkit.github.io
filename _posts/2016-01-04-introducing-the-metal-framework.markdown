@@ -1,6 +1,7 @@
 ---
 published: true
 title: Introducing the Metal framework
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter01_3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">What is Metal? What are its advantages over other frameworks? Which GPUs are supported by Metal? How to initialize a Metal device.</div></div>
 layout: post
 ---

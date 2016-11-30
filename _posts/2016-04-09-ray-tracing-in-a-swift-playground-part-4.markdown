@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 4
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing9_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a dielectric material. Using the Schlick polynomial approximation for higher reflectivity. Applying Snell's law to compute refraction. Tweaking the normals to get a hollow glass surface. Fixing the camera to get better views from different angles and distances.</div></div>
 layout: post
 ---

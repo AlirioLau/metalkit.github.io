@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 8
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://developer.apple.com/assets/elements/icons/256x256/swift.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Metal prototyping in the Swift playgrounds. Making sure the Swift source code is created in the Sources directory while the Metal files (as well as any assets we might have) are created in the Resources directory. Creating the library from a path since a default one cannot be created in a playground.</div></div>
 layout: post
 ---

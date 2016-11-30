@@ -1,6 +1,7 @@
 ---
 published: true
 title: Metal Performance Shaders for the iPad playground
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/mps_9.png" alt="Metal" height="100" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how to easily import a playground from a Mac to an iPad using the iCloud Drive. Seeing how a MPS object does the command encoding directly, without having to configure any states, descriptors or functions.</div></div>
 layout: post
 ---

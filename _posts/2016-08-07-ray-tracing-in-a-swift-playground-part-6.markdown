@@ -1,6 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 6
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Porting the Raytracing code to the Swift Playgrounds app for iPad. Tweaking the number of samples for getting better quality images vs faster rendering. Adding a viewer for the raytraced content.</div></div>
 layout: post
 ---

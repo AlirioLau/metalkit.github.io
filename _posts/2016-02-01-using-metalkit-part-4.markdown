@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 4
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/part4_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking at the graphics pipeline in more detail. Building a Metal application in two stages - Initialization (get device, create command queue, create buffers/textures, create render pipeline, create view) and Drawing (get command buffer, start render pass, draw, commit command buffer).</div></div> 
 layout: post
 ---

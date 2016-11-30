@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 17
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter17_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how to draw wireframes by setting the triangle fill mode to lines. Disabling the back-face culling for 3D rendering so we can see all the wires, including those in the back.</div></div>
 layout: post
 ---

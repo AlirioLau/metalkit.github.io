@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 10
+author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter10_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing the compute pipeline and functions (kernels). Using MTLSize to determine the size of a threadgroup and the number of groups in a grid. Dispatching the threadgroups to do work in parallel. Using the thread_position_in_grid index to identify each thread. Working with the texture coordinates and dimensions. Introducing distance functions.</div></div>
 layout: post
 ---
