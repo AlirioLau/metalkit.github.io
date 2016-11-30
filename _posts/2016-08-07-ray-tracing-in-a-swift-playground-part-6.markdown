@@ -1,7 +1,7 @@
 ---
 published: true
 title: Ray tracing in a Swift playground part 6
-summary: 
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="100" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Porting the Raytracing code to the Swift Playgrounds app for iPad.</div></div>
 layout: post
 ---
 Today, I am looking again at the `Ray Tracing` project because I wanted to see how it runs in an `iPad Playground`. There aren't any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app. 
