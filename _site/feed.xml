@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-11-30T02:13:47+02:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-11-30T02:17:39+02:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
 </subtitle><entry><title type="html">Using MetalKit part 2*3^2</title><link href="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html" rel="alternate" type="text/html" title="Using MetalKit part 2*3^2" /><published>2016-10-01T00:00:00+03:00</published><updated>2016-10-01T00:00:00+03:00</updated><id>http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2</id><content type="html" xml:base="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html">Yes, as the title suggests, we're going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an `iPad` with us. Luckily, the `iPad` now has the awesome `Swift Playgrounds` app.
 
 Let's start with a new playground that runs a basic compute kernel. Since the current version of the `Swift Playgrounds` app does not yet let us edit the `Auxiliary Source Files`, where all our `Swift` and `Metal` files usually reside, we will have to write our code in the main playground page, but it is not that complicated. All we have to do is modify our `MetalView` initializer and let it take in an extra argument -- our shader/kernel code. Then we start building our code by adding more lines to this long string.
@@ -351,25 +351,23 @@ The output image should look like this:
 
 The source code is posted on Github as usual.
 
-Until next time!</summary></entry><entry><title type="html">The Model I/O framework</title><link href="http://localhost:4000/2016/08/30/the-model-i-o-framework.html" rel="alternate" type="text/html" title="The Model I/O framework" /><published>2016-08-30T00:00:00+03:00</published><updated>2016-08-30T00:00:00+03:00</updated><id>http://localhost:4000/2016/08/30/the-model-i-o-framework</id><content type="html" xml:base="http://localhost:4000/2016/08/30/the-model-i-o-framework.html">__Model I/O__ was introduced in `2015` for `iOS 9` and `OS X 10.11` and it is a framework that helps us create more realistic and interactive graphics. We can use it to import/export `3D` assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering. Model I/O easily integrates our assets with our code in various `3D APIs`:
+Until next time!</summary></entry><entry><title type="html">The Model I/O framework</title><link href="http://localhost:4000/2016/08/30/the-model-i-o-framework.html" rel="alternate" type="text/html" title="The Model I/O framework" /><published>2016-08-30T00:00:00+03:00</published><updated>2016-08-30T00:00:00+03:00</updated><id>http://localhost:4000/2016/08/30/the-model-i-o-framework</id><content type="html" xml:base="http://localhost:4000/2016/08/30/the-model-i-o-framework.html">&lt;p&gt;&lt;strong&gt;Model I/O&lt;/strong&gt; was introduced in &lt;code class=&quot;highlighter-rouge&quot;&gt;2015&lt;/code&gt; for &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS 9&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;OS X 10.11&lt;/code&gt; and it is a framework that helps us create more realistic and interactive graphics. We can use it to import/export &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering. Model I/O easily integrates our assets with our code in various &lt;code class=&quot;highlighter-rouge&quot;&gt;3D APIs&lt;/code&gt;:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_1.png &quot;1&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_1.png&quot; alt=&quot;alt text&quot; title=&quot;1&quot; /&gt;&lt;/p&gt;
 
-In order to import an asset we simply do:
+&lt;p&gt;In order to import an asset we simply do:&lt;/p&gt;
 
-{% highlight swift %}var url = URL(string: &quot;/Users/YourUsername/Desktop/imported.obj&quot;)
-let asset = MDLAsset(url: url!)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/Users/YourUsername/Desktop/imported.obj&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;asset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLAsset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-To export an asset we do:
+&lt;p&gt;To export an asset we do:&lt;/p&gt;
 
-{% highlight swift %}url = URL(string: &quot;/Users/YourUsername/Desktop/exported.obj&quot;)
-try! asset.export(to: url!)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;/Users/YourUsername/Desktop/exported.obj&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;try!&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;asset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;export&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-Model I/O will save both the __.obj__ file and an additional __.mtl__ file that contains information about the object materials, such as in this example:
+&lt;p&gt;Model I/O will save both the &lt;strong&gt;.obj&lt;/strong&gt; file and an additional &lt;strong&gt;.mtl&lt;/strong&gt; file that contains information about the object materials, such as in this example:&lt;/p&gt;
 
-{% highlight text %}# Apple ModelI/O MTL File: exported.mtl
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-text&quot; data-lang=&quot;text&quot;&gt;# Apple ModelI/O MTL File: exported.mtl
 
 newmtl material_1
 	Kd 0.8 0.8 0.8
@@ -384,164 +382,156 @@ newmtl material_1
 	sheen 0.05 0 0
 	sheenTint 0 0 0
 	clearCoat 0 0 0
-	clearCoatGloss 0 0 0
-{% endhighlight %}
+	clearCoatGloss 0 0 0&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-Integrating `Model I/O` with `Metal` takes four steps:
+&lt;p&gt;Integrating &lt;code class=&quot;highlighter-rouge&quot;&gt;Model I/O&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; takes four steps:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_2.png &quot;2&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_2.png&quot; alt=&quot;alt text&quot; title=&quot;2&quot; /&gt;&lt;/p&gt;
 
-### Step 1: set up the render pipeline state
+&lt;h3 id=&quot;step-1-set-up-the-render-pipeline-state&quot;&gt;Step 1: set up the render pipeline state&lt;/h3&gt;
 
-First we create a vertex descriptor so we can pass input to the vertex function. The vertex descriptor is needed to describe the vertex attribute inputs to a render state pipeline. We need `3 x 4` bytes for the vertex position, `4 x 1` byte for color, `2 x 2` bytes for the texture coordinates and `4 x 1` byte for ambient occlusion. At the end we tell the descriptor how large (__24__) our `stride` is in total:
+&lt;p&gt;First we create a vertex descriptor so we can pass input to the vertex function. The vertex descriptor is needed to describe the vertex attribute inputs to a render state pipeline. We need &lt;code class=&quot;highlighter-rouge&quot;&gt;3 x 4&lt;/code&gt; bytes for the vertex position, &lt;code class=&quot;highlighter-rouge&quot;&gt;4 x 1&lt;/code&gt; byte for color, &lt;code class=&quot;highlighter-rouge&quot;&gt;2 x 2&lt;/code&gt; bytes for the texture coordinates and &lt;code class=&quot;highlighter-rouge&quot;&gt;4 x 1&lt;/code&gt; byte for ambient occlusion. At the end we tell the descriptor how large (&lt;strong&gt;24&lt;/strong&gt;) our &lt;code class=&quot;highlighter-rouge&quot;&gt;stride&lt;/code&gt; is in total:&lt;/p&gt;
 
-{% highlight swift %}let vertexDescriptor = MTLVertexDescriptor()
-vertexDescriptor.attributes[0].offset = 0
-vertexDescriptor.attributes[0].format = MTLVertexFormat.float3 // position
-vertexDescriptor.attributes[1].offset = 12
-vertexDescriptor.attributes[1].format = MTLVertexFormat.uChar4 // color
-vertexDescriptor.attributes[2].offset = 16
-vertexDescriptor.attributes[2].format = MTLVertexFormat.half2 // texture
-vertexDescriptor.attributes[3].offset = 20
-vertexDescriptor.attributes[3].format = MTLVertexFormat.float // occlusion
-vertexDescriptor.layouts[0].stride = 24
-let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-renderPipelineDescriptor.vertexDescriptor = vertexDescriptor
-let rps = device.newRenderPipelineStateWithDescriptor(renderPipelineDescriptor)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexDescriptor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLVertexDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLVertexFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// position
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;12&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLVertexFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uChar4&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// color
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;16&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLVertexFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;half2&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// texture
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;format&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLVertexFormat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// occlusion
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;layouts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stride&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;24&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;renderPipelineDescriptor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTLRenderPipelineDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;renderPipelineDescriptor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;rps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;newRenderPipelineStateWithDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;renderPipelineDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-### Step 2: set up the asset initialization
+&lt;h3 id=&quot;step-2-set-up-the-asset-initialization&quot;&gt;Step 2: set up the asset initialization&lt;/h3&gt;
 
-We need to also create a `Model I/O` vertex descriptor to describe the layout of the vertex attributes in a mesh. We use a model named __Farmhouse.obj__ that also has a texture __Farmhouse.png__ (both already added to the sample project for you):
+&lt;p&gt;We need to also create a &lt;code class=&quot;highlighter-rouge&quot;&gt;Model I/O&lt;/code&gt; vertex descriptor to describe the layout of the vertex attributes in a mesh. We use a model named &lt;strong&gt;Farmhouse.obj&lt;/strong&gt; that also has a texture &lt;strong&gt;Farmhouse.png&lt;/strong&gt; (both already added to the sample project for you):&lt;/p&gt;
 
-{% highlight swift %}let desc = MTKModelIOVertexDescriptorFromMetal(vertexDescriptor)
-var attribute = desc.attributes[0] as! MDLVertexAttribute
-attribute.name = MDLVertexAttributePosition
-attribute = desc.attributes[1] as! MDLVertexAttribute
-attribute.name = MDLVertexAttributeColor
-attribute = desc.attributes[2] as! MDLVertexAttribute
-attribute.name = MDLVertexAttributeTextureCoordinate
-attribute = desc.attributes[3] as! MDLVertexAttribute
-attribute.name = MDLVertexAttributeOcclusionValue
-let mtkBufferAllocator = MTKMeshBufferAllocator(device: device!)
-let url = Bundle.main.url(forResource: &quot;Farmhouse&quot;, withExtension: &quot;obj&quot;)
-let asset = MDLAsset(url: url!, vertexDescriptor: desc, bufferAllocator: mtkBufferAllocator)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;desc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTKModelIOVertexDescriptorFromMetal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;attribute&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as!&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttribute&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttributePosition&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as!&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttribute&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttributeColor&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as!&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttribute&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttributeTextureCoordinate&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;attributes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as!&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttribute&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttributeOcclusionValue&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mtkBufferAllocator&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTKMeshBufferAllocator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Bundle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;forResource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Farmhouse&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;withExtension&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;obj&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;asset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLAsset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexDescriptor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;desc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;bufferAllocator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mtkBufferAllocator&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-Next, we load the texture for our asset:
+&lt;p&gt;Next, we load the texture for our asset:&lt;/p&gt;
 
-{% highlight swift %}let loader = MTKTextureLoader(device: device)
-let file = Bundle.main.path(forResource: &quot;Farmhouse&quot;, ofType: &quot;png&quot;)
-let data = try Data(contentsOf: URL(fileURLWithPath: file))
-let texture = try loader.newTexture(with: data, options: nil)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;loader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTKTextureLoader&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Bundle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;forResource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Farmhouse&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;ofType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;png&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;contentsOf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;URL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;fileURLWithPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;texture&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;loader&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;newTexture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;with&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-### Step 3: set up `MetalKit` mesh and submesh objects
+&lt;h3 id=&quot;step-3-set-up--mesh-and-submesh-objects&quot;&gt;Step 3: set up &lt;code class=&quot;highlighter-rouge&quot;&gt;MetalKit&lt;/code&gt; mesh and submesh objects&lt;/h3&gt;
 
-We are now creating the meshes and submeshes needed in the final, fourth step. We also compute the __Ambient Occlusion__, which is a measure of geometry obstruction, and it tells us how much of the ambient light actually reaches any given pixel or point of our object, and and how much of this light is blocked by surrounding meshes. `Model I/O` provides a `UV` mapper that creates a `2D` texture and wraps it around the object's `3D` mesh. For every pixel in the texture we can compute the ambient occlusion value, which is just one extra float added for each vertex:
+&lt;p&gt;We are now creating the meshes and submeshes needed in the final, fourth step. We also compute the &lt;strong&gt;Ambient Occlusion&lt;/strong&gt;, which is a measure of geometry obstruction, and it tells us how much of the ambient light actually reaches any given pixel or point of our object, and and how much of this light is blocked by surrounding meshes. &lt;code class=&quot;highlighter-rouge&quot;&gt;Model I/O&lt;/code&gt; provides a &lt;code class=&quot;highlighter-rouge&quot;&gt;UV&lt;/code&gt; mapper that creates a &lt;code class=&quot;highlighter-rouge&quot;&gt;2D&lt;/code&gt; texture and wraps it around the object’s &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; mesh. For every pixel in the texture we can compute the ambient occlusion value, which is just one extra float added for each vertex:&lt;/p&gt;
 
-{% highlight swift %}let mesh = asset.object(at: 0) as? MDLMesh
-mesh.generateAmbientOcclusionVertexColors(withQuality: 1, attenuationFactor: 0.98, objectsToConsider: [mesh], vertexAttributeNamed: MDLVertexAttributeOcclusionValue)
-let meshes = try MTKMesh.newMeshes(from: asset, device: device!, sourceMeshes: nil)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mesh&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;asset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as?&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLMesh&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;generateAmbientOcclusionVertexColors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;withQuality&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;attenuationFactor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.98&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;objectsToConsider&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mesh&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexAttributeNamed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVertexAttributeOcclusionValue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;meshes&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MTKMesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;newMeshes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;asset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;sourceMeshes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-### Step 4: set up `Metal` rendering and drawing of meshes
+&lt;h3 id=&quot;step-4-set-up--rendering-and-drawing-of-meshes&quot;&gt;Step 4: set up &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; rendering and drawing of meshes&lt;/h3&gt;
 
-Finally, we configure the command encoder with the mesh data that it needs to draw:
+&lt;p&gt;Finally, we configure the command encoder with the mesh data that it needs to draw:&lt;/p&gt;
 
-{% highlight swift %}let mesh = (meshes?.first)!
-let vertexBuffer = mesh.vertexBuffers[0]
-commandEncoder.setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, at: 0)
-let submesh = mesh.submeshes.first!
-commandEncoder.drawIndexedPrimitives(submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;mesh&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;meshes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;vertexBuffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertexBuffers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;commandEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setVertexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertexBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertexBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;submesh&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;submeshes&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;first&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;commandEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;drawIndexedPrimitives&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;submesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;primitiveType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;indexCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;submesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indexCount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;indexType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;submesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indexType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;indexBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;submesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indexBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;indexBufferOffset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;submesh&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;indexBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-Next, we will work on our shader functions. First we set up our structs for the vertices and uniforms:
+&lt;p&gt;Next, we will work on our shader functions. First we set up our structs for the vertices and uniforms:&lt;/p&gt;
 
-{% highlight swift %}struct VertexIn {
-    float4 position [[attribute(0)]];
-    float4 color [[attribute(1)]];
-    float2 texCoords [[attribute(2)]];
-    float occlusion [[attribute(3)]];
-};
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;VertexIn&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;texCoords&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;attribute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]];&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 
-struct VertexOut {
-    float4 position [[position]];
-    float4 color;
-    float2 texCoords;
-    float occlusion;
-};
+&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]];&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;texCoords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
 
-struct Uniforms {
-    float4x4 modelViewProjectionMatrix;
-};
-{% endhighlight %}
+&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Uniforms&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4x4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modelViewProjectionMatrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-Notice that we are matching the information we set up in the vertex descriptor, with the `VertexIn` struct.
-For the vertex function, we use a __[[stage_in]]__ attribute because we are passing per-vertex inputs as an argument to this function:
+&lt;p&gt;Notice that we are matching the information we set up in the vertex descriptor, with the &lt;code class=&quot;highlighter-rouge&quot;&gt;VertexIn&lt;/code&gt; struct.
+For the vertex function, we use a &lt;strong&gt;[[stage_in]]&lt;/strong&gt; attribute because we are passing per-vertex inputs as an argument to this function:&lt;/p&gt;
 
-{% highlight swift %}vertex VertexOut vertex_func(const VertexIn vertices [[stage_in]],
-                             constant Uniforms &amp;uniforms [[buffer(1)]],
-                             uint vertexId [[vertex_id]])
-{
-    float4x4 mvpMatrix = uniforms.modelViewProjectionMatrix;
-    float4 position = vertices.position;
-    VertexOut out;
-    out.position = mvpMatrix * position;
-    out.color = float4(1);
-    out.texCoords = vertices.texCoords;
-    out.occlusion = vertices.occlusion;
-    return out;
-}
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;vertex&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vertex_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;VertexIn&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stage_in&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+                             &lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Uniforms&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniforms&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]],&lt;/span&gt;
+                             &lt;span class=&quot;n&quot;&gt;uint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertexId&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertex_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4x4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mvpMatrix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uniforms&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;modelViewProjectionMatrix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mvpMatrix&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;texCoords&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;texCoords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The fragment function reads the per-fragment inputs passed from the vertex function and also processes the texture we passed via the command encoder: 
+&lt;p&gt;The fragment function reads the per-fragment inputs passed from the vertex function and also processes the texture we passed via the command encoder:&lt;/p&gt;
 
-{% highlight swift %}fragment half4 fragment_func(VertexOut fragments [[stage_in]],
-                             texture2d&lt;float&gt; textures [[texture(0)]])
-{
-    float4 baseColor = fragments.color;
-    return half4(baseColor);
-}
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;fragment&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;half4&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;fragment_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;VertexOut&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fragments&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stage_in&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+                             &lt;span class=&quot;n&quot;&gt;texture2d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;textures&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;texture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;baseColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fragments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;color&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;half4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baseColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-If you run the playground, you will see this output image:
+&lt;p&gt;If you run the playground, you will see this output image:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_3.png &quot;3&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_3.png&quot; alt=&quot;alt text&quot; title=&quot;3&quot; /&gt;&lt;/p&gt;
 
-That's a pretty dull white model. Let's apply the ambient occlusion to it by replacing the last line in the fragment function with these lines:
+&lt;p&gt;That’s a pretty dull white model. Let’s apply the ambient occlusion to it by replacing the last line in the fragment function with these lines:&lt;/p&gt;
 
-{% highlight swift %}float4 occlusion = fragments.occlusion;
-return half4(baseColor * occlusion);
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fragments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;half4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baseColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-If you run the playground again, you will see this output image:
+&lt;p&gt;If you run the playground again, you will see this output image:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_4.png &quot;4&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_4.png&quot; alt=&quot;alt text&quot; title=&quot;4&quot; /&gt;&lt;/p&gt;
 
-The ambient occlusion also seems a bit raw and that is because our model is quite flat, without any curves or surface irregularities which would give way more credit to the realism that the ambient occlusion brings. Next, let's apply the texture. Replace the last line in the fragment function with these lines: 
+&lt;p&gt;The ambient occlusion also seems a bit raw and that is because our model is quite flat, without any curves or surface irregularities which would give way more credit to the realism that the ambient occlusion brings. Next, let’s apply the texture. Replace the last line in the fragment function with these lines:&lt;/p&gt;
 
-{% highlight swift %}constexpr sampler samplers;
-float4 texture = textures.sample(samplers, fragments.texCoords);
-return half4(baseColor * texture);
-{% endhighlight %}    
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;constexpr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sampler&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;samplers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;float4&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;texture&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;textures&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;sample&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;samplers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fragments&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;texCoords&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;half4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baseColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;texture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-If you run the playground again, you will see this output image:
+&lt;p&gt;If you run the playground again, you will see this output image:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_5.png &quot;5&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_5.png&quot; alt=&quot;alt text&quot; title=&quot;5&quot; /&gt;&lt;/p&gt;
 
-The texture looks really great on this model, but it would look even more realistic if we brought the ambient occlusion back. Replace the last line in the fragment function with this line: 
+&lt;p&gt;The texture looks really great on this model, but it would look even more realistic if we brought the ambient occlusion back. Replace the last line in the fragment function with this line:&lt;/p&gt;
 
-{% highlight swift %}return half4(baseColor * occlusion * texture);
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;half4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;baseColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;texture&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-If you run the playground again, you will see this output image:
+&lt;p&gt;If you run the playground again, you will see this output image:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/modelio_6.png &quot;6&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/modelio_6.png&quot; alt=&quot;alt text&quot; title=&quot;6&quot; /&gt;&lt;/p&gt;
 
-Not bad for a few lines of code, right? `Model I/O` is such a great framework for `3D` graphics and game programmers. There are a couple of articles on the web about using `Model I/O` with `SceneKit`, however, I thought using it with `Metal` is even more interesting! The [source code](https://github.com/MetalKit/modelio) is posted on Github as usual.
+&lt;p&gt;Not bad for a few lines of code, right? &lt;code class=&quot;highlighter-rouge&quot;&gt;Model I/O&lt;/code&gt; is such a great framework for &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; graphics and game programmers. There are a couple of articles on the web about using &lt;code class=&quot;highlighter-rouge&quot;&gt;Model I/O&lt;/code&gt; with &lt;code class=&quot;highlighter-rouge&quot;&gt;SceneKit&lt;/code&gt;, however, I thought using it with &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; is even more interesting! The &lt;a href=&quot;https://github.com/MetalKit/modelio&quot;&gt;source code&lt;/a&gt; is posted on Github as usual.&lt;/p&gt;
 
-Until next time!</content><summary type="html">Model I/O was introduced in 2015 for iOS 9 and OS X 10.11 and it is a framework that helps us create more realistic and interactive graphics. We can use it to import/export 3D assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering. Model I/O easily integrates our assets with our code in various 3D APIs:
+&lt;p&gt;Until next time!&lt;/p&gt;</content><summary type="html">Model I/O was introduced in 2015 for iOS 9 and OS X 10.11 and it is a framework that helps us create more realistic and interactive graphics. We can use it to import/export 3D assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering. Model I/O easily integrates our assets with our code in various 3D APIs:
 
 
 
@@ -721,19 +711,19 @@ If you run the playground again, you will see this output image:
 
 Not bad for a few lines of code, right? Model I/O is such a great framework for 3D graphics and game programmers. There are a couple of articles on the web about using Model I/O with SceneKit, however, I thought using it with Metal is even more interesting! The source code is posted on Github as usual.
 
-Until next time!</summary></entry><entry><title type="html">Ray tracing in a Swift playground part 6</title><link href="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html" rel="alternate" type="text/html" title="Ray tracing in a Swift playground part 6" /><published>2016-08-07T00:00:00+03:00</published><updated>2016-08-07T00:00:00+03:00</updated><id>http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6</id><content type="html" xml:base="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html">&lt;p&gt;Today, I am looking again at the &lt;code class=&quot;highlighter-rouge&quot;&gt;Ray Tracing&lt;/code&gt; project because I wanted to see how it runs in an &lt;code class=&quot;highlighter-rouge&quot;&gt;iPad Playground&lt;/code&gt;. There aren’t any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app.&lt;/p&gt;
+Until next time!</summary></entry><entry><title type="html">Ray tracing in a Swift playground part 6</title><link href="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html" rel="alternate" type="text/html" title="Ray tracing in a Swift playground part 6" /><published>2016-08-07T00:00:00+03:00</published><updated>2016-08-07T00:00:00+03:00</updated><id>http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6</id><content type="html" xml:base="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html">Today, I am looking again at the `Ray Tracing` project because I wanted to see how it runs in an `iPad Playground`. There aren't any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app. 
 
-&lt;p&gt;If you run the playground, now you have the option to play with the &lt;strong&gt;number of samples (ns)&lt;/strong&gt; right on the main page of the playground. Fair warning, the higher you set that number, the longer it will take your playground to finish running but the higher the quality of the output image will be. The runtime will also increase if you make the &lt;code class=&quot;highlighter-rouge&quot;&gt;width&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;height&lt;/code&gt; bigger. For &lt;code class=&quot;highlighter-rouge&quot;&gt;400 x 200&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;ns = 10&lt;/code&gt;, you will get an image like this:&lt;/p&gt;
+If you run the playground, now you have the option to play with the __number of samples (ns)__ right on the main page of the playground. Fair warning, the higher you set that number, the longer it will take your playground to finish running but the higher the quality of the output image will be. The runtime will also increase if you make the `width` or `height` bigger. For `400 x 200` and `ns = 10`, you will get an image like this:
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/raytracing_01.png&quot; alt=&quot;alt text&quot; title=&quot;1&quot; /&gt;&lt;/p&gt;
+![alt text](https://github.com/MetalKit/images/raw/master/raytracing_01.png &quot;1&quot;)
 
-&lt;p&gt;In order to get the image to show, you need to tap on the little icon that looks like an image, at the end of the line, and choose &lt;code class=&quot;highlighter-rouge&quot;&gt;Add viewer&lt;/code&gt;. You could amp up the resolution to say, &lt;code class=&quot;highlighter-rouge&quot;&gt;800 x 400&lt;/code&gt;, but this will also increase the running time of your playground. However, the output image is worth the waiting!&lt;/p&gt;
+In order to get the image to show, you need to tap on the little icon that looks like an image, at the end of the line, and choose `Add viewer`. You could amp up the resolution to say, `800 x 400`, but this will also increase the running time of your playground. However, the output image is worth the waiting!
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/raytracing_02.png&quot; alt=&quot;alt text&quot; title=&quot;2&quot; /&gt;&lt;/p&gt;
+![alt text](https://github.com/MetalKit/images/raw/master/raytracing_02.png &quot;2&quot;)
 
-&lt;p&gt;We will soon look at ways to make the playground run faster and generate higher quality output images. My good friend and scientific programming guru, &lt;a href=&quot;https://twitter.com/hyperjeff/&quot;&gt;Jeff&lt;/a&gt;, is working on a &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt;-based version of this raytracer. We will talk about that soon, too. The &lt;a href=&quot;https://github.com/MetalKit/raytracing&quot;&gt;source code&lt;/a&gt; for the playground in this article is posted on Github as usual.&lt;/p&gt;
+We will soon look at ways to make the playground run faster and generate higher quality output images. My good friend and scientific programming guru, [Jeff](https://twitter.com/hyperjeff/), is working on a `Metal`-based version of this raytracer. We will talk about that soon, too. The [source code](https://github.com/MetalKit/raytracing) for the playground in this article is posted on Github as usual.
 
-&lt;p&gt;Until next time!&lt;/p&gt;</content><summary type="html">Today, I am looking again at the Ray Tracing project because I wanted to see how it runs in an iPad Playground. There aren’t any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app.
+Until next time!</content><summary type="html">Today, I am looking again at the Ray Tracing project because I wanted to see how it runs in an iPad Playground. There aren’t any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app.
 
 If you run the playground, now you have the option to play with the number of samples (ns) right on the main page of the playground. Fair warning, the higher you set that number, the longer it will take your playground to finish running but the higher the quality of the output image will be. The runtime will also increase if you make the width or height bigger. For 400 x 200 and ns = 10, you will get an image like this:
 
