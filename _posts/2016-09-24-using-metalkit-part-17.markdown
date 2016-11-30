@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 17
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter17_1.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how to draw wireframes by setting the triangle fill mode to lines. Disabling the back-face culling for 3D rendering so we can see all the wires, including those in the back.</div></div>
 layout: post
 ---
 I am writing this article for three reasons: first, to tell you that I am working on updating all the `Metal` code to `Swift 3` and then moving the tutorials to a new home with a nicer design and a proper domain name; second, I wanted to show you a different way to work with `MetalKit` other than subclassing `MTKView`, that is, using the `MTKViewDelegate`; and third, I wanted to answer one of our readers' question about how to draw wireframes.
