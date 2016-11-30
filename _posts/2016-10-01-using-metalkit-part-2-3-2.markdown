@@ -1,6 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 2*3^2
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter18.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Prototyping kernels using math functions and the Swift Playgrounds app for iPad. Using sqrt to shape transitions, then cos to create variations of ups and downs in shapes, then exp that allows us to create curves, then smoothstep for thresholding, then abs for symmetry and mix for blending.</div></div>
 layout: post
 ---
 Yes, as the title suggests, we're going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an `iPad` with us. Luckily, the `iPad` now has the awesome `Swift Playgrounds` app.

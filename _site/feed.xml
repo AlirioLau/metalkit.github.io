@@ -1,163 +1,148 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-11-30T02:23:48+02:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
-</subtitle><entry><title type="html">Using MetalKit part 2*3^2</title><link href="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html" rel="alternate" type="text/html" title="Using MetalKit part 2*3^2" /><published>2016-10-01T00:00:00+03:00</published><updated>2016-10-01T00:00:00+03:00</updated><id>http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2</id><content type="html" xml:base="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html">Yes, as the title suggests, we're going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an `iPad` with us. Luckily, the `iPad` now has the awesome `Swift Playgrounds` app.
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2016-11-30T02:36:28+02:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</subtitle><entry><title type="html">Using MetalKit part 2*3^2</title><link href="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html" rel="alternate" type="text/html" title="Using MetalKit part 2*3^2" /><published>2016-10-01T00:00:00+03:00</published><updated>2016-10-01T00:00:00+03:00</updated><id>http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2</id><content type="html" xml:base="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html">&lt;p&gt;Yes, as the title suggests, we’re going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an &lt;code class=&quot;highlighter-rouge&quot;&gt;iPad&lt;/code&gt; with us. Luckily, the &lt;code class=&quot;highlighter-rouge&quot;&gt;iPad&lt;/code&gt; now has the awesome &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift Playgrounds&lt;/code&gt; app.&lt;/p&gt;
 
-Let's start with a new playground that runs a basic compute kernel. Since the current version of the `Swift Playgrounds` app does not yet let us edit the `Auxiliary Source Files`, where all our `Swift` and `Metal` files usually reside, we will have to write our code in the main playground page, but it is not that complicated. All we have to do is modify our `MetalView` initializer and let it take in an extra argument -- our shader/kernel code. Then we start building our code by adding more lines to this long string.
+&lt;p&gt;Let’s start with a new playground that runs a basic compute kernel. Since the current version of the &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift Playgrounds&lt;/code&gt; app does not yet let us edit the &lt;code class=&quot;highlighter-rouge&quot;&gt;Auxiliary Source Files&lt;/code&gt;, where all our &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; files usually reside, we will have to write our code in the main playground page, but it is not that complicated. All we have to do is modify our &lt;code class=&quot;highlighter-rouge&quot;&gt;MetalView&lt;/code&gt; initializer and let it take in an extra argument – our shader/kernel code. Then we start building our code by adding more lines to this long string.&lt;/p&gt;
 
-Let's start with a light blue sky background color:
+&lt;p&gt;Let’s start with a light blue sky background color:&lt;/p&gt;
 
-{% highlight swift %}let shader =
-&quot;#include &lt;metal_stdlib&gt;\n&quot; +
-&quot;using namespace metal;&quot; +
-&quot;kernel void k(texture2d&lt;float,access::write&gt; o[[texture(0)]],&quot; +
-&quot;              uint2 gid[[thread_position_in_grid]]) {&quot; +
-&quot;   float3 color = float3(0.5, 0.8, 1.0);&quot; +
-&quot;   o.write(float4(color, 1.0), gid);&quot; +
-&quot;}&quot;
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;shader&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;#include &amp;lt;metal_stdlib&amp;gt;&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;using namespace metal;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;kernel void k(texture2d&amp;lt;float,access::write&amp;gt; o[[texture(0)]],&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;              uint2 gid[[thread_position_in_grid]]) {&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   float3 color = float3(0.5, 0.8, 1.0);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   o.write(float4(color, 1.0), gid);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;}&quot;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-If you run the playground now, the output image should look like this:
+&lt;p&gt;If you run the playground now, the output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_1.png &quot;1&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_1.png&quot; alt=&quot;alt text&quot; title=&quot;1&quot; /&gt;&lt;/p&gt;
 
-Next, let's draw a gradient. we divide the current pixel coordinates to the screen dimensions and we get __UV__ -- a pair of floats between __(0-1)__. we then multiply the fixed color with __Y__ -- the vertical component of `UV` which gives us the gradient:
+&lt;p&gt;Next, let’s draw a gradient. we divide the current pixel coordinates to the screen dimensions and we get &lt;strong&gt;UV&lt;/strong&gt; – a pair of floats between &lt;strong&gt;(0-1)&lt;/strong&gt;. we then multiply the fixed color with &lt;strong&gt;Y&lt;/strong&gt; – the vertical component of &lt;code class=&quot;highlighter-rouge&quot;&gt;UV&lt;/code&gt; which gives us the gradient:&lt;/p&gt;
 
-{% highlight swift %}&quot;   int width = o.get_width();&quot; +
-&quot;   int height = o.get_height();&quot; +
-&quot;   float2 uv = float2(gid) / float2(width, height);&quot; +
-&quot;   color *= uv.y;&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   int width = o.get_width();&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   int height = o.get_height();&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   float2 uv = float2(gid) / float2(width, height);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   color *= uv.y;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_2.png &quot;2&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_2.png&quot; alt=&quot;alt text&quot; title=&quot;2&quot; /&gt;&lt;/p&gt;
 
-Let's work on a nicer background next. A smooth gradient would look like a great sunset. We can use __mix__ to blend colors. We tell the function to blend vertically, and take the complement of __Y__ to switch the colors:
+&lt;p&gt;Let’s work on a nicer background next. A smooth gradient would look like a great sunset. We can use &lt;strong&gt;mix&lt;/strong&gt; to blend colors. We tell the function to blend vertically, and take the complement of &lt;strong&gt;Y&lt;/strong&gt; to switch the colors:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_3.png &quot;3&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_3.png&quot; alt=&quot;alt text&quot; title=&quot;3&quot; /&gt;&lt;/p&gt;
 
-From here we could go to drawing a black hole. We would achieve that by using a distance function (__length__) to draw black in the middle of the screen __(0.5, 0.5)__ and add more and more background color outside of it, until we reach the maximum value in the screen corners. Replace the last line with:
+&lt;p&gt;From here we could go to drawing a black hole. We would achieve that by using a distance function (&lt;strong&gt;length&lt;/strong&gt;) to draw black in the middle of the screen &lt;strong&gt;(0.5, 0.5)&lt;/strong&gt; and add more and more background color outside of it, until we reach the maximum value in the screen corners. Replace the last line with:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float2 q = uv - float2(0.5);&quot; +
-&quot;   color *= length(q);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float2 q = uv - float2(0.5);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   color *= length(q);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_4.png.png &quot;4&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_4.png.png&quot; alt=&quot;alt text&quot; title=&quot;4&quot; /&gt;&lt;/p&gt;
 
-Next we use __smootstep__ to draw a round shape that is black inside, blue outside and a blended color between __r__ and __(r + 0.01)__. Replace the last line with:
+&lt;p&gt;Next we use &lt;strong&gt;smootstep&lt;/strong&gt; to draw a round shape that is black inside, blue outside and a blended color between &lt;strong&gt;r&lt;/strong&gt; and &lt;strong&gt;(r + 0.01)&lt;/strong&gt;. Replace the last line with:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float r = 0.2;&quot; +
-&quot;   color *= smoothstep(r, r + 0.01, length(q));&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float r = 0.2;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   color *= smoothstep(r, r + 0.01, length(q));&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_5.png &quot;5&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_5.png&quot; alt=&quot;alt text&quot; title=&quot;5&quot; /&gt;&lt;/p&gt;
 
-If we're not satisfied with a circular perimeter, we could make it _bumpy_ by using math functions such as __cos__ and __atan2__. We generate here __9__ spikes (__frequency__) with a spike length (__amplitude__) of __0.1__:
+&lt;p&gt;If we’re not satisfied with a circular perimeter, we could make it &lt;em&gt;bumpy&lt;/em&gt; by using math functions such as &lt;strong&gt;cos&lt;/strong&gt; and &lt;strong&gt;atan2&lt;/strong&gt;. We generate here &lt;strong&gt;9&lt;/strong&gt; spikes (&lt;strong&gt;frequency&lt;/strong&gt;) with a spike length (&lt;strong&gt;amplitude&lt;/strong&gt;) of &lt;strong&gt;0.1&lt;/strong&gt;:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_6.png &quot;6&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_6.png&quot; alt=&quot;alt text&quot; title=&quot;6&quot; /&gt;&lt;/p&gt;
 
-Adding the __X__ coordinate to the _cosine_ phase introduces a spike _bend-like_ effect:
+&lt;p&gt;Adding the &lt;strong&gt;X&lt;/strong&gt; coordinate to the &lt;em&gt;cosine&lt;/em&gt; phase introduces a spike &lt;em&gt;bend-like&lt;/em&gt; effect:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_7.png &quot;7&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_7.png&quot; alt=&quot;alt text&quot; title=&quot;7&quot; /&gt;&lt;/p&gt;
 
-You can rotate them by adding a small number such as __1.0__ to the _cosine_ value:
+&lt;p&gt;You can rotate them by adding a small number such as &lt;strong&gt;1.0&lt;/strong&gt; to the &lt;em&gt;cosine&lt;/em&gt; value:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x + 1.0);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x + 1.0);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_8.png &quot;8&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_8.png&quot; alt=&quot;alt text&quot; title=&quot;8&quot; /&gt;&lt;/p&gt;
 
-If you think this is starting to look like a palm tree canopy, I see it too! We can draw its trunk using __abs__ which gives us horizontal/vertical distances instead of _euclidian_ distances (to a given point) like _length_ did, so let's take the __X__ distance and add these lines (we are reusing both __r__ and __color__) after the existing ones: 
+&lt;p&gt;If you think this is starting to look like a palm tree canopy, I see it too! We can draw its trunk using &lt;strong&gt;abs&lt;/strong&gt; which gives us horizontal/vertical distances instead of &lt;em&gt;euclidian&lt;/em&gt; distances (to a given point) like &lt;em&gt;length&lt;/em&gt; did, so let’s take the &lt;strong&gt;X&lt;/strong&gt; distance and add these lines (we are reusing both &lt;strong&gt;r&lt;/strong&gt; and &lt;strong&gt;color&lt;/strong&gt;) after the existing ones:&lt;/p&gt;
 
-{% highlight swift %}&quot;   r = 0.015;&quot; +
-&quot;   color *= smoothstep(r, r + 0.002, abs(q.x));&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   r = 0.015;&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;&quot;   color *= smoothstep(r, r + 0.002, abs(q.x));&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_9.png &quot;9&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_9.png&quot; alt=&quot;alt text&quot; title=&quot;9&quot; /&gt;&lt;/p&gt;
 
-We can remove the unneeded part of the trunk by using another __smoothstep__ on the __Y__ coordinate:
+&lt;p&gt;We can remove the unneeded part of the trunk by using another &lt;strong&gt;smoothstep&lt;/strong&gt; on the &lt;strong&gt;Y&lt;/strong&gt; coordinate:&lt;/p&gt;
 
-{% highlight swift %}&quot;   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x))) * smoothstep(0.0, 0.1, q.y);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x))) * smoothstep(0.0, 0.1, q.y);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_10.png &quot;10&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_10.png&quot; alt=&quot;alt text&quot; title=&quot;10&quot; /&gt;&lt;/p&gt;
 
-Since both the canopy and trunk are using __q__, modifying its value will move both:
+&lt;p&gt;Since both the canopy and trunk are using &lt;strong&gt;q&lt;/strong&gt;, modifying its value will move both:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float2 q = uv - float2(0.67, 0.29);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float2 q = uv - float2(0.67, 0.29);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_11.png &quot;11&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_11.png&quot; alt=&quot;alt text&quot; title=&quot;11&quot; /&gt;&lt;/p&gt;
 
-By introducing a __sin__ function we can bend the trunk. A too small _frequency_ does not bend it enough while a too high _frequency_ bends it too much so __2.0__ seems right. An _amplitude_ of __0.25__ also moves the base of the trunk towards the edge of the screen so it looks right (as an aside, changing the sign from __+__ to __--__ will shift the base to the other side):
+&lt;p&gt;By introducing a &lt;strong&gt;sin&lt;/strong&gt; function we can bend the trunk. A too small &lt;em&gt;frequency&lt;/em&gt; does not bend it enough while a too high &lt;em&gt;frequency&lt;/em&gt; bends it too much so &lt;strong&gt;2.0&lt;/strong&gt; seems right. An &lt;em&gt;amplitude&lt;/em&gt; of &lt;strong&gt;0.25&lt;/strong&gt; also moves the base of the trunk towards the edge of the screen so it looks right (as an aside, changing the sign from &lt;strong&gt;+&lt;/strong&gt; to &lt;strong&gt;–&lt;/strong&gt; will shift the base to the other side):&lt;/p&gt;
 
-{% highlight swift %}&quot;   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x - 0.25 * sin(2.0 * q.y)))) * smoothstep(0.0, 0.1, q.y);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x - 0.25 * sin(2.0 * q.y)))) * smoothstep(0.0, 0.1, q.y);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_12.png &quot;12&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_12.png&quot; alt=&quot;alt text&quot; title=&quot;12&quot; /&gt;&lt;/p&gt;
 
-The trunk, however, is too smooth. To add irregularities to its surface we use __cos__ again. A high _frequency_ and low _amplitude_ seem to be what we need to make it look right:
+&lt;p&gt;The trunk, however, is too smooth. To add irregularities to its surface we use &lt;strong&gt;cos&lt;/strong&gt; again. A high &lt;em&gt;frequency&lt;/em&gt; and low &lt;em&gt;amplitude&lt;/em&gt; seem to be what we need to make it look right:&lt;/p&gt;
 
-{% highlight swift %}&quot;   r = 0.015 + 0.002 * cos (120.0 * q.y);&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   r = 0.015 + 0.002 * cos (120.0 * q.y);&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_13.png &quot;13&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_13.png&quot; alt=&quot;alt text&quot; title=&quot;13&quot; /&gt;&lt;/p&gt;
 
-Also, trunks are usually shaping the ground a little around their base, so an __exp__ function is what we need here because it grows slowly in the beginning and then it soars to the skies. We use an _attenuation_ factor of __-50.0__:
+&lt;p&gt;Also, trunks are usually shaping the ground a little around their base, so an &lt;strong&gt;exp&lt;/strong&gt; function is what we need here because it grows slowly in the beginning and then it soars to the skies. We use an &lt;em&gt;attenuation&lt;/em&gt; factor of &lt;strong&gt;-50.0&lt;/strong&gt;:&lt;/p&gt;
 
-{% highlight swift %}&quot;   r = 0.015 + 0.002 * cos (120.0 * q.y) + exp(-50.0 * (1.0 - uv.y));&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   r = 0.015 + 0.002 * cos (120.0 * q.y) + exp(-50.0 * (1.0 - uv.y));&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The output image should look like this:
+&lt;p&gt;The output image should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_14.png &quot;14&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_14.png&quot; alt=&quot;alt text&quot; title=&quot;14&quot; /&gt;&lt;/p&gt;
 
-We can increase the presence of the second color by using __sqrt__ which gives us bigger numbers (when used on sub-unitary numbers) to work with. The sunset is about to end soon:
+&lt;p&gt;We can increase the presence of the second color by using &lt;strong&gt;sqrt&lt;/strong&gt; which gives us bigger numbers (when used on sub-unitary numbers) to work with. The sunset is about to end soon:&lt;/p&gt;
 
-{% highlight swift %}&quot;   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));&quot; +
-{% endhighlight %}
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;s&quot;&gt;&quot;   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-The final image on the iPad should look like this:
+&lt;p&gt;The final image on the iPad should look like this:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_15.png &quot;15&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_15.png&quot; alt=&quot;alt text&quot; title=&quot;15&quot; /&gt;&lt;/p&gt;
 
-In conclusion, we saw how to use __sqrt__ to shape transitions, then __cos__ to create variations of ups and downs in shapes, then __exp__ that allows us to create curves, then __smoothstep__ for thresholding, then __abs__ for symmetry and __mix__ for blending. Still commuting? Why don't you take a look at how this nice clover was created:
+&lt;p&gt;In conclusion, we saw how to use &lt;strong&gt;sqrt&lt;/strong&gt; to shape transitions, then &lt;strong&gt;cos&lt;/strong&gt; to create variations of ups and downs in shapes, then &lt;strong&gt;exp&lt;/strong&gt; that allows us to create curves, then &lt;strong&gt;smoothstep&lt;/strong&gt; for thresholding, then &lt;strong&gt;abs&lt;/strong&gt; for symmetry and &lt;strong&gt;mix&lt;/strong&gt; for blending. Still commuting? Why don’t you take a look at how this nice clover was created:&lt;/p&gt;
 
-![alt text](https://github.com/MetalKit/images/raw/master/chapter18_16.png &quot;16&quot;)
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter18_16.png&quot; alt=&quot;alt text&quot; title=&quot;16&quot; /&gt;&lt;/p&gt;
 
-I want to say thanks to [Inigo Quilez](https://twitter.com/iquilezles) again, for keep inspiring me to write more and more about drawing with math. All the math in this tutorial belongs to him. The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+&lt;p&gt;I want to say thanks to &lt;a href=&quot;https://twitter.com/iquilezles&quot;&gt;Inigo Quilez&lt;/a&gt; again, for keep inspiring me to write more and more about drawing with math. All the math in this tutorial belongs to him. The &lt;a href=&quot;https://github.com/MetalKit/metal&quot;&gt;source code&lt;/a&gt; is posted on &lt;code class=&quot;highlighter-rouge&quot;&gt;Github&lt;/code&gt; as usual.&lt;/p&gt;
 
-Until next time!</content><summary type="html">Yes, as the title suggests, we’re going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an iPad with us. Luckily, the iPad now has the awesome Swift Playgrounds app.
+&lt;p&gt;Until next time!&lt;/p&gt;</content><summary type="html">Yes, as the title suggests, we’re going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an iPad with us. Luckily, the iPad now has the awesome Swift Playgrounds app.
 
 Let’s start with a new playground that runs a basic compute kernel. Since the current version of the Swift Playgrounds app does not yet let us edit the Auxiliary Source Files, where all our Swift and Metal files usually reside, we will have to write our code in the main playground page, but it is not that complicated. All we have to do is modify our MetalView initializer and let it take in an extra argument – our shader/kernel code. Then we start building our code by adding more lines to this long string.
 
@@ -300,31 +285,34 @@ In conclusion, we saw how to use sqrt to shape transitions, then cos to create v
 
 I want to say thanks to Inigo Quilez again, for keep inspiring me to write more and more about drawing with math. All the math in this tutorial belongs to him. The source code is posted on Github as usual.
 
-Until next time!</summary></entry><entry><title type="html">Using MetalKit part 17</title><link href="http://localhost:4000/2016/09/24/using-metalkit-part-17.html" rel="alternate" type="text/html" title="Using MetalKit part 17" /><published>2016-09-24T00:00:00+03:00</published><updated>2016-09-24T00:00:00+03:00</updated><id>http://localhost:4000/2016/09/24/using-metalkit-part-17</id><content type="html" xml:base="http://localhost:4000/2016/09/24/using-metalkit-part-17.html">&lt;p&gt;I am writing this article for three reasons: first, to tell you that I am working on updating all the &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; code to &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift 3&lt;/code&gt; and then moving the tutorials to a new home with a nicer design and a proper domain name; second, I wanted to show you a different way to work with &lt;code class=&quot;highlighter-rouge&quot;&gt;MetalKit&lt;/code&gt; other than subclassing &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKView&lt;/code&gt;, that is, using the &lt;code class=&quot;highlighter-rouge&quot;&gt;MTKViewDelegate&lt;/code&gt;; and third, I wanted to answer one of our readers’ question about how to draw wireframes.&lt;/p&gt;
+Until next time!</summary></entry><entry><title type="html">Using MetalKit part 17</title><link href="http://localhost:4000/2016/09/24/using-metalkit-part-17.html" rel="alternate" type="text/html" title="Using MetalKit part 17" /><published>2016-09-24T00:00:00+03:00</published><updated>2016-09-24T00:00:00+03:00</updated><id>http://localhost:4000/2016/09/24/using-metalkit-part-17</id><content type="html" xml:base="http://localhost:4000/2016/09/24/using-metalkit-part-17.html">I am writing this article for three reasons: first, to tell you that I am working on updating all the `Metal` code to `Swift 3` and then moving the tutorials to a new home with a nicer design and a proper domain name; second, I wanted to show you a different way to work with `MetalKit` other than subclassing `MTKView`, that is, using the `MTKViewDelegate`; and third, I wanted to answer one of our readers' question about how to draw wireframes.
 
-&lt;p&gt;Let’s start by using the code from &lt;code class=&quot;highlighter-rouge&quot;&gt;Part 4&lt;/code&gt; which is an &lt;code class=&quot;highlighter-rouge&quot;&gt;Xcode&lt;/code&gt; project but we will turn it into a playground this time. This is going to be a shockingly short tutorial but all you have to do is add the following line right before encoding the draw command:&lt;/p&gt;
+Let's start by using the code from `Part 4` which is an `Xcode` project but we will turn it into a playground this time. This is going to be a shockingly short tutorial but all you have to do is add the following line right before encoding the draw command:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;renderEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setTriangleFillMode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;lines&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+{% highlight swift %}renderEncoder.setTriangleFillMode(.lines)
+{% endhighlight %}
 
-&lt;p&gt;That’s it! Run the playground and enjoy the wireframed triangle. If you don’t want it to have an interpolated color, in the fragment shader also replace the return line with a constant color like green, for example:&lt;/p&gt;
+That's it! Run the playground and enjoy the wireframed triangle. If you don't want it to have an interpolated color, in the fragment shader also replace the return line with a constant color like green, for example:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;half4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+{% highlight swift %}return half4(0.0, 1.0, 0.0, 1.0);
+{% endhighlight %}
 
-&lt;p&gt;The output image should look like this:&lt;/p&gt;
+The output image should look like this:
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter17.png&quot; alt=&quot;alt text&quot; title=&quot;2D&quot; /&gt;&lt;/p&gt;
+![alt text](https://github.com/MetalKit/images/raw/master/chapter17.png &quot;2D&quot;)
 
-&lt;p&gt;For a &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; rendering there is one more thing we need to do, disable the backface culling. If you’re working in the playground from &lt;code class=&quot;highlighter-rouge&quot;&gt;Part 9&lt;/code&gt; just comment out this line:&lt;/p&gt;
+For a `3D` rendering there is one more thing we need to do, disable the backface culling. If you're working in the playground from `Part 9` just comment out this line:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;commandEncoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setCullMode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;back&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+{% highlight swift %}commandEncoder.setCullMode(.back)
+{% endhighlight %}
 
-&lt;p&gt;The output image should look like this:&lt;/p&gt;
+The output image should look like this:
 
-&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/chapter17_2.png&quot; alt=&quot;alt text&quot; title=&quot;3D&quot; /&gt;&lt;/p&gt;
+![alt text](https://github.com/MetalKit/images/raw/master/chapter17_2.png &quot;3D&quot;)
 
-&lt;p&gt;The &lt;a href=&quot;https://github.com/MetalKit/metal&quot;&gt;source code&lt;/a&gt; is posted on &lt;code class=&quot;highlighter-rouge&quot;&gt;Github&lt;/code&gt; as usual.&lt;/p&gt;
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
 
-&lt;p&gt;Until next time!&lt;/p&gt;</content><summary type="html">I am writing this article for three reasons: first, to tell you that I am working on updating all the Metal code to Swift 3 and then moving the tutorials to a new home with a nicer design and a proper domain name; second, I wanted to show you a different way to work with MetalKit other than subclassing MTKView, that is, using the MTKViewDelegate; and third, I wanted to answer one of our readers’ question about how to draw wireframes.
+Until next time!</content><summary type="html">I am writing this article for three reasons: first, to tell you that I am working on updating all the Metal code to Swift 3 and then moving the tutorials to a new home with a nicer design and a proper domain name; second, I wanted to show you a different way to work with MetalKit other than subclassing MTKView, that is, using the MTKViewDelegate; and third, I wanted to answer one of our readers’ question about how to draw wireframes.
 
 Let’s start by using the code from Part 4 which is an Xcode project but we will turn it into a playground this time. This is going to be a shockingly short tutorial but all you have to do is add the following line right before encoding the draw command:
 
