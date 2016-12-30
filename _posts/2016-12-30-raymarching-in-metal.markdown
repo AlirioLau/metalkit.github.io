@@ -7,7 +7,7 @@ layout: post
 ---
 __Raymarching__ is a fast rendering method used in realtime graphics. The geometry is usually not passed to the renderer but rather created in the shader using __Signed Distance Fields (SDF)__ functions that describe the shortest distance between a point and the surface of any object in the scene. The `SDF` returns a negative number if the point is inside of an object. Also, `SDFs` are useful because they allow us to reduce the number of samples used by `Ray Tracing`.  Similar to _Ray Tracing_, in `Raymarching` we also have a ray cast for each pixel on the view plane and each ray is used to determine if there is an intersection with an object. 
 
-The difference between the two techniques is that in _Ray Tracing_ the intersection is determined by a strict set of equations while in `Raymarching` the intersection is approximated. Using `SDFs` we can _march_ along the ray until we get close enough to an object. This is inexpensive to compute compared to exactly determining an intersection which is very expensive when there are many objects in the scene and complex lighting is used. Another advantage of using `Raymarching` is the rendering of volumetric materials (fog, water, clouds) which _Ray Tracing_ cannot easily do.
+The difference between the two techniques is that in _Ray Tracing_ the intersection is determined by a strict set of equations while in `Raymarching` the intersection is approximated. Using `SDFs` we can _march_ along the ray until we get close enough to an object. This is inexpensive to compute compared to exactly determining intersections which could become very expensive when there are many objects in the scene and the lighting is complex. Another great use case for `Raymarching` is volumetric rendering (fog, water, clouds) which _Ray Tracing_ cannot easily do because determining intersections with such volumes is quite difficult.
 
 To follow allong, you can use the playground from [Using MetalKit part 10](http://metalkit.org/2016/05/02/using-metalkit-part-10.html), slightly modified as explained next. Let’s start with two basic building blocks we need at the very minimum in our kernel: a ray and an object (sphere).
 
@@ -82,7 +82,7 @@ Now let's create a function named __distToScene__ that only takes a ray in as ar
 }
 {% endhighlight %}
 
-By using the `fmod` function we repeated the space throughout the entire screen and pratically created an infinite number of spheres, each with its own ray (repeated) now. Of course, we will only see the ones bounded by the `x` and `y` coordinates of the screen, however, the `z` coordinate will let us see how the spheres go indefinitely in depth. Inside the kernel, remove the sphere line, move the ray to a really far location, modify `dist` to rather give us the distance to the scene, and finally change the last line to give us some nice colors:
+By using the `fmod` function we repeated the space throughout the entire screen and pratically created an infinite number of spheres, each with its own (repeated) ray. Of course, we will only see the ones bounded by the `x` and `y` coordinates of the screen, however, the `z` coordinate will let us see how the spheres go indefinitely in depth. Inside the kernel, remove the sphere line, move the ray to a really far location, modify `dist` to rather give us the distance to the scene, and finally change the last line to give us some nice colors:
 
 {% highlight swift %}Ray ray = Ray(float3(1000.), normalize(float3(uv, 1.0)));
 ...
