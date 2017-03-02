@@ -2,7 +2,7 @@
 published: true
 title: Shadows in Metal part 2
 author: by <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Soft Shadows in Metal.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Soft Shadows in Metal. Returning to Raymarching to build a complex 3D scene using distance operation functions. Learning how to calculate normals and the visualizing them. Learning how to use normals to calculate diffuse and specular lighting. Determining hard shadows as well as soft shadows for objects in a 3D scene.</div></div>
 layout: post
 ---
 In this second part of the series, we will be looking into __soft shadows__. We are going to work on the playground we used in [Raymarching in Metal](http://metalkit.org/2016/12/30/raymarching-in-metal.html) and build up on that because it was already set up for `3D` objects. Let’s set up a basic scene that has a sphere, a plane, a light and a ray: 
