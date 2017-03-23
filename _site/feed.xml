@@ -1,5 +1,136 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-03-02T00:31:08-06:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
-</subtitle><entry><title type="html">Shadows in Metal part 2</title><link href="http://localhost:4000/2017/02/28/shadows-in-metal-part-2.html" rel="alternate" type="text/html" title="Shadows in Metal part 2" /><published>2017-02-28T00:00:00-06:00</published><updated>2017-02-28T00:00:00-06:00</updated><id>http://localhost:4000/2017/02/28/shadows-in-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/02/28/shadows-in-metal-part-2.html">&lt;p&gt;In this second part of the series, we will be looking into &lt;strong&gt;soft shadows&lt;/strong&gt;. We are going to work on the playground we used in &lt;a href=&quot;http://metalkit.org/2016/12/30/raymarching-in-metal.html&quot;&gt;Raymarching in Metal&lt;/a&gt; and build up on that because it was already set up for &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; objects. Let’s set up a basic scene that has a sphere, a plane, a light and a ray:&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-03-23T00:30:54-05:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</subtitle><entry><title type="html">Ambient Occlusion in Metal</title><link href="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html" rel="alternate" type="text/html" title="Ambient Occlusion in Metal" /><published>2017-03-22T00:00:00-05:00</published><updated>2017-03-22T00:00:00-05:00</updated><id>http://localhost:4000/2017/03/22/ambient-occlusion-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html">&lt;p&gt;Today we will be looking into &lt;strong&gt;ambient occlusion&lt;/strong&gt;. We are going to work on the playground we used in &lt;a href=&quot;http://metalkit.org/2017/02/28/shadows-in-metal-part-2.html&quot;&gt;Shadows in Metal part 2&lt;/a&gt; and build up on that. First, let’s add a new object type - a rectangular box:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Box&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;center&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Box&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;center&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;size&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Next, let’s also add a new distance function for our new struct:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToBox&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Box&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;center&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;min&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Then, update our scene to something new:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToScene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Plane&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Plane&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToPlane&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;8.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;6.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Sphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;15.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Box&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Box&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtb&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToBox&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2s1&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToSphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2s2&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToSphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2s3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToSphere&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;differenceOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d2s1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2s2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;differenceOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d2s3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;unionOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;unionOp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d2p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dist&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;What we did here was to first draw a sphere with a radius of &lt;code class=&quot;highlighter-rouge&quot;&gt;8&lt;/code&gt;, one with a radius of &lt;code class=&quot;highlighter-rouge&quot;&gt;6&lt;/code&gt; and take the difference between them. Since they have the same center the smaller one would not be visible unless we made a cross sectioning somehow. That was exactly why we used a third sphere, much larger and with a different center. We took the difference again and we could now see the result of the first difference. Finally, we added a box in there for a nicer, more diverse view. If you run the playground now, you should see something similar:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/ao_1.png&quot; alt=&quot;alt text&quot; title=&quot;1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Next, let’s delete the &lt;strong&gt;lighting()&lt;/strong&gt; and &lt;strong&gt;shadow()&lt;/strong&gt; functions as we don’t need them anymore. Also, delete the &lt;strong&gt;Light&lt;/strong&gt; struct and its two instances inside the kernel. Now let’s create an &lt;code class=&quot;highlighter-rouge&quot;&gt;ambient occlusion&lt;/code&gt; surrogate function:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ao&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We’re just using the normal’s &lt;code class=&quot;highlighter-rouge&quot;&gt;y&lt;/code&gt; component for light, which is like having a light directly above. Inside the kernel, right after creating the normal (inside the &lt;code class=&quot;highlighter-rouge&quot;&gt;else&lt;/code&gt; block), call the &lt;code class=&quot;highlighter-rouge&quot;&gt;ao()&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;o&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ao&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;o&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;There are no shadows anymore, only a basic (directly above) light. If you run the playground now, you should see something similar:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/ao_2.png&quot; alt=&quot;alt text&quot; title=&quot;2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Time to get some real &lt;code class=&quot;highlighter-rouge&quot;&gt;ambient occlusion&lt;/code&gt; now. &lt;em&gt;Ambient&lt;/em&gt; means the light does not come from a well defined light source but rather means general background lighting. &lt;em&gt;Occlusion&lt;/em&gt; means how much ambient light is blocked. We take the point on the surface where our ray hits and look at what’s around it. If there’s an object anywhere around it, that will block most of the light in the scene, so this is a dark area. If there’s nothing around it, then the area is well lit. For in between situations though, we need to figure out more precisely how much light was occluded. Introducing the &lt;strong&gt;cone tracing&lt;/strong&gt; concept.&lt;/p&gt;
+
+&lt;p&gt;The idea of &lt;code class=&quot;highlighter-rouge&quot;&gt;cone tracing&lt;/code&gt; is using a cone in the scene, instead of a ray. If the cone intersects an object, we don’t just have a simple &lt;code class=&quot;highlighter-rouge&quot;&gt;true/false&lt;/code&gt; result. We can find out how much of the cone the object covers at that point. But how do we even trace a cone? We could make a cone using many spheres. Try to imagine several spheres along a line, very small at one end, big at the other end. This is as good a cone approximation we can get here. Here are the steps we want to take:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Start at the point on the surface&lt;/li&gt;
+  &lt;li&gt;March out from the surface, along the normal&lt;/li&gt;
+  &lt;li&gt;For each iteration, determine how much of the sphere is filled by the scene using distance function&lt;/li&gt;
+  &lt;li&gt;For each iteration, double the distance from the surface, and also double the size of the sphere&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Since we are doubling the sphere size at each step, that means we travel out from the surface very fast so we need fewer iterations. That also gives us a nice wide cone. Here is the complete &lt;code class=&quot;highlighter-rouge&quot;&gt;ao()&lt;/code&gt; function:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;ao&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.01&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;10.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;distToScene&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)));&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coneWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusionAmount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;coneWidth&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusionFactor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusionAmount&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;coneWidth&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;occlusionFactor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;10.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusionFactor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;eps&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;eps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;max&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;occlusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Let’s go over the code, line by line. First we define the &lt;strong&gt;eps&lt;/strong&gt; variable which is both the cone radius and the distance from the surface. Then, we move away a bit to prevent hitting surface we’re moving away from. Next, we define the &lt;strong&gt;occlusion&lt;/strong&gt; variable which is initially nil (scene is all lit). Then, we enter the loop and at each iteration we get the scene distance, double the radius so we know how much of the cone is occluded, make sure we eliminate negative values for the light, get the amount (ratio) of occlusion scaled by the cone width, set a lower impact for more distant occluders (the iteration count gives us this), preserve the highest occlusion value so far, double the &lt;strong&gt;eps&lt;/strong&gt; value and finally move along the normal by that distance. We then return a value that represents how much light reaches this point.&lt;/p&gt;
+
+&lt;p&gt;Now lets have a &lt;strong&gt;camera&lt;/strong&gt; struct. It needs a position. Instead of camera direction we’ll just store a &lt;strong&gt;ray&lt;/strong&gt;. Finally the &lt;strong&gt;rayDivergence&lt;/strong&gt; gives us a factor of how much the ray spreads.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;rayDivergence&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;rayDivergence&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Next, we need to set up the camera. It needs the camera position, a look-at target, the field of view and the view coordinates:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupCam&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fov&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;float2&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;uv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fov&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;target&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cp&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;cross&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;cross&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cu&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;normalize&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cu&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cam&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fov&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cam&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Now we just need to initialize the camera. We’ll have it circling the scene, looking at the center &lt;strong&gt;(0,0,0)&lt;/strong&gt;. Add this to the kernel, just after you set up the &lt;code class=&quot;highlighter-rouge&quot;&gt;uv&lt;/code&gt; variable:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;camPos&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;sin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;cos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;Camera&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cam&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;setupCam&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;camPos&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;float3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.25&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;uv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;width&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Then delete the &lt;strong&gt;ray&lt;/strong&gt; variable, and replace everywhere it was used in the kernel with &lt;strong&gt;cam.ray&lt;/strong&gt; instead. If you run the playground now, you should see something similar:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://github.com/MetalKit/images/raw/master/ao_3.png&quot; alt=&quot;alt text&quot; title=&quot;3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;To see an animated version of this code, use the &lt;code class=&quot;highlighter-rouge&quot;&gt;Shadertoy&lt;/code&gt; embedded player below. Just hover over it and click the play button to watch it in action:&lt;/p&gt;
+
+&lt;iframe width=&quot;740&quot; height=&quot;450&quot; frameborder=&quot;0&quot; src=&quot;https://www.shadertoy.com/embed/4ltSWf&quot; allowfullscreen=&quot;&quot;&gt;&lt;/iframe&gt;
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;The &lt;a href=&quot;https://github.com/MetalKit/metal&quot;&gt;source code&lt;/a&gt; is posted on &lt;code class=&quot;highlighter-rouge&quot;&gt;Github&lt;/code&gt; as usual. I want to thanks &lt;a href=&quot;https://twitter.com/_psonice&quot;&gt;Chris&lt;/a&gt; again for his assistance.&lt;/p&gt;
+
+&lt;p&gt;Until next time!&lt;/p&gt;</content><author><name>by &lt;a href = &quot;https://twitter.com/MTLDevice&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today we will be looking into ambient occlusion. We are going to work on the playground we used in Shadows in Metal part 2 and build up on that. First, let’s add a new object type - a rectangular box:</summary></entry><entry><title type="html">Shadows in Metal part 2</title><link href="http://localhost:4000/2017/02/28/shadows-in-metal-part-2.html" rel="alternate" type="text/html" title="Shadows in Metal part 2" /><published>2017-02-28T00:00:00-06:00</published><updated>2017-02-28T00:00:00-06:00</updated><id>http://localhost:4000/2017/02/28/shadows-in-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/02/28/shadows-in-metal-part-2.html">&lt;p&gt;In this second part of the series, we will be looking into &lt;strong&gt;soft shadows&lt;/strong&gt;. We are going to work on the playground we used in &lt;a href=&quot;http://metalkit.org/2016/12/30/raymarching-in-metal.html&quot;&gt;Raymarching in Metal&lt;/a&gt; and build up on that because it was already set up for &lt;code class=&quot;highlighter-rouge&quot;&gt;3D&lt;/code&gt; objects. Let’s set up a basic scene that has a sphere, a plane, a light and a ray:&lt;/p&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;kd&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Ray&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
     &lt;span class=&quot;n&quot;&gt;float3&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;origin&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
@@ -1255,363 +1386,5 @@ Check out the new output image:
 
 
 Imagine the possibilities you have here by only changing one line of code! There are a couple dozen different shaders that you can try. Check out the Metal Performance Shaders API for more details. If you are interested in image processing, you might want to also check Simon Gladman’s Core Image for Swift book. If you want to learn more about the Metal backend of MPS, also check out Warren Moore’s Metal by Example book. The source code for the playground in this article is posted on Github as usual.
-
-Until next time!</summary></entry><entry><title type="html">Using MetalKit part 16</title><link href="http://localhost:4000/2016/07/06/using-metalkit-part-16.html" rel="alternate" type="text/html" title="Using MetalKit part 16" /><published>2016-07-06T00:00:00-05:00</published><updated>2016-07-06T00:00:00-05:00</updated><id>http://localhost:4000/2016/07/06/using-metalkit-part-16</id><content type="html" xml:base="http://localhost:4000/2016/07/06/using-metalkit-part-16.html">&lt;p&gt;A couple of weeks ago, at the &lt;code class=&quot;highlighter-rouge&quot;&gt;WWDC 2016&lt;/code&gt;, the &lt;code class=&quot;highlighter-rouge&quot;&gt;Apple&lt;/code&gt; engineers released a new document, the &lt;strong&gt;Metal Best Practices Guide&lt;/strong&gt; which includes useful information about organizing your code for better performance in your &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; apps. Because the documentation is quite extensive, we are just going to outline the main concepts in this article. An efficient &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; app requires:&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Low &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt; overhead.&lt;/li&gt;
-  &lt;li&gt;Optimal &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; performance.&lt;/li&gt;
-  &lt;li&gt;Continuous processor parallelism.&lt;/li&gt;
-  &lt;li&gt;Effective resource management.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;1-resource-management&quot;&gt;&lt;strong&gt;1 Resource Management&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h3 id=&quot;11-persistent-objects&quot;&gt;&lt;em&gt;1.1 Persistent Objects&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Create persistent objects early and reuse them often.&lt;/p&gt;
-
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; framework provides several protocols to manage persistent objects throughout the lifetime of your app. These objects are expensive to create but are usually initialized once and reused often. Do not create these objects at the beginning of every render or compute loop.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Initialize Your Device and Command Queue First&lt;/li&gt;
-  &lt;li&gt;Compile Your Functions and Build Your Library at Build Time&lt;/li&gt;
-  &lt;li&gt;Build Your Pipelines Once and Reuse Them Often&lt;/li&gt;
-  &lt;li&gt;Allocate Resource Storage Up Front&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/PersistentObjects.html&quot;&gt;Persistent Objects&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;12-resource-options&quot;&gt;&lt;em&gt;1.2 Resource Options&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Set appropriate resource storage modes and texture usage options for your resources.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; resources must be configured appropriately to take advantage of fast memory access and driver performance optimizations. Resource storage modes allow you to define the storage location and access permissions for your &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLTexture&lt;/code&gt; objects. Texture usage options allow you to explicitly declare how you intend to use your &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLTexture&lt;/code&gt; objects.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Familiarize Yourself with Device Memory Models&lt;/li&gt;
-  &lt;li&gt;Choose an Appropriate Resource Storage Mode (&lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tvOS&lt;/code&gt;)&lt;/li&gt;
-  &lt;li&gt;Choose an Appropriate Resource Storage Mode (&lt;code class=&quot;highlighter-rouge&quot;&gt;OS X&lt;/code&gt;)&lt;/li&gt;
-  &lt;li&gt;Set Appropriate Texture Usage Flags&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/ResourceOptions.html&quot;&gt;Resource Options&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;13-triple-buffering&quot;&gt;&lt;em&gt;1.3 Triple Buffering&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Implement a triple buffering model to update dynamic buffer data.&lt;/p&gt;
-
-&lt;p&gt;Dynamic buffer data refers to frequently-updated data stored in a buffer. To avoid creating new buffers per frame and to minimize processor idle time between frames, implementing a triple buffering model is strongly recommended.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Prevent Access Conflicts and Reduce Processor Idle Time&lt;/li&gt;
-  &lt;li&gt;Reduce Memory Overhead and Frame Latency&lt;/li&gt;
-  &lt;li&gt;Allow Time for Command Buffer Transactions&lt;/li&gt;
-  &lt;li&gt;Implement a Triple Buffering Model&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/TripleBuffering.html&quot;&gt;Triple Buffering&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;14-buffer-bindings&quot;&gt;&lt;em&gt;1.4 Buffer Bindings&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Use an appropriate method to bind your buffer data to a graphics or compute function.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; provides several &lt;code class=&quot;highlighter-rouge&quot;&gt;API&lt;/code&gt; options for binding buffer data to a graphics or compute function. The &lt;strong&gt;setVertexBytes:length:atIndex:&lt;/strong&gt; method is the best option for binding an amount of dynamic buffer data (a transient buffer) that is less than &lt;strong&gt;4 KB&lt;/strong&gt; to a vertex function. If the data size is larger than 4 KB, you should create a &lt;strong&gt;MTLBuffer&lt;/strong&gt; once and update its contents as needed.&lt;/p&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/BufferBindings.html&quot;&gt;Buffer Bindings&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h2 id=&quot;2-display-management&quot;&gt;&lt;strong&gt;2 Display Management&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h3 id=&quot;21-drawables&quot;&gt;&lt;em&gt;2.1 Drawables&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Hold a drawable as briefly as possible.&lt;/p&gt;
-
-&lt;p&gt;The command buffer is used to schedule a drawable’s presentation with the &lt;strong&gt;presentDrawable:&lt;/strong&gt; method before the command buffer itself is scheduled for execution, however, the drawable itself is actually presented after the command buffer has completed execution.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use a MetalKit View to Acquire a Drawable&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Drawables.html&quot;&gt;Drawables&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;22-native-screen-scale-ios-and-tvos&quot;&gt;&lt;em&gt;2.2 Native Screen Scale (iOS and tvOS)&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Render at the exact pixel size of your target display.&lt;/p&gt;
-
-&lt;p&gt;The pixel size of your drawables should always match the exact pixel size of their target display. This is critical to avoid rendering to off-screen pixels or incurring an additional sampling stage.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use a MetalKit View to Support Native Screen Scale&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/NativeScreenScale.html&quot;&gt;Native Screen Scale&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;23-frame-rate-ios-and-tvos&quot;&gt;&lt;em&gt;2.3 Frame Rate (iOS and tvOS)&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: For apps that can’t maintain a &lt;strong&gt;60 FPS&lt;/strong&gt; frame rate, present your drawables at a steady frame rate.&lt;/p&gt;
-
-&lt;p&gt;The display refresh rate of &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt; devices is &lt;code class=&quot;highlighter-rouge&quot;&gt;60 Hz&lt;/code&gt;. Apps that are consistently unable to complete a frame’s work within this time should target a lower frame rate to avoid jitter. The display refresh rate of &lt;code class=&quot;highlighter-rouge&quot;&gt;tvOS&lt;/code&gt; devices is usually, but not always, &lt;code class=&quot;highlighter-rouge&quot;&gt;60 Hz&lt;/code&gt;.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Use the Display Link&lt;/li&gt;
-  &lt;li&gt;Adjust the Frame Interval&lt;/li&gt;
-  &lt;li&gt;Adjust the Drawable Presentation Time&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FrameRate.html&quot;&gt;Frame Rate&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h2 id=&quot;3-command-generation&quot;&gt;&lt;strong&gt;3 Command Generation&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h3 id=&quot;31-load-and-store-actions&quot;&gt;&lt;em&gt;3.1 Load and Store Actions&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Set appropriate load and store actions for your render targets.&lt;/p&gt;
-
-&lt;p&gt;Actions performed on your &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; render targets must be configured appropriately to avoid costly and unnecessary rendering work at the start (load action) or end (store action) of a rendering pass.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Choose an Appropriate Load Action&lt;/li&gt;
-  &lt;li&gt;Choose an Appropriate Store Action&lt;/li&gt;
-  &lt;li&gt;Evaluate Actions Between Rendering Passes&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/LoadandStoreActions.html&quot;&gt;Load and Store Actions&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;32-render-command-encoders-ios-and-tvos&quot;&gt;&lt;em&gt;3.2 Render Command Encoders (iOS and tvOS)&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Merge render command encoders when possible.&lt;/p&gt;
-
-&lt;p&gt;Eliminating unnecessary render command encoders reduces memory bandwidth and increases performance.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Evaluate Rendering Pass Order&lt;/li&gt;
-  &lt;li&gt;Evaluate Sampling Dependencies&lt;/li&gt;
-  &lt;li&gt;Evaluate Actions Between Rendering Passes&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/RenderCommandEncoders.html&quot;&gt;Render Command Encoders&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;33-command-buffers&quot;&gt;&lt;em&gt;3.3 Command Buffers&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Submit the fewest command buffers per frame without underutilizing the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Command buffers are the unit of work submission in &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt;; they are created by the &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt; and executed by the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt;. This relationship allows you to balance &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; work by adjusting the number of command buffers submitted per frame.&lt;/p&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/CommandBuffers.html&quot;&gt;Command Buffers&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;34-indirect-buffers&quot;&gt;&lt;em&gt;3.4 Indirect Buffers&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Use indirect buffers if your draw or dispatch call arguments are dynamically generated by the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Indirect buffers are &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; objects with a specific data layout representing draw or dispatch call arguments.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Eliminate Unnecessary Data Transfers and Reduce Processor Idle Time&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/IndirectBuffers.html&quot;&gt;Indirect Buffers&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h2 id=&quot;4-compilation&quot;&gt;&lt;strong&gt;4 Compilation&lt;/strong&gt;&lt;/h2&gt;
-
-&lt;h3 id=&quot;41-functions-and-libraries&quot;&gt;&lt;em&gt;4.1 Functions and Libraries&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Compile your functions and build your library at build time.&lt;/p&gt;
-
-&lt;p&gt;Compiling &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal Shading Language&lt;/code&gt; source code is one of the most expensive stages in a &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; app. &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; is designed to minimize this cost by allowing you to compile graphics and compute functions at build time, then load them at runtime as a library.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Build Your Library at Build Time&lt;/li&gt;
-  &lt;li&gt;Group Your Functions into a Single Library&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FunctionsandLibraries.html&quot;&gt;Functions and Libraries&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;h3 id=&quot;42-pipelines&quot;&gt;&lt;em&gt;4.2 Pipelines&lt;/em&gt;&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;Best Practice&lt;/strong&gt;: Build your render and compute pipelines asynchronously.&lt;/p&gt;
-
-&lt;p&gt;Having multiple render or compute pipelines allows your app to use different state configurations for specific tasks. Building these pipelines asynchronously maximizes performance and parallelism. It is recommended that you build all known pipelines up front and avoid lazy loading.&lt;/p&gt;
-
-&lt;p&gt;For more information, consult the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Pipelines.html&quot;&gt;Pipelines&lt;/a&gt; section of the documentation.&lt;/p&gt;
-
-&lt;p&gt;This guide, along with the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/Introduction/Introduction.html&quot;&gt;&lt;strong&gt;Metal Programming Guide&lt;/strong&gt;&lt;/a&gt; and the &lt;a href=&quot;https://developer.apple.com/library/prerelease/content/documentation/Metal/Reference/MetalShadingLanguageGuide/Introduction/Introduction.html&quot;&gt;&lt;strong&gt;Metal Shading Language Guide&lt;/strong&gt;&lt;/a&gt; both already updated for &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS 10&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;tvOS 10&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;OS X 10.12&lt;/code&gt;, give you the trilogy of documents containing everything you need to start creating performant &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; apps.&lt;/p&gt;
-
-&lt;p&gt;Until next time!&lt;/p&gt;</content><author><name>&lt;a href = &quot;https://twitter.com/MTLDevice&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">A couple of weeks ago, at the WWDC 2016, the Apple engineers released a new document, the Metal Best Practices Guide which includes useful information about organizing your code for better performance in your Metal apps. Because the documentation is quite extensive, we are just going to outline the main concepts in this article. An efficient Metal app requires:
-
-
-  Low CPU overhead.
-  Optimal GPU performance.
-  Continuous processor parallelism.
-  Effective resource management.
-
-
-1 Resource Management
-
-1.1 Persistent Objects
-
-Best Practice: Create persistent objects early and reuse them often.
-
-The Metal framework provides several protocols to manage persistent objects throughout the lifetime of your app. These objects are expensive to create but are usually initialized once and reused often. Do not create these objects at the beginning of every render or compute loop.
-
-
-  Initialize Your Device and Command Queue First
-  Compile Your Functions and Build Your Library at Build Time
-  Build Your Pipelines Once and Reuse Them Often
-  Allocate Resource Storage Up Front
-
-
-For more information, consult the Persistent Objects section of the documentation.
-
-1.2 Resource Options
-
-Best Practice: Set appropriate resource storage modes and texture usage options for your resources.
-
-Metal resources must be configured appropriately to take advantage of fast memory access and driver performance optimizations. Resource storage modes allow you to define the storage location and access permissions for your MTLBuffer and MTLTexture objects. Texture usage options allow you to explicitly declare how you intend to use your MTLTexture objects.
-
-
-  Familiarize Yourself with Device Memory Models
-  Choose an Appropriate Resource Storage Mode (iOS and tvOS)
-  Choose an Appropriate Resource Storage Mode (OS X)
-  Set Appropriate Texture Usage Flags
-
-
-For more information, consult the Resource Options section of the documentation.
-
-1.3 Triple Buffering
-
-Best Practice: Implement a triple buffering model to update dynamic buffer data.
-
-Dynamic buffer data refers to frequently-updated data stored in a buffer. To avoid creating new buffers per frame and to minimize processor idle time between frames, implementing a triple buffering model is strongly recommended.
-
-
-  Prevent Access Conflicts and Reduce Processor Idle Time
-  Reduce Memory Overhead and Frame Latency
-  Allow Time for Command Buffer Transactions
-  Implement a Triple Buffering Model
-
-
-For more information, consult the Triple Buffering section of the documentation.
-
-1.4 Buffer Bindings
-
-Best Practice: Use an appropriate method to bind your buffer data to a graphics or compute function.
-
-Metal provides several API options for binding buffer data to a graphics or compute function. The setVertexBytes:length:atIndex: method is the best option for binding an amount of dynamic buffer data (a transient buffer) that is less than 4 KB to a vertex function. If the data size is larger than 4 KB, you should create a MTLBuffer once and update its contents as needed.
-
-For more information, consult the Buffer Bindings section of the documentation.
-
-2 Display Management
-
-2.1 Drawables
-
-Best Practice: Hold a drawable as briefly as possible.
-
-The command buffer is used to schedule a drawable’s presentation with the presentDrawable: method before the command buffer itself is scheduled for execution, however, the drawable itself is actually presented after the command buffer has completed execution.
-
-
-  Use a MetalKit View to Acquire a Drawable
-
-
-For more information, consult the Drawables section of the documentation.
-
-2.2 Native Screen Scale (iOS and tvOS)
-
-Best Practice: Render at the exact pixel size of your target display.
-
-The pixel size of your drawables should always match the exact pixel size of their target display. This is critical to avoid rendering to off-screen pixels or incurring an additional sampling stage.
-
-
-  Use a MetalKit View to Support Native Screen Scale
-
-
-For more information, consult the Native Screen Scale section of the documentation.
-
-2.3 Frame Rate (iOS and tvOS)
-
-Best Practice: For apps that can’t maintain a 60 FPS frame rate, present your drawables at a steady frame rate.
-
-The display refresh rate of iOS devices is 60 Hz. Apps that are consistently unable to complete a frame’s work within this time should target a lower frame rate to avoid jitter. The display refresh rate of tvOS devices is usually, but not always, 60 Hz.
-
-
-  Use the Display Link
-  Adjust the Frame Interval
-  Adjust the Drawable Presentation Time
-
-
-For more information, consult the Frame Rate section of the documentation.
-
-3 Command Generation
-
-3.1 Load and Store Actions
-
-Best Practice: Set appropriate load and store actions for your render targets.
-
-Actions performed on your Metal render targets must be configured appropriately to avoid costly and unnecessary rendering work at the start (load action) or end (store action) of a rendering pass.
-
-
-  Choose an Appropriate Load Action
-  Choose an Appropriate Store Action
-  Evaluate Actions Between Rendering Passes
-
-
-For more information, consult the Load and Store Actions section of the documentation.
-
-3.2 Render Command Encoders (iOS and tvOS)
-
-Best Practice: Merge render command encoders when possible.
-
-Eliminating unnecessary render command encoders reduces memory bandwidth and increases performance.
-
-
-  Evaluate Rendering Pass Order
-  Evaluate Sampling Dependencies
-  Evaluate Actions Between Rendering Passes
-
-
-For more information, consult the Render Command Encoders section of the documentation.
-
-3.3 Command Buffers
-
-Best Practice: Submit the fewest command buffers per frame without underutilizing the GPU.
-
-Command buffers are the unit of work submission in Metal; they are created by the CPU and executed by the GPU. This relationship allows you to balance CPU and GPU work by adjusting the number of command buffers submitted per frame.
-
-For more information, consult the Command Buffers section of the documentation.
-
-3.4 Indirect Buffers
-
-Best Practice: Use indirect buffers if your draw or dispatch call arguments are dynamically generated by the GPU.
-
-Indirect buffers are MTLBuffer objects with a specific data layout representing draw or dispatch call arguments.
-
-
-  Eliminate Unnecessary Data Transfers and Reduce Processor Idle Time
-
-
-For more information, consult the Indirect Buffers section of the documentation.
-
-4 Compilation
-
-4.1 Functions and Libraries
-
-Best Practice: Compile your functions and build your library at build time.
-
-Compiling Metal Shading Language source code is one of the most expensive stages in a Metal app. Metal is designed to minimize this cost by allowing you to compile graphics and compute functions at build time, then load them at runtime as a library.
-
-
-  Build Your Library at Build Time
-  Group Your Functions into a Single Library
-
-
-For more information, consult the Functions and Libraries section of the documentation.
-
-4.2 Pipelines
-
-Best Practice: Build your render and compute pipelines asynchronously.
-
-Having multiple render or compute pipelines allows your app to use different state configurations for specific tasks. Building these pipelines asynchronously maximizes performance and parallelism. It is recommended that you build all known pipelines up front and avoid lazy loading.
-
-For more information, consult the Pipelines section of the documentation.
-
-This guide, along with the Metal Programming Guide and the Metal Shading Language Guide both already updated for iOS 10, tvOS 10 and OS X 10.12, give you the trilogy of documents containing everything you need to start creating performant Metal apps.
 
 Until next time!</summary></entry></feed>
