@@ -1,7 +1,7 @@
 ---
 published: true
 title: Ambient Occlusion in Metal
-author: by <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/ao_3.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Ambient Occlusion in Metal. Using more distance functions - rectangular shapes. Introducing cone tracing as a derivative of ray tracing using "thicker" rays. Using spheres with different radii to approximate a cone. Marching along the cone instead of a ray, to determine how much light is occluded. Replacing the circling light source with a moving camera so we can examine the entire scene.</div></div>
 layout: post
 ---
