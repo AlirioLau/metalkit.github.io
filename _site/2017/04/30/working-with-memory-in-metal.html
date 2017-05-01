@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Working with memory in Metal</title>
-  <meta name="description" content="Today we look at how the memory is managed when working with the GPU. The Metal framework defines memory sources as MTLBuffer objects which are typeless and ...">
+  <meta name="description" content="Today we look at how memory is managed when working with the GPU. The Metal framework defines memory sources as MTLBuffer objects which are typeless and unfo...">
 
   <link rel="stylesheet" href="/assets/main.css">
   <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
@@ -57,7 +57,7 @@
   <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
 
   <div class="post-content" itemprop="articleBody">
-    <p>Today we look at how the memory is managed when working with the <code class="highlighter-rouge">GPU</code>. The <code class="highlighter-rouge">Metal</code> framework defines memory sources as <code class="highlighter-rouge">MTLBuffer</code> objects which are typeless and unformatted allocations of memory (any type of data), and <code class="highlighter-rouge">MTLTexture</code> objects which are formatted allocations of memory holding image data. Since textures have stricter usage rules we only look at buffers, keeping in mind textures are easier to work with, provided the specialized functions the <code class="highlighter-rouge">Metal API</code> provides for that.</p>
+    <p>Today we look at how memory is managed when working with the <code class="highlighter-rouge">GPU</code>. The <code class="highlighter-rouge">Metal</code> framework defines memory sources as <code class="highlighter-rouge">MTLBuffer</code> objects which are typeless and unformatted allocations of memory (any type of data), and <code class="highlighter-rouge">MTLTexture</code> objects which are formatted allocations of memory holding image data. We only look at buffers in this article.</p>
 
 <p>To create <code class="highlighter-rouge">MTLBuffer</code> objects we have 3 options:</p>
 
@@ -71,12 +71,12 @@
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">count</span> <span class="o">=</span> <span class="mi">1500</span>
 <span class="k">var</span> <span class="nv">myVector</span> <span class="o">=</span> <span class="p">[</span><span class="kt">Float</span><span class="p">](</span><span class="nv">repeating</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">count</span><span class="p">:</span> <span class="n">count</span><span class="p">)</span>
-<span class="k">var</span> <span class="nv">length</span> <span class="o">=</span> <span class="n">count</span> <span class="o">*</span> <span class="kt">MemoryLayout</span><span class="o">&lt;</span> <span class="kt">Float</span> <span class="o">&gt;.</span><span class="n">size</span>
+<span class="k">var</span> <span class="nv">length</span> <span class="o">=</span> <span class="n">count</span> <span class="o">*</span> <span class="kt">MemoryLayout</span><span class="o">&lt;</span> <span class="kt">Float</span> <span class="o">&gt;.</span><span class="n">stride</span>
 <span class="k">var</span> <span class="nv">outBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">bytes</span><span class="p">:</span> <span class="n">myVector</span><span class="p">,</span> <span class="nv">length</span><span class="p">:</span> <span class="n">length</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span>
 <span class="k">for</span> <span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="k">in</span> <span class="n">myVector</span><span class="o">.</span><span class="nf">enumerated</span><span class="p">()</span> <span class="p">{</span> <span class="n">myVector</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="kt">Float</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="p">}</span>
 <span class="k">var</span> <span class="nv">inBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">bytes</span><span class="p">:</span> <span class="n">myVector</span><span class="p">,</span> <span class="nv">length</span><span class="p">:</span> <span class="n">length</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span></code></pre></figure>
 
-<p>The new <strong>MemoryLayout&lt; Type &gt;.size</strong> syntax was introduced in <code class="highlighter-rouge">Swift 3</code> to replace the old <code class="highlighter-rouge">sizeof(Type)</code> function. The next step is to tell the command encoder about our buffers:</p>
+<p>The new <strong>MemoryLayout&lt; Type &gt;.stride</strong> syntax was introduced in <code class="highlighter-rouge">Swift 3</code> to replace the old <code class="highlighter-rouge">strideof(Type)</code> function. By the way, we use <code class="highlighter-rouge">.stride</code> instead of <code class="highlighter-rouge">.size</code> for memory alignment reasons. The <strong>stride</strong> is the number of bytes moved when a pointer is incremented. The next step is to tell the command encoder about our buffers:</p>
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">encoder</span><span class="o">.</span><span class="nf">setBuffer</span><span class="p">(</span><span class="n">inBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">at</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
 <span class="n">encoder</span><span class="o">.</span><span class="nf">setBuffer</span><span class="p">(</span><span class="n">outBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">at</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span></code></pre></figure>
@@ -93,7 +93,7 @@
 
 <p><code class="highlighter-rouge">Metal</code> resources must be configured for fast memory access and driver performance optimizations. Resource <strong>storage modes</strong> let us define the storage location and access permissions for our buffers and textures. If you take a look above where we created our buffers, we used the default option (<strong>[]</strong>) as the storage mode.</p>
 
-<p>All <code class="highlighter-rouge">iOS</code> and <code class="highlighter-rouge">tvOS</code> devices support a <em>unified memory model</em> where both the <code class="highlighter-rouge">CPU</code> and the <code class="highlighter-rouge">GPU</code> share the system memory, while <code class="highlighter-rouge">macOS</code> devices support a <em>discrete memory model</em> where the <code class="highlighter-rouge">GPU</code> has its own memory. In <code class="highlighter-rouge">iOS</code> and <code class="highlighter-rouge">tvOS</code>, the <strong>Shared</strong> mode (<code class="highlighter-rouge">MTLStorageModeShared</code>) defines system memory accessible to both <code class="highlighter-rouge">CPU</code> and <code class="highlighter-rouge">GPU</code>, while <strong>Private</strong> mode (<code class="highlighter-rouge">MTLStorageModePrivate </code>) defines system memory accessible only to the GPU. The <code class="highlighter-rouge">Shared</code> mode is the default storage mode on all three operating systems.</p>
+<p>All <code class="highlighter-rouge">iOS</code> and <code class="highlighter-rouge">tvOS</code> devices support a <em>unified memory model</em> where both the <code class="highlighter-rouge">CPU</code> and the <code class="highlighter-rouge">GPU</code> share the system memory, while <code class="highlighter-rouge">macOS</code> devices support a <em>discrete memory model</em> where the <code class="highlighter-rouge">GPU</code> has its own memory. In <code class="highlighter-rouge">iOS</code> and <code class="highlighter-rouge">tvOS</code>, the <strong>Shared</strong> mode (<code class="highlighter-rouge">MTLStorageModeShared</code>) defines system memory accessible to both <code class="highlighter-rouge">CPU</code> and <code class="highlighter-rouge">GPU</code>, while <strong>Private</strong> mode (<code class="highlighter-rouge">MTLStorageModePrivate</code>) defines system memory accessible only to the GPU. The <code class="highlighter-rouge">Shared</code> mode is the default storage mode on all three operating systems.</p>
 
 <p><img src="https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_iOStvOSMemory_2x.png" alt="alt text" title="iOS and tvOS" /></p>
 
@@ -119,7 +119,7 @@
   <li><strong>thread</strong> - refers to the per-thread memory address space. Variables allocated in this address space are not visible to other threads. Variables declared inside a graphics or kernel function are allocated in the thread address space.</li>
 </ul>
 
-<p>As a bonus, let’s also look at another way of accessing memory locations in <code class="highlighter-rouge">Swift 3</code>:</p>
+<p>As a bonus, let’s also look at another way of accessing memory locations in <code class="highlighter-rouge">Swift 3</code>. This code snippet belongs to a previous article, <a href="http://metalkit.org/2016/08/30/the-model-i-o-framework.html">The Model I/O framework</a>, so we will not go again into details about voxels. Just think of an array that we need to iterate over to get values:</p>
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">url</span><span class="p">(</span><span class="nv">forResource</span><span class="p">:</span> <span class="s">"teapot"</span><span class="p">,</span> <span class="nv">withExtension</span><span class="p">:</span> <span class="s">"obj"</span><span class="p">)</span>
 <span class="k">let</span> <span class="nv">asset</span> <span class="o">=</span> <span class="kt">MDLAsset</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="p">)</span>
@@ -140,6 +140,8 @@
     <span class="nf">print</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
     <span class="n">voxelIndex</span> <span class="o">=</span> <span class="n">voxelIndex</span><span class="o">.</span><span class="nf">successor</span><span class="p">()</span>
 <span class="p">}</span></code></pre></figure>
+
+<p>The <a href="https://github.com/MetalKit/metal">source code</a> is posted on <code class="highlighter-rouge">Github</code> as usual.</p>
 
 <p>Until next time!</p>
 
