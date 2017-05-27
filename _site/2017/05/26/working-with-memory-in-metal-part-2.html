@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Working with memory in Metal part 2</title>
+  <meta name="description" content="There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create MTLBuffer objects we have 3 op...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Working with memory in Metal part 2</h1>
+    <p class="post-meta"><time datetime="2017-05-26T00:00:00-05:00" itemprop="datePublished">May 26, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create <code class="highlighter-rouge">MTLBuffer</code> objects we have 3 options: by creating a new memory allocation with new data, by copying data from an existing allocation into a new allocation and by reusing an existing storage allocation which does not copy data. Since we haven’t looked at the memory before, let’s check that is actually true. First we copy data into another allocation:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">count</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="k">let</span> <span class="nv">length</span> <span class="o">=</span> <span class="n">count</span> <span class="o">*</span> <span class="kt">MemoryLayout</span><span class="o">&lt;</span> <span class="kt">Float</span> <span class="o">&gt;.</span><span class="n">stride</span>
+<span class="k">var</span> <span class="nv">myVector</span> <span class="o">=</span> <span class="p">[</span><span class="kt">Float</span><span class="p">](</span><span class="nv">repeating</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">count</span><span class="p">:</span> <span class="n">count</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">myBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">bytes</span><span class="p">:</span> <span class="n">myVector</span><span class="p">,</span> <span class="nv">length</span><span class="p">:</span> <span class="n">length</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="p">[])</span>
+<span class="nf">withUnsafePointer</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="o">&amp;</span><span class="n">myVector</span><span class="p">)</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="nv">$0</span><span class="p">)</span> <span class="p">}</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">myBuffer</span><span class="o">.</span><span class="nf">contents</span><span class="p">())</span></code></pre></figure>
+
+<blockquote>
+  <p>Note: the <strong>withUnsafePointer()</strong> function gives us the memory address of the actual data on the heap instead of the address of the pointer (from the stack) that wraps that data.</p>
+</blockquote>
+
+<p>Your output should look similar to this:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="mh">0x000000010043e0e0</span>
+<span class="mh">0x0000000102afd000</span></code></pre></figure>
+
+<p>The two data buffers are definitely stored at different memory locations. Now let’s use the <code class="highlighter-rouge">no-copy</code> option:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">var</span> <span class="nv">memory</span><span class="p">:</span> <span class="kt">UnsafeMutableRawPointer</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
+<span class="k">let</span> <span class="nv">alignment</span> <span class="o">=</span> <span class="mh">0x1000</span>
+<span class="k">let</span> <span class="nv">allocationSize</span> <span class="o">=</span> <span class="p">(</span><span class="n">length</span> <span class="o">+</span> <span class="n">alignment</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="o">~</span><span class="p">(</span><span class="n">alignment</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+<span class="nf">posix_memalign</span><span class="p">(</span><span class="o">&amp;</span><span class="n">memory</span><span class="p">,</span> <span class="n">alignment</span><span class="p">,</span> <span class="n">allocationSize</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">myBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">bytesNoCopy</span><span class="p">:</span> <span class="n">memory</span><span class="o">!</span><span class="p">,</span> 
+				 <span class="nv">length</span><span class="p">:</span> <span class="n">allocationSize</span><span class="p">,</span> 
+				 <span class="nv">options</span><span class="p">:</span> <span class="p">[],</span> 
+				 <span class="nv">deallocator</span><span class="p">:</span> <span class="p">{</span> <span class="p">(</span><span class="nv">pointer</span><span class="p">:</span> <span class="kt">UnsafeMutableRawPointer</span><span class="p">,</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="k">in</span> 
+					<span class="nf">free</span><span class="p">(</span><span class="n">pointer</span><span class="p">)</span> 
+				 <span class="p">})</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">memory</span><span class="o">!</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">myBuffer</span><span class="o">.</span><span class="nf">contents</span><span class="p">())</span></code></pre></figure>
+
+<p>First, we create a pointer to our data which (data) we’ll store on the heap. For this we need to page-align it. We set the page size to be <code class="highlighter-rouge">4K</code> (<code class="highlighter-rouge">1000</code> in hexadecimal). We need to also round the buffer size to match the alignment. We used a bitwise <code class="highlighter-rouge">AND</code> to avoid division which is a very expensive operation. Otherwise we would just round like this:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">allocationSize</span> <span class="o">=</span> <span class="p">((</span><span class="n">length</span> <span class="o">+</span> <span class="n">alignment</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">alignment</span><span class="p">)</span> <span class="o">*</span> <span class="n">alignment</span></code></pre></figure>
+
+<p>Your output should look similar to this:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="mh">0x000000010300c000</span>
+<span class="mh">0x000000010300c000</span></code></pre></figure>
+
+<p>Notice the last three digits in the addresses above? Those come from page-alinging the data because an address is determined by <code class="highlighter-rouge">0 mod pageSize</code>, hence the last three <code class="highlighter-rouge">0</code>’s, which makes sense since our page size is <code class="highlighter-rouge">0x1000</code>.</p>
+
+<p>Let’s now move to <code class="highlighter-rouge">Storage Modes</code> which we briefly mentioned last time. There are basically only four main rules to keep in mind, one for each of the storage modes:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Mode</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Shared</code></td>
+      <td style="text-align: left"><em>default</em> on <code class="highlighter-rouge">macOS</code> buffers, <code class="highlighter-rouge">iOS/tvOS</code> resources; not available on <code class="highlighter-rouge">macOS</code> textures.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Private</code></td>
+      <td style="text-align: left">mostly use when data is only accessed by <code class="highlighter-rouge">GPU</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Memoryless</code></td>
+      <td style="text-align: left">only for <code class="highlighter-rouge">iOS/tvOS</code> on-chip temporary render targets (textures).</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Managed</code></td>
+      <td style="text-align: left"><em>default</em> mode for <code class="highlighter-rouge">macOS</code> textures; not available on <code class="highlighter-rouge">iOS/tvOS</code> resources.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>For a better big picture, here is the full cheat sheet in case you might find it easier to use than remembering the rules above:</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/storage-modes.png?raw=true" alt="alt text" title="Storage Modes" /></p>
+
+<p>The most complicated case is when working with <code class="highlighter-rouge">macOS</code> buffers and when the data needs to be accessed by both the <code class="highlighter-rouge">CPU</code> and the <code class="highlighter-rouge">GPU</code>. We choose the storage mode based on whether one or more of the following conditions are true:</p>
+
+<ul>
+  <li><strong>Private</strong> - for large-sized data that changes at most once, so it is not “dirty” at all. create a source buffer with a <code class="highlighter-rouge">Shared</code> mode and then blit its data into a destination buffer with a <code class="highlighter-rouge">Private</code> mode. resource coherency is not necessary in this case as the data is only accessed by the <code class="highlighter-rouge">GPU</code>. this operation is the least expensive (a one-time cost).</li>
+  <li><strong>Managed</strong> - for medium-sized data that changes infrequently (every few frames), so it is partially “dirty”. one copy of the data is stored in system memory for the <code class="highlighter-rouge">CPU</code> and another copy is stored in <code class="highlighter-rouge">GPU</code> memory. resource coherency is explicitly managed by synchronizing the two copies.</li>
+  <li><strong>Shared</strong> - for small-sized data that is updated every frame, so it is fully dirty. data resides in the system memory and is visible and modifyable by both the <code class="highlighter-rouge">CPU</code> and the <code class="highlighter-rouge">GPU</code>. resource coherency is only guaranteed within command buffer boundaries.</li>
+</ul>
+
+<p>How to make sure coherency is guaranteed? First, make sure that all the modifications done by the <code class="highlighter-rouge">CPU</code> finished before the command buffer was committed (check if the command buffer status property is <strong>MTLCommandBufferStatusCommitted</strong>). After the <code class="highlighter-rouge">GPU</code> finishes executing the command buffer, the <code class="highlighter-rouge">CPU</code> should only start making modifications again only after the <code class="highlighter-rouge">GPU</code> is signaling the <code class="highlighter-rouge">CPU</code> that the command buffer finished executing (check if the command buffer status property is <strong>MTLCommandBufferStatusCompleted</strong>).</p>
+
+<p>Finally, let’s see how synchronization is done for <code class="highlighter-rouge">macOS</code> resources. For buffers: after a <code class="highlighter-rouge">CPU</code> write use <strong>didModifyRange()</strong> to inform the <code class="highlighter-rouge">GPU</code> of the changes so <code class="highlighter-rouge">Metal</code> can update that data region only; after a <code class="highlighter-rouge">GPU</code> write use <strong>synchronize(resource:)</strong> within a blit operation, to refresh the caches so the <code class="highlighter-rouge">CPU</code> can access the updated data. For textures: after a <code class="highlighter-rouge">CPU</code> write use one of the two <strong>replace()</strong> region functions to inform the <code class="highlighter-rouge">GPU</code> of the changes so <code class="highlighter-rouge">Metal</code> can update that data region only; after a <code class="highlighter-rouge">GPU</code> write use one of the two <strong>synchronize()</strong> functions within a blit operation to allow <code class="highlighter-rouge">Metal</code> to update the system memory copy after the <code class="highlighter-rouge">GPU</code> finished modifying the data.</p>
+
+<p>The <a href="https://github.com/MetalKit/metal">source code</a> is posted on <code class="highlighter-rouge">Github</code> as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

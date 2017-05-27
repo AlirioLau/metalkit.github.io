@@ -1,91 +1,180 @@
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-01T09:25:09-05:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
-</subtitle><entry><title type="html">Working with memory in Metal</title><link href="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html" rel="alternate" type="text/html" title="Working with memory in Metal" /><published>2017-04-30T00:00:00-05:00</published><updated>2017-04-30T00:00:00-05:00</updated><id>http://localhost:4000/2017/04/30/working-with-memory-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html">&lt;p&gt;Today we look at how memory is managed when working with the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt;. The &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; framework defines memory sources as &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; objects which are typeless and unformatted allocations of memory (any type of data), and &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLTexture&lt;/code&gt; objects which are formatted allocations of memory holding image data. We only look at buffers in this article.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-05-26T22:05:26-05:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</subtitle><entry><title type="html">Working with memory in Metal part 2</title><link href="http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2.html" rel="alternate" type="text/html" title="Working with memory in Metal part 2" /><published>2017-05-26T00:00:00-05:00</published><updated>2017-05-26T00:00:00-05:00</updated><id>http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2.html">There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create `MTLBuffer` objects we have 3 options: by creating a new memory allocation with new data, by copying data from an existing allocation into a new allocation and by reusing an existing storage allocation which does not copy data. Since we haven't looked at the memory before, let's check that is actually true. First we copy data into another allocation:
+ 
+{% highlight swift %}let count = 2000
+let length = count * MemoryLayout&lt; Float &gt;.stride
+var myVector = [Float](repeating: 0, count: count)
+let myBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+withUnsafePointer(to: &amp;myVector) { print($0) }
+print(myBuffer.contents())
+{% endhighlight %}
+ 
+&gt; Note: the __withUnsafePointer()__ function gives us the memory address of the actual data on the heap instead of the address of the pointer (from the stack) that wraps that data.
+ 
+Your output should look similar to this:
+ 
+{% highlight swift %}0x000000010043e0e0
+0x0000000102afd000
+{% endhighlight %}
 
-&lt;p&gt;To create &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; objects we have 3 options:&lt;/p&gt;
+The two data buffers are definitely stored at different memory locations. Now let's use the `no-copy` option:
+ 
+{% highlight swift %}var memory: UnsafeMutableRawPointer? = nil
+let alignment = 0x1000
+let allocationSize = (length + alignment - 1) &amp; (~(alignment - 1))
+posix_memalign(&amp;memory, alignment, allocationSize)
+let myBuffer = device.makeBuffer(bytesNoCopy: memory!, 
+				 length: allocationSize, 
+				 options: [], 
+				 deallocator: { (pointer: UnsafeMutableRawPointer, _: Int) in 
+					free(pointer) 
+				 })
+print(memory!)
+print(myBuffer.contents())
+{% endhighlight %}
+ 
+First, we create a pointer to our data which (data) we'll store on the heap. For this we need to page-align it. We set the page size to be `4K` (`1000` in hexadecimal). We need to also round the buffer size to match the alignment. We used a bitwise `AND` to avoid division which is a very expensive operation. Otherwise we would just round like this: 
+ 
+{% highlight swift %}let allocationSize = ((length + alignment - 1) / alignment) * alignment
+{% endhighlight %}
+ 
+Your output should look similar to this:
+ 
+{% highlight swift %}0x000000010300c000
+0x000000010300c000
+{% endhighlight %}
+ 
+Notice the last three digits in the addresses above? Those come from page-alinging the data because an address is determined by `0 mod pageSize`, hence the last three `0`'s, which makes sense since our page size is `0x1000`.
+ 
+Let's now move to `Storage Modes` which we briefly mentioned last time. There are basically only four main rules to keep in mind, one for each of the storage modes:
+ 
+|Mode|Description|
+|:--|:--|
+|`Shared`|_default_ on `macOS` buffers, `iOS/tvOS` resources; not available on `macOS` textures.|
+|`Private`|mostly use when data is only accessed by `GPU`.|
+|`Memoryless`|only for `iOS/tvOS` on-chip temporary render targets (textures).|
+|`Managed`|_default_ mode for `macOS` textures; not available on `iOS/tvOS` resources.|
+||
+ 
+For a better big picture, here is the full cheat sheet in case you might find it easier to use than remembering the rules above:
+ 
+![alt text](https://github.com/MetalKit/images/blob/master/storage-modes.png?raw=true &quot;Storage Modes&quot;)
+ 
+The most complicated case is when working with `macOS` buffers and when the data needs to be accessed by both the `CPU` and the `GPU`. We choose the storage mode based on whether one or more of the following conditions are true:
+ 
+* __Private__ - for large-sized data that changes at most once, so it is not &quot;dirty&quot; at all. create a source buffer with a `Shared` mode and then blit its data into a destination buffer with a `Private` mode. resource coherency is not necessary in this case as the data is only accessed by the `GPU`. this operation is the least expensive (a one-time cost).
+* __Managed__ - for medium-sized data that changes infrequently (every few frames), so it is partially &quot;dirty&quot;. one copy of the data is stored in system memory for the `CPU` and another copy is stored in `GPU` memory. resource coherency is explicitly managed by synchronizing the two copies.
+* __Shared__ - for small-sized data that is updated every frame, so it is fully dirty. data resides in the system memory and is visible and modifyable by both the `CPU` and the `GPU`. resource coherency is only guaranteed within command buffer boundaries.
+ 
+How to make sure coherency is guaranteed? First, make sure that all the modifications done by the `CPU` finished before the command buffer was committed (check if the command buffer status property is __MTLCommandBufferStatusCommitted__). After the `GPU` finishes executing the command buffer, the `CPU` should only start making modifications again only after the `GPU` is signaling the `CPU` that the command buffer finished executing (check if the command buffer status property is __MTLCommandBufferStatusCompleted__).
+ 
+Finally, let's see how synchronization is done for `macOS` resources. For buffers: after a `CPU` write use __didModifyRange()__ to inform the `GPU` of the changes so `Metal` can update that data region only; after a `GPU` write use __synchronize(resource:)__ within a blit operation, to refresh the caches so the `CPU` can access the updated data. For textures: after a `CPU` write use one of the two __replace()__ region functions to inform the `GPU` of the changes so `Metal` can update that data region only; after a `GPU` write use one of the two __synchronize()__ functions within a blit operation to allow `Metal` to update the system memory copy after the `GPU` finished modifying the data. 
+ 
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create MTLBuffer objects we have 3 options: by creating a new memory allocation with new data, by copying data from an existing allocation into a new allocation and by reusing an existing storage allocation which does not copy data. Since we haven’t looked at the memory before, let’s check that is actually true. First we copy data into another allocation:
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;makeBuffer(length:options:)&lt;/strong&gt; creates a &lt;code class=&quot;highlighter-rouge&quot;&gt;MTLBuffer&lt;/code&gt; object with a new allocation.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;makeBuffer(bytes:length:options:)&lt;/strong&gt; copies data from an existing allocation into a new allocation.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;makeBuffer(bytesNoCopy:length:options:deallocator:)&lt;/strong&gt; reuses an existing storage allocation.&lt;/li&gt;
-&lt;/ul&gt;
+let count = 2000
+let length = count * MemoryLayout&amp;lt; Float &amp;gt;.stride
+var myVector = [Float](repeating: 0, count: count)
+let myBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+withUnsafePointer(to: &amp;amp;myVector) { print($0) }
+print(myBuffer.contents())
 
-&lt;p&gt;Let’s create a couple of buffers and see how data is being sent to the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; and then sent back to the &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt;. We first create a buffer for both input and output data and initialize them to some values:&lt;/p&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1500&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;myVector&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;repeating&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MemoryLayout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stride&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;outBuffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;makeBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;myVector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;myVector&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;enumerated&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;myVector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;inBuffer&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;makeBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;bytes&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;myVector&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+  Note: the withUnsafePointer() function gives us the memory address of the actual data on the heap instead of the address of the pointer (from the stack) that wraps that data.
 
-&lt;p&gt;The new &lt;strong&gt;MemoryLayout&amp;lt; Type &amp;gt;.stride&lt;/strong&gt; syntax was introduced in &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift 3&lt;/code&gt; to replace the old &lt;code class=&quot;highlighter-rouge&quot;&gt;strideof(Type)&lt;/code&gt; function. By the way, we use &lt;code class=&quot;highlighter-rouge&quot;&gt;.stride&lt;/code&gt; instead of &lt;code class=&quot;highlighter-rouge&quot;&gt;.size&lt;/code&gt; for memory alignment reasons. The &lt;strong&gt;stride&lt;/strong&gt; is the number of bytes moved when a pointer is incremented. The next step is to tell the command encoder about our buffers:&lt;/p&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;encoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;encoder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;outBuffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;at&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+Your output should look similar to this:
 
-&lt;blockquote&gt;
-  &lt;p&gt;Note: the Metal Best Practices Guide states that we should always avoid creating buffers when our data is less than &lt;strong&gt;4 KB&lt;/strong&gt; (up to a thousand &lt;code class=&quot;highlighter-rouge&quot;&gt;Floats&lt;/code&gt;, for example). In this case we should simply use the &lt;strong&gt;setBytes()&lt;/strong&gt; function instead of creating a buffer.&lt;/p&gt;
-&lt;/blockquote&gt;
+0x000000010043e0e0
+0x0000000102afd000</summary></entry><entry><title type="html">Working with memory in Metal</title><link href="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html" rel="alternate" type="text/html" title="Working with memory in Metal" /><published>2017-04-30T00:00:00-05:00</published><updated>2017-04-30T00:00:00-05:00</updated><id>http://localhost:4000/2017/04/30/working-with-memory-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html">Today we look at how memory is managed when working with the `GPU`. The `Metal` framework defines memory sources as `MTLBuffer` objects which are typeless and unformatted allocations of memory (any type of data), and `MTLTexture` objects which are formatted allocations of memory holding image data. We only look at buffers in this article.
 
-&lt;p&gt;The final step is to read the data the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; sent back by using the &lt;strong&gt;contents()&lt;/strong&gt; function to bind the memory data to our output buffer:&lt;/p&gt;
+To create `MTLBuffer` objects we have 3 options:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;outBuffer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;contents&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;bindMemory&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;capacity&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;Float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;repeating&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;..&amp;lt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+* __makeBuffer(length:options:)__ creates a `MTLBuffer` object with a new allocation.
+* __makeBuffer(bytes:length:options:)__ copies data from an existing allocation into a new allocation.
+* __makeBuffer(bytesNoCopy:length:options:deallocator:)__ reuses an existing storage allocation.
 
-&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Metal&lt;/code&gt; resources must be configured for fast memory access and driver performance optimizations. Resource &lt;strong&gt;storage modes&lt;/strong&gt; let us define the storage location and access permissions for our buffers and textures. If you take a look above where we created our buffers, we used the default option (&lt;strong&gt;[]&lt;/strong&gt;) as the storage mode.&lt;/p&gt;
+Let's create a couple of buffers and see how data is being sent to the `GPU` and then sent back to the `CPU`. We first create a buffer for both input and output data and initialize them to some values:
 
-&lt;p&gt;All &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tvOS&lt;/code&gt; devices support a &lt;em&gt;unified memory model&lt;/em&gt; where both the &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt; and the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; share the system memory, while &lt;code class=&quot;highlighter-rouge&quot;&gt;macOS&lt;/code&gt; devices support a &lt;em&gt;discrete memory model&lt;/em&gt; where the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; has its own memory. In &lt;code class=&quot;highlighter-rouge&quot;&gt;iOS&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;tvOS&lt;/code&gt;, the &lt;strong&gt;Shared&lt;/strong&gt; mode (&lt;code class=&quot;highlighter-rouge&quot;&gt;MTLStorageModeShared&lt;/code&gt;) defines system memory accessible to both &lt;code class=&quot;highlighter-rouge&quot;&gt;CPU&lt;/code&gt; and &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt;, while &lt;strong&gt;Private&lt;/strong&gt; mode (&lt;code class=&quot;highlighter-rouge&quot;&gt;MTLStorageModePrivate&lt;/code&gt;) defines system memory accessible only to the GPU. The &lt;code class=&quot;highlighter-rouge&quot;&gt;Shared&lt;/code&gt; mode is the default storage mode on all three operating systems.&lt;/p&gt;
+{% highlight swift %}let count = 1500
+var myVector = [Float](repeating: 0, count: count)
+var length = count * MemoryLayout&lt; Float &gt;.stride
+var outBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+for (index, value) in myVector.enumerated() { myVector[index] = Float(index) }
+var inBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+{% endhighlight %}
 
-&lt;p&gt;&lt;img src=&quot;https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_iOStvOSMemory_2x.png&quot; alt=&quot;alt text&quot; title=&quot;iOS and tvOS&quot; /&gt;&lt;/p&gt;
+The new __MemoryLayout&lt; Type &gt;.stride__ syntax was introduced in `Swift 3` to replace the old `strideof(Type)` function. By the way, we use `.stride` instead of `.size` for memory alignment reasons. The __stride__ is the number of bytes moved when a pointer is incremented. The next step is to tell the command encoder about our buffers:
 
-&lt;p&gt;Besides these two storage modes, &lt;code class=&quot;highlighter-rouge&quot;&gt;macOS&lt;/code&gt; also has a &lt;strong&gt;Managed&lt;/strong&gt; mode (&lt;code class=&quot;highlighter-rouge&quot;&gt;MTLStorageModeManaged&lt;/code&gt;) that defines a synchronized memory pair for a resource, with one copy in system memory and another in video memory for faster CPU and GPU local accesses.&lt;/p&gt;
+{% highlight swift %}encoder.setBuffer(inBuffer, offset: 0, at: 0)
+encoder.setBuffer(outBuffer, offset: 0, at: 1)
+{% endhighlight %}
 
-&lt;p&gt;&lt;img src=&quot;https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_OSXMemory_2x.png&quot; alt=&quot;alt text&quot; title=&quot;macOS&quot; /&gt;&lt;/p&gt;
+&gt; Note: the Metal Best Practices Guide states that we should always avoid creating buffers when our data is less than __4 KB__ (up to a thousand `Floats`, for example). In this case we should simply use the __setBytes()__ function instead of creating a buffer. 
 
-&lt;p&gt;Now let’s look at what happens on the &lt;code class=&quot;highlighter-rouge&quot;&gt;GPU&lt;/code&gt; when we send it data buffers. Here is a typical vertex shader example:&lt;/p&gt;
+The final step is to read the data the `GPU` sent back by using the __contents()__ function to bind the memory data to our output buffer:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;n&quot;&gt;vertex&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Vertices&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;vertex_func&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;device&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Vertices&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertices&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]],&lt;/span&gt; 
-            		    &lt;span class=&quot;n&quot;&gt;constant&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Uniforms&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;uniforms&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]],&lt;/span&gt; 
-            		    &lt;span class=&quot;n&quot;&gt;uint&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vid&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vertex_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt; 
-&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;o&quot;&gt;...&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+{% highlight swift %}let result = outBuffer.contents().bindMemory(to: Float.self, capacity: count)
+var data = [Float](repeating:0, count: count)
+for i in 0 ..&lt; count { data[i] = result[i] }
+{% endhighlight %}
 
-&lt;p&gt;The &lt;code class=&quot;highlighter-rouge&quot;&gt;Metal Shading Language&lt;/code&gt; implements address space qualifiers to specify the region of memory where a function variable or argument is allocated:&lt;/p&gt;
+`Metal` resources must be configured for fast memory access and driver performance optimizations. Resource __storage modes__ let us define the storage location and access permissions for our buffers and textures. If you take a look above where we created our buffers, we used the default option (__[]__) as the storage mode. 
 
-&lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;device&lt;/strong&gt; - refers to buffer memory objects allocated from the device memory pool that are both readable and writeable unless the keyword &lt;strong&gt;const&lt;/strong&gt; preceeds it in which case the objects are only readable.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;constant&lt;/strong&gt; - refers to buffer memory objects allocated from the device memory pool but that are &lt;code class=&quot;highlighter-rouge&quot;&gt;read-only&lt;/code&gt;. Variables in program scope must be declared in the constant address space and initialized during the declaration statement. The constant address space is optimized for multiple instances executing a graphics or kernel function accessing the same location in the buffer.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;threadgroup&lt;/strong&gt; - is used to allocate variables used by a kernel functions only and they are allocated for each threadgroup executing the kernel, are shared by all threads in a threadgroup and exist only for the lifetime of the threadgroup that is executing the kernel.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;thread&lt;/strong&gt; - refers to the per-thread memory address space. Variables allocated in this address space are not visible to other threads. Variables declared inside a graphics or kernel function are allocated in the thread address space.&lt;/li&gt;
-&lt;/ul&gt;
+All `iOS` and `tvOS` devices support a _unified memory model_ where both the `CPU` and the `GPU` share the system memory, while `macOS` devices support a _discrete memory model_ where the `GPU` has its own memory. In `iOS` and `tvOS`, the __Shared__ mode (`MTLStorageModeShared`) defines system memory accessible to both `CPU` and `GPU`, while __Private__ mode (`MTLStorageModePrivate`) defines system memory accessible only to the GPU. The `Shared` mode is the default storage mode on all three operating systems.
 
-&lt;p&gt;As a bonus, let’s also look at another way of accessing memory locations in &lt;code class=&quot;highlighter-rouge&quot;&gt;Swift 3&lt;/code&gt;. This code snippet belongs to a previous article, &lt;a href=&quot;http://metalkit.org/2016/08/30/the-model-i-o-framework.html&quot;&gt;The Model I/O framework&lt;/a&gt;, so we will not go again into details about voxels. Just think of an array that we need to iterate over to get values:&lt;/p&gt;
+![alt text](https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_iOStvOSMemory_2x.png &quot;iOS and tvOS&quot;)
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Bundle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;forResource&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;teapot&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;withExtension&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;obj&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;asset&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLAsset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;voxelArray&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MDLVoxelArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;asset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;asset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;divisions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;patchRadius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxelArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;voxelIndices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;withUnsafeBytes&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;voxels&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;UnsafePointer&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;MDLVoxelIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;Void&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;MemoryLayout&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;MDLVoxelIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;
-        &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxelArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;spatialLocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ofIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxels&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pointee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-        &lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+Besides these two storage modes, `macOS` also has a __Managed__ mode (`MTLStorageModeManaged`) that defines a synchronized memory pair for a resource, with one copy in system memory and another in video memory for faster CPU and GPU local accesses.
+ 
+![alt text](https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_OSXMemory_2x.png &quot;macOS&quot;)
 
-&lt;p&gt;In this case, the &lt;code class=&quot;highlighter-rouge&quot;&gt;MDLVoxelArray&lt;/code&gt; object has a function named &lt;code class=&quot;highlighter-rouge&quot;&gt;spatialLocation()&lt;/code&gt; which lets us iterate through the array by using an &lt;code class=&quot;highlighter-rouge&quot;&gt;UnsafePointer&lt;/code&gt; of the &lt;code class=&quot;highlighter-rouge&quot;&gt;MDLVoxelIndex&lt;/code&gt; type and accessing the data through the &lt;code class=&quot;highlighter-rouge&quot;&gt;pointee&lt;/code&gt; at each location. In this example we are only printing out the first value found at that address but a simple loop will let us get all of them like this:&lt;/p&gt;
+Now let's look at what happens on the `GPU` when we send it data buffers. Here is a typical vertex shader example:
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-swift&quot; data-lang=&quot;swift&quot;&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;voxelIndex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxels&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;..&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;count&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;position&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxelArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;spatialLocation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;ofIndex&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxelIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pointee&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;nf&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;position&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;voxelIndex&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;voxelIndex&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;successor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+{% highlight swift %}vertex Vertices vertex_func(const device Vertices *vertices [[buffer(0)]], 
+            		    constant Uniforms &amp;uniforms [[buffer(1)]], 
+            		    uint vid [[vertex_id]]) 
+{
+	...
+}
+{% endhighlight %}
 
-&lt;p&gt;The &lt;a href=&quot;https://github.com/MetalKit/metal&quot;&gt;source code&lt;/a&gt; is posted on &lt;code class=&quot;highlighter-rouge&quot;&gt;Github&lt;/code&gt; as usual.&lt;/p&gt;
+The `Metal Shading Language` implements address space qualifiers to specify the region of memory where a function variable or argument is allocated: 
 
-&lt;p&gt;Until next time!&lt;/p&gt;</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today we look at how memory is managed when working with the GPU. The Metal framework defines memory sources as MTLBuffer objects which are typeless and unformatted allocations of memory (any type of data), and MTLTexture objects which are formatted allocations of memory holding image data. We only look at buffers in this article.</summary></entry><entry><title type="html">Ambient Occlusion in Metal</title><link href="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html" rel="alternate" type="text/html" title="Ambient Occlusion in Metal" /><published>2017-03-22T00:00:00-05:00</published><updated>2017-03-22T00:00:00-05:00</updated><id>http://localhost:4000/2017/03/22/ambient-occlusion-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html">Today we will be looking into __ambient occlusion__. We are going to work on the playground we used in [Shadows in Metal part 2](http://metalkit.org/2017/02/28/shadows-in-metal-part-2.html) and build up on that. First, let’s add a new object type - a rectangular box:
+* __device__ - refers to buffer memory objects allocated from the device memory pool that are both readable and writeable unless the keyword __const__ preceeds it in which case the objects are only readable.
+* __constant__ - refers to buffer memory objects allocated from the device memory pool but that are `read-only`. Variables in program scope must be declared in the constant address space and initialized during the declaration statement. The constant address space is optimized for multiple instances executing a graphics or kernel function accessing the same location in the buffer.
+* __threadgroup__ - is used to allocate variables used by a kernel functions only and they are allocated for each threadgroup executing the kernel, are shared by all threads in a threadgroup and exist only for the lifetime of the threadgroup that is executing the kernel. 
+* __thread__ - refers to the per-thread memory address space. Variables allocated in this address space are not visible to other threads. Variables declared inside a graphics or kernel function are allocated in the thread address space.
+
+As a bonus, let's also look at another way of accessing memory locations in `Swift 3`. This code snippet belongs to a previous article, [The Model I/O framework](http://metalkit.org/2016/08/30/the-model-i-o-framework.html), so we will not go again into details about voxels. Just think of an array that we need to iterate over to get values:
+
+{% highlight swift %}let url = Bundle.main.url(forResource: &quot;teapot&quot;, withExtension: &quot;obj&quot;)
+let asset = MDLAsset(url: url)
+let voxelArray = MDLVoxelArray(asset: asset, divisions: 10, patchRadius: 0)
+if let data = voxelArray.voxelIndices() {
+    data.withUnsafeBytes { (voxels: UnsafePointer&lt;MDLVoxelIndex&gt;) -&gt; Void in
+        let count = data.count / MemoryLayout&lt;MDLVoxelIndex&gt;.size
+        let position = voxelArray.spatialLocation(ofIndex: voxels.pointee)
+        print(position)
+    }
+}
+{% endhighlight %} 
+
+In this case, the `MDLVoxelArray` object has a function named `spatialLocation()` which lets us iterate through the array by using an `UnsafePointer` of the `MDLVoxelIndex` type and accessing the data through the `pointee` at each location. In this example we are only printing out the first value found at that address but a simple loop will let us get all of them like this:
+
+{% highlight swift %}var voxelIndex = voxels
+for _ in 0..&lt;count {
+    let position = voxelArray.spatialLocation(ofIndex: voxelIndex.pointee)
+    print(position)
+    voxelIndex = voxelIndex.successor()
+}
+{% endhighlight %}
+
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today we look at how memory is managed when working with the GPU. The Metal framework defines memory sources as MTLBuffer objects which are typeless and unformatted allocations of memory (any type of data), and MTLTexture objects which are formatted allocations of memory holding image data. We only look at buffers in this article.</summary></entry><entry><title type="html">Ambient Occlusion in Metal</title><link href="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html" rel="alternate" type="text/html" title="Ambient Occlusion in Metal" /><published>2017-03-22T00:00:00-05:00</published><updated>2017-03-22T00:00:00-05:00</updated><id>http://localhost:4000/2017/03/22/ambient-occlusion-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/03/22/ambient-occlusion-in-metal.html">Today we will be looking into __ambient occlusion__. We are going to work on the playground we used in [Shadows in Metal part 2](http://metalkit.org/2017/02/28/shadows-in-metal-part-2.html) and build up on that. First, let’s add a new object type - a rectangular box:
 
 {% highlight swift %}struct Box {
     float3 center;
@@ -1393,29 +1482,5 @@ If you run the playground again, you will see this output image:
 
 
 Not bad for a few lines of code, right? Model I/O is such a great framework for 3D graphics and game programmers. There are a couple of articles on the web about using Model I/O with SceneKit, however, I thought using it with Metal is even more interesting! The source code is posted on Github as usual.
-
-Until next time!</summary></entry><entry><title type="html">Ray tracing in a Swift playground part 6</title><link href="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html" rel="alternate" type="text/html" title="Ray tracing in a Swift playground part 6" /><published>2016-08-07T00:00:00-05:00</published><updated>2016-08-07T00:00:00-05:00</updated><id>http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6</id><content type="html" xml:base="http://localhost:4000/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html">Today, I am looking again at the `Ray Tracing` project because I wanted to see how it runs in an `iPad Playground`. There aren't any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app. 
-
-If you run the playground, now you have the option to play with the __number of samples (ns)__ right on the main page of the playground. Fair warning, the higher you set that number, the longer it will take your playground to finish running but the higher the quality of the output image will be. The runtime will also increase if you make the `width` or `height` bigger. For `400 x 200` and `ns = 10`, you will get an image like this:
-
-![alt text](https://github.com/MetalKit/images/raw/master/raytracing_01.png &quot;1&quot;)
-
-In order to get the image to show, you need to tap on the little icon that looks like an image, at the end of the line, and choose `Add viewer`. You could amp up the resolution to say, `800 x 400`, but this will also increase the running time of your playground. However, the output image is worth the waiting!
-
-![alt text](https://github.com/MetalKit/images/raw/master/raytracing_02.png &quot;2&quot;)
-
-We will soon look at ways to make the playground run faster and generate higher quality output images. My good friend and scientific programming guru, [Jeff](https://twitter.com/hyperjeff/), is working on a `Metal`-based version of this raytracer. We will talk about that soon, too. The [source code](https://github.com/MetalKit/raytracing) for the playground in this article is posted on Github as usual.
-
-Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/MTLDevice&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today, I am looking again at the Ray Tracing project because I wanted to see how it runs in an iPad Playground. There aren’t any changes in the core code for now, except I have updated it to run on iOS 10, Xcode 8, Swift 3 and the new iPad Playground app.
-
-If you run the playground, now you have the option to play with the number of samples (ns) right on the main page of the playground. Fair warning, the higher you set that number, the longer it will take your playground to finish running but the higher the quality of the output image will be. The runtime will also increase if you make the width or height bigger. For 400 x 200 and ns = 10, you will get an image like this:
-
-
-
-In order to get the image to show, you need to tap on the little icon that looks like an image, at the end of the line, and choose Add viewer. You could amp up the resolution to say, 800 x 400, but this will also increase the running time of your playground. However, the output image is worth the waiting!
-
-
-
-We will soon look at ways to make the playground run faster and generate higher quality output images. My good friend and scientific programming guru, Jeff, is working on a Metal-based version of this raytracer. We will talk about that soon, too. The source code for the playground in this article is posted on Github as usual.
 
 Until next time!</summary></entry></feed>
