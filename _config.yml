@@ -13,7 +13,7 @@ email:
 description: > # this means to ignore newlines until "baseurl:"
   Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
 baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "http://metalkit.org" # e.g. http://example.com
 twitter_username: gpu3d
 github_username:  MetalKit
 
