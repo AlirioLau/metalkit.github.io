@@ -2,7 +2,7 @@
 published: true
 title: Introducing Metal 2
 author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal2.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">What's new in Metal.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal2.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Read about what's new in Metal, now called Metal 2. MPS has new features but most important - it now works on macOS too. See why the new Argument Buffers are the biggest addition to the framework this year. Read about how Raster Order Groups can help avoiding race conditions in shaders. Find out what the ProMotion and Direct to Display features are, and read about all the other new features introduced this year.</div></div>
 layout: post
 ---
 This year's `WWDC` was probably the most important one ever, at least as far as we - the `Metal` developers - are concerned. I can wholeheartedly say it was the [best week of my life](https://twitter.com/gpu3d/status/873049387269738497), for sure!
