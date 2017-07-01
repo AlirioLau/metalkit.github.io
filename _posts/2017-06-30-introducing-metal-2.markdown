@@ -82,7 +82,7 @@ A copying kernel is straightforward and lets you assign constant values, do part
 }
 {% endhighlight %}
 
-Finally, we also have the use case of referencing other argument buffers. Imagine a structure to represent an instance (character) that will have a pointer to the `Material` structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each `Node` would have a pointer to the `Instance` structure which will act as an array of instances in the node:
+Finally, we also have the use case of referencing other argument buffers (`multiple indirections`). Imagine a structure to represent an instance (character) that will have a pointer to the `Material` structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each `Node` would have a pointer to the `Instance` structure which will act as an array of instances in the node:
 
 {% highlight swift %}struct Instance {
     float4 position;
