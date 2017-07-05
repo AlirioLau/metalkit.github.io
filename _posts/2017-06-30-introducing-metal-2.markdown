@@ -131,7 +131,7 @@ With `ProMotion` the framerate goes up to `120` FPS (`8.3` ms/frame) which is re
 
 ![alt text](https://github.com/MetalKit/images/blob/master/promotion2.png?raw=true "ProMotion 2")
 
-`ProMotion` also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without `ProMotion` there is inconsistency in image refreshing which does not cope well with the user experience. Developers usually trade away their peak framerate to constrain all of them to `30` FPS rather than the targeted `48` FPS (`20.83` ms/frame), to achieve consistency:
+`ProMotion` also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without `ProMotion` there is inconsistency in image refreshing which does not bode well for the user experience. Developers usually trade away their peak framerate to constrain all of them to `30` FPS rather than the targeted `48` FPS (`20.83` ms/frame), to achieve consistency:
 
 ![alt text](https://github.com/MetalKit/images/blob/master/promotion3.png?raw=true "ProMotion 3")
 
