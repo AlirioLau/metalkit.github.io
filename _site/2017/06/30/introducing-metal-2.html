@@ -132,7 +132,7 @@
     <span class="n">destination</span> <span class="o">=</span> <span class="n">source</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>Finally, we also have the use case of referencing other argument buffers. Imagine a structure to represent an instance (character) that will have a pointer to the <code class="highlighter-rouge">Material</code> structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each <code class="highlighter-rouge">Node</code> would have a pointer to the <code class="highlighter-rouge">Instance</code> structure which will act as an array of instances in the node:</p>
+<p>Finally, we also have the use case of referencing other argument buffers (<code class="highlighter-rouge">multiple indirections</code>). Imagine a structure to represent an instance (character) that will have a pointer to the <code class="highlighter-rouge">Material</code> structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each <code class="highlighter-rouge">Node</code> would have a pointer to the <code class="highlighter-rouge">Instance</code> structure which will act as an array of instances in the node:</p>
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">Instance</span> <span class="p">{</span>
     <span class="n">float4</span> <span class="n">position</span><span class="p">;</span>
@@ -180,7 +180,7 @@
 
 <p><img src="https://github.com/MetalKit/images/blob/master/promotion2.png?raw=true" alt="alt text" title="ProMotion 2" /></p>
 
-<p><code class="highlighter-rouge">ProMotion</code> also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without <code class="highlighter-rouge">ProMotion</code> there is inconsistency in image refreshing which does not cope well with the user experience. Developers usually trade away their peak framerate to constrain all of them to <code class="highlighter-rouge">30</code> FPS rather than the targeted <code class="highlighter-rouge">48</code> FPS (<code class="highlighter-rouge">20.83</code> ms/frame), to achieve consistency:</p>
+<p><code class="highlighter-rouge">ProMotion</code> also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without <code class="highlighter-rouge">ProMotion</code> there is inconsistency in image refreshing which does not bode well for the user experience. Developers usually trade away their peak framerate to constrain all of them to <code class="highlighter-rouge">30</code> FPS rather than the targeted <code class="highlighter-rouge">48</code> FPS (<code class="highlighter-rouge">20.83</code> ms/frame), to achieve consistency:</p>
 
 <p><img src="https://github.com/MetalKit/images/blob/master/promotion3.png?raw=true" alt="alt text" title="ProMotion 3" /></p>
 
