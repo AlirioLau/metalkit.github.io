@@ -13,7 +13,7 @@ There are three distinct layers in an `ARKit` application:
 
 - **Tracking** - no external setup is necessary to do world tracking using visual inertial odometry.
 - **Scene Understanding** - the ability of detecting scene attributes using plane detection, hit-testing and light estimation.
-- **Rendering** - can be easily integrated because of the template `AR` views provided by `SpriteKit` and `SceneKit` but it can also be customized for `Metal`. all the pre-render processing is done by `ARKit` which is also responsible for image capturing using `AVFoundation` and `CoreMotion`.
+- **Rendering** - can be easily integrated because of the template `AR` views provided by `SpriteKit` and `SceneKit` but it can also be customized for `Metal`. All the pre-render processing is done by `ARKit` which is also responsible for image capturing using `AVFoundation` and `CoreMotion`.
 
 In this first part of the series we will be looking mostly at `Rendering` in `Metal` and talk about the other two stages in the next part of this series. In an `AR` application, the `Tracking` and `Scene Understanding` are handled entirely by the `ARKit` framework while `Rendering` can be handled by either `SpriteKit`, `SceneKit` or `Metal`: 
 
@@ -61,7 +61,7 @@ func sessionInterruptionEnded(_ session: ARSession) {
 - update the lighting
 - update the transforms for geometry
 
-All this information is in the `ARFrame` object. To access the frame, there are two options: _polling_ or using a _delegate_. We are going to describe the latter. I took the `ARKit` template for `Metal` and stripped it down to a minimum so I can better understand how it works. First thing I did was to remove all the `C` dependencies so a bridging is not necessary anymore. It will be useful in the future to have it in place so types and enum constants can be shared between `API` code and shaders but for the purpose of this article it is not needed.
+All this information is in the `ARFrame` object. To access the frame, there are two options: _polling_ or using a _delegate_. We are going to describe the latter. I took the `ARKit` template for `Metal` and stripped it down to a minimum so I can better understand how it works. First thing I did was to remove all the `C` dependencies so bridging is not necessary anymore. It will be useful in the future to have it in place so types and enum constants can be shared between `API` code and shaders but for the purpose of this article it is not needed.
 
 Next, on to __ViewController__ which will act as both our `MTKView` and `ARSession` delegates. We create a `Renderer` instance that will work with the delegates for real time updates to the application: 
 
@@ -285,7 +285,7 @@ Back to the __setupPipeline()__ function which we briefly mentioned earlier. We 
 }
 {% endhighlight %}
 
-In the fragment shader we sample the two textures to get the color at the given texture coordinate after which we return the coverted `RGB` color:
+In the fragment shader we sample the two textures to get the color at the given texture coordinate after which we return the converted `RGB` color:
 
 {% highlight swift %}fragment float4 capturedImageFragmentShader(ImageColorInOut in [[stage_in]],
                                             texture2d<float, access::sample> textureY [[ texture(1) ]],
