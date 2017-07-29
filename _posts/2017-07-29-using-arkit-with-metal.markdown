@@ -15,7 +15,7 @@ There are three distinct layers in an `ARKit` application:
 - **Scene Understanding** - the ability of detecting scene attributes using plane detection, hit-testing and light estimation.
 - **Rendering** - can be easily integrated because of the template `AR` views provided by `SpriteKit` and `SceneKit` but it can also be customized for `Metal`. all the pre-render processing is done by `ARKit` which is also responsible for image capturing using `AVFoundation` and `CoreMotion`.
 
-In this first part of the series we will be looking mostly at `Rendering` in `Metal` and talk about most of the other two stages for the next part of this series. In an `AR` application, the `Tracking` and `Scene Understanding` are handled entirely by the `ARKit` framework while `Rendering` can be handled by either `SpriteKit`, `SceneKit` or `Metal`: 
+In this first part of the series we will be looking mostly at `Rendering` in `Metal` and talk about the other two stages in the next part of this series. In an `AR` application, the `Tracking` and `Scene Understanding` are handled entirely by the `ARKit` framework while `Rendering` can be handled by either `SpriteKit`, `SceneKit` or `Metal`: 
 
 ￼￼![alt text](https://github.com/MetalKit/images/blob/master/ARKit1.png?raw=true "ARKit 1")
 
