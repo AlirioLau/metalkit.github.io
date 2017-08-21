@@ -88,7 +88,7 @@ This code again looks familiar from the previous chapters where we discussed how
 
 ![alt text](https://github.com/MetalKit/images/raw/master/chapter15_3.gif "3")
 
-This is a bit awkward! The output looks like someone would walk in a dark cave, next to the wall and carrying a torch. Replace the last three lines we added with this block of code:
+This is a bit awkward! The output looks like a spotlight. Replace the last three lines we added with this block of code:
 
 {% highlight swift %}uv = uv * 2;
 radius = 1;
