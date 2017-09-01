@@ -5,7 +5,7 @@ author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/ARKit.jpg" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continuing with implementing the other stages in ARKit. Describing the features needed for Scene Understaning. Enabling plane detection in the ARKit app. Introducing the ARSessionDelegate methods for adding, updating and removing anchors. Creating the plane buffer, mesh and drawing it with a new pair of vertex and fragment functions.</div></div>
 layout: post
 ---
-As underlined last time, ￼there are three layers in an __ARKit__ application: `Rendering`, `Tracking` and `Scene Understanding`. Last time we analyzed in great detail how _Rendering_ is done in `Metal` using a custom view. `ARKit` uses `Visual Inertial Odometry` for accurately _Tracking_ of the world around it and to combine camera sensor data with `CoreMotion` data. No additional calibration is necessary for image stability while we are in motion. In this article we look at **Scene Understanding** - ways of describing scene attributes by using plane detection, hit-testing and light estimation. `ARKit` can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is __off__ by default) by simply adding one more line before running the session configuration:
+As underlined last time, ￼there are three layers in an __ARKit__ application: `Rendering`, `Tracking` and `Scene Understanding`. Last time we analyzed in great detail how _Rendering_ is done in `Metal` using a custom view. `ARKit` uses `Visual Inertial Odometry` for accurate _Tracking_ of the world around it and to combine camera sensor data with `CoreMotion` data. No additional calibration is necessary for image stability while we are in motion. In this article we look at **Scene Understanding** - ways of describing scene attributes by using plane detection, hit-testing and light estimation. `ARKit` can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is __off__ by default) by simply adding one more line before running the session configuration:
 
 {% highlight swift %}override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
@@ -51,7 +51,7 @@ Next, in __setupPipeline()__ we create the buffer:
 {% highlight swift %}debugUniformBuffer = device.makeBuffer(length: anchorUniformBufferSize, options: .storageModeShared)
 {% endhighlight %}
 
-We need to create new vertex and fragment functions for our plane, as well as new render pipeline and depth stencil states. Right before the line where the command queue is created, add these lines. :
+We need to create new vertex and fragment functions for our plane, as well as new render pipeline and depth stencil states. Right before the line where the command queue is created, add these lines:
 
 {% highlight swift %}let debugGeometryVertexFunction = defaultLibrary.makeFunction(name: "vertexDebugPlane")!
 let debugGeometryFragmentFunction = defaultLibrary.makeFunction(name: "fragmentDebugPlane")!
