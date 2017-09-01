@@ -2,7 +2,7 @@
 published: true
 title: Using ARKit with Metal part 2
 author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/ARKit.jpg" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continuing with implementing the other stages in ARKit. Describing the features needed for Scene Understaning. Enabling plane detection in the ARKit app. Introducing the ARSessionDelegate methods for adding, updating and removing anchors. Creating the plane buffer, mesh and drawing it with a new pair of vertex and fragment functions.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/ARKit.jpg" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continuing with implementing the other stages in ARKit. Describing the features needed for Scene Understanding. Enabling plane detection in the ARKit app. Introducing the ARSessionDelegate methods for adding, updating and removing anchors. Creating the plane buffer, mesh and drawing it with a new pair of vertex and fragment functions.</div></div>
 layout: post
 ---
 As underlined last time, ￼there are three layers in an __ARKit__ application: `Rendering`, `Tracking` and `Scene Understanding`. Last time we analyzed in great detail how _Rendering_ is done in `Metal` using a custom view. `ARKit` uses `Visual Inertial Odometry` for accurate _Tracking_ of the world around it and to combine camera sensor data with `CoreMotion` data. No additional calibration is necessary for image stability while we are in motion. In this article we look at **Scene Understanding** - ways of describing scene attributes by using plane detection, hit-testing and light estimation. `ARKit` can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is __off__ by default) by simply adding one more line before running the session configuration:
@@ -182,7 +182,7 @@ If you run the app, you should be able to see a rectangle added when the app det
 
 ￼￼![alt text](https://github.com/MetalKit/images/blob/master/plane.gif?raw=true "Plane detection")
 
-What we could do next is update/remove planes as we detect more or as we move away from the previously detected one. The other delegate methods can help us achieve just that. Then, we could look at collisions and physics. Just a thought for future. 
+What we could do next is update/remove planes as we detect more or as we move away from the previously detected one. The other delegate methods can help us achieve just that. Then, we could look at collisions and physics. Just a thought for the future. 
 
 I want to thank [Caroline](https://twitter.com/carolinebegbie) for being the designated (plane) detective for this article! The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
  
