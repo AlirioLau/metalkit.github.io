@@ -23,7 +23,7 @@ theme: minima
 gems:
   - jekyll-feed
   - jekyll-paginate
-paginate: 5
+paginate: 100
 disqus:
     shortname: MetalKit
 google_analytics: UA-64309195-2

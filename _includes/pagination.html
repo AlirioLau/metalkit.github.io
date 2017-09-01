@@ -2,6 +2,7 @@
 <div class="pagination clearfix mb1 mt4"><br />
   <div class="footer-col footer-col-1"></div>
   <div class="footer-col footer-col-2">
+  
     {% if paginator.previous_page %}
       {% if paginator.page == 2 %}
         <a class="pagination-item" href="{{ site.baseurl }}/">Newer posts</a>
@@ -18,6 +19,7 @@
     {% else %}
       <span class="pagination-item disabled">Older posts</span>
     {% endif %}
+  
   </div>
   <div class="footer-col footer-col-4"></div>
 </div>

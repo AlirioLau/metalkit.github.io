@@ -27,7 +27,11 @@
     <a class="site-title" href="/">The Metal Framework</a>
 
     <nav class="site-nav">
+    
+    <!--
       <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
       <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
       <a href="/feed.xml" style="color:grey;">RSS</a>
     </nav>
@@ -66,10 +70,10 @@
 <ul>
   <li><strong>Tracking</strong> - no external setup is necessary to do world tracking using visual inertial odometry.</li>
   <li><strong>Scene Understanding</strong> - the ability of detecting scene attributes using plane detection, hit-testing and light estimation.</li>
-  <li><strong>Rendering</strong> - can be easily integrated because of the template <code class="highlighter-rouge">AR</code> views provided by <code class="highlighter-rouge">SpriteKit</code> and <code class="highlighter-rouge">SceneKit</code> but it can also be customized for <code class="highlighter-rouge">Metal</code>. all the pre-render processing is done by <code class="highlighter-rouge">ARKit</code> which is also responsible for image capturing using <code class="highlighter-rouge">AVFoundation</code> and <code class="highlighter-rouge">CoreMotion</code>.</li>
+  <li><strong>Rendering</strong> - can be easily integrated because of the template <code class="highlighter-rouge">AR</code> views provided by <code class="highlighter-rouge">SpriteKit</code> and <code class="highlighter-rouge">SceneKit</code> but it can also be customized for <code class="highlighter-rouge">Metal</code>. All the pre-render processing is done by <code class="highlighter-rouge">ARKit</code> which is also responsible for image capturing using <code class="highlighter-rouge">AVFoundation</code> and <code class="highlighter-rouge">CoreMotion</code>.</li>
 </ul>
 
-<p>In this first part of the series we will be looking mostly at <code class="highlighter-rouge">Rendering</code> in <code class="highlighter-rouge">Metal</code> and talk about most of the other two stages for the next part of this series. In an <code class="highlighter-rouge">AR</code> application, the <code class="highlighter-rouge">Tracking</code> and <code class="highlighter-rouge">Scene Understanding</code> are handled entirely by the <code class="highlighter-rouge">ARKit</code> framework while <code class="highlighter-rouge">Rendering</code> can be handled by either <code class="highlighter-rouge">SpriteKit</code>, <code class="highlighter-rouge">SceneKit</code> or <code class="highlighter-rouge">Metal</code>:</p>
+<p>In this first part of the series we will be looking mostly at <code class="highlighter-rouge">Rendering</code> in <code class="highlighter-rouge">Metal</code> and talk about the other two stages in the next part of this series. In an <code class="highlighter-rouge">AR</code> application, the <code class="highlighter-rouge">Tracking</code> and <code class="highlighter-rouge">Scene Understanding</code> are handled entirely by the <code class="highlighter-rouge">ARKit</code> framework while <code class="highlighter-rouge">Rendering</code> can be handled by either <code class="highlighter-rouge">SpriteKit</code>, <code class="highlighter-rouge">SceneKit</code> or <code class="highlighter-rouge">Metal</code>:</p>
 
 <p>￼￼<img src="https://github.com/MetalKit/images/blob/master/ARKit1.png?raw=true" alt="alt text" title="ARKit 1" /></p>
 
@@ -115,7 +119,7 @@
   <li>update the transforms for geometry</li>
 </ul>
 
-<p>All this information is in the <code class="highlighter-rouge">ARFrame</code> object. To access the frame, there are two options: <em>polling</em> or using a <em>delegate</em>. We are going to describe the latter. I took the <code class="highlighter-rouge">ARKit</code> template for <code class="highlighter-rouge">Metal</code> and stripped it down to a minimum so I can better understand how it works. First thing I did was to remove all the <code class="highlighter-rouge">C</code> dependencies so a bridging is not necessary anymore. It will be useful in the future to have it in place so types and enum constants can be shared between <code class="highlighter-rouge">API</code> code and shaders but for the purpose of this article it is not needed.</p>
+<p>All this information is in the <code class="highlighter-rouge">ARFrame</code> object. To access the frame, there are two options: <em>polling</em> or using a <em>delegate</em>. We are going to describe the latter. I took the <code class="highlighter-rouge">ARKit</code> template for <code class="highlighter-rouge">Metal</code> and stripped it down to a minimum so I can better understand how it works. First thing I did was to remove all the <code class="highlighter-rouge">C</code> dependencies so bridging is not necessary anymore. It will be useful in the future to have it in place so types and enum constants can be shared between <code class="highlighter-rouge">API</code> code and shaders but for the purpose of this article it is not needed.</p>
 
 <p>Next, on to <strong>ViewController</strong> which will act as both our <code class="highlighter-rouge">MTKView</code> and <code class="highlighter-rouge">ARSession</code> delegates. We create a <code class="highlighter-rouge">Renderer</code> instance that will work with the delegates for real time updates to the application:</p>
 
@@ -324,7 +328,7 @@
     <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 
-<p>In the fragment shader we sample the two textures to get the color at the given texture coordinate after which we return the coverted <code class="highlighter-rouge">RGB</code> color:</p>
+<p>In the fragment shader we sample the two textures to get the color at the given texture coordinate after which we return the converted <code class="highlighter-rouge">RGB</code> color:</p>
 
 <figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fragment</span> <span class="n">float4</span> <span class="nf">capturedImageFragmentShader</span><span class="p">(</span><span class="kt">ImageColorInOut</span> <span class="k">in</span> <span class="p">[[</span><span class="n">stage_in</span><span class="p">]],</span>
                                             <span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">sample</span><span class="o">&gt;</span> <span class="n">textureY</span> <span class="p">[[</span> <span class="nf">texture</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">]],</span>
