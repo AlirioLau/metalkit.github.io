@@ -186,4 +186,4 @@ What we could do next is update/remove planes as we detect more or as we move aw
 
 I want to thank [Caroline](https://twitter.com/carolinebegbie) for being the designated (plane) detective for this article! The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
  
-Until next time!
+Until next time! 
