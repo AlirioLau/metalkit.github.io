@@ -9,7 +9,7 @@ __Raymarching__ is a fast rendering method used in realtime graphics. The geomet
 
 The difference between the two techniques is that in _Ray Tracing_ the intersection is determined by a strict set of equations while in `Raymarching` the intersection is approximated. Using `SDFs` we can _march_ along the ray until we get close enough to an object. This is inexpensive to compute compared to exactly determining intersections which could become very expensive when there are many objects in the scene and the lighting is complex. Another great use case for `Raymarching` is volumetric rendering (fog, water, clouds) which _Ray Tracing_ cannot easily do because determining intersections with such volumes is quite difficult.
 
-To follow allong, you can use the playground from [Using MetalKit part 10](http://metalkit.org/2016/05/02/using-metalkit-part-10.html), slightly modified as explained next. Let’s start with two basic building blocks we need at the very minimum in our kernel: a ray and an object (sphere).
+To follow along, you can use the playground from [Using MetalKit part 10](http://metalkit.org/2016/05/02/using-metalkit-part-10.html), slightly modified as explained next. Let’s start with two basic building blocks we need at the very minimum in our kernel: a ray and an object (sphere).
 
 {% highlight swift %}struct Ray {
     float3 origin;
