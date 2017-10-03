@@ -13,9 +13,11 @@ using namespace metal;
 kernel void compute(texture2d<float, access::write> output [[texture(0)]],
                     constant float &time [[buffer(0)]],
                     uint2 gid [[thread_position_in_grid]]) {
-    int width = output.get_width();
-    int height = output.get_height();
+    float width = output.get_width();
+    float height = output.get_height();
     float2 uv = float2(gid) / float2(width, height);
+    float aspect = width / height;
+    uv.x *= aspect;
     output.write(float4(0.2, 0.5, 0.7, 1), gid);
 }
 {% endhighlight %}
@@ -37,7 +39,7 @@ We also need a way to know where the particle is on the screen, so let's create 
 
 Inside the kernel, right above the last line, let's create a new particle and place it at the top of the screen, midway on the `X` axis. Give it a radius of `0.05`:
 
-{% highlight swift %}float2 center = float2(0.5, time);
+{% highlight swift %}float2 center = float2(aspect / 2, time);
 float radius = 0.05;
 Particle p = Particle{center, radius};
 {% endhighlight %}
