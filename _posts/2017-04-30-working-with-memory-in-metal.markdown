@@ -2,7 +2,7 @@
 published: true
 title: Working with memory in Metal
 author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about the memory model in Metal. Defining Metal resources as Buffers and Textures. Presenting ways to create a Buffer. Defining the Resource Storage Modes. Presenting the address space qualifiers for function variables and arguments. Looking at UnsafePointer and Pointee as another way to aceess memory locations.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about the memory model in Metal. Defining Metal resources as Buffers and Textures. Presenting ways to create a Buffer. Defining the Resource Storage Modes. Presenting the address space qualifiers for function variables and arguments. Looking at UnsafePointer and Pointee as another way to aceess memory locations.</div></div>
 layout: post
 ---
 Today we look at how memory is managed when working with the `GPU`. The `Metal` framework defines memory sources as `MTLBuffer` objects which are typeless and unformatted allocations of memory (any type of data), and `MTLTexture` objects which are formatted allocations of memory holding image data. We only look at buffers in this article.
