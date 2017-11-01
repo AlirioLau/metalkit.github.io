@@ -103,7 +103,7 @@ fragment float4 fragment_main(VertexOut vertex_in [[stage_in]]) {
 }
 ```
 
-If you run the app, you should be able to see the particle falling down uniformly and stopping at the bottom, like this:
+If you run the app, you should be able to see the particles falling down like a water stream:
 
 ￼￼![alt text](https://github.com/MetalKit/images/blob/master/particles.gif?raw=true "Particle")
 
