@@ -21,28 +21,25 @@ Next, we create a an array of particles and a buffer to hold the data. Here we a
 particles = [Particle](repeatElement(Particle(), count: 1000))
 particlesBuffer = device.makeBuffer(length: particles.count * MemoryLayout<Particle>.stride, options: [])!
 var pointer = particlesBuffer.contents().bindMemory(to: Particle.self, capacity: particles.count)
-for _ in particles.enumerated() {
+for _ in particles {
     pointer.pointee.initialMatrix = translate(by: [Float(drand48()) / 10, Float(drand48()) * 10, 0])
     pointer.pointee.color = float4(0.2, 0.6, 0.9, 1)
     pointer = pointer.advanced(by: 1)
 }
 ```
 
-> Note: we devide the `x` coordinate by `10` to gather all particles inside a small horizontal range, while we multiply the `y` coordinate by `10` for the opposite effect - to spread out the particles vertically a little. 
+> Note: we devide the `x` coordinate by `10` to gather particles inside a small horizontal range, while we multiply the `y` coordinate by `10` for the opposite effect - to spread out the particles vertically a little. 
 
 The next step is to create a sphere that will serve as the particle's mesh:
 
 ```swift
 let allocator = MTKMeshBufferAllocator(device: device)
 let sphere = MDLMesh(sphereWithExtent: [0.01, 0.01, 0.01], segments: [8, 8], inwardNormals: false, geometryType: .triangles, allocator: allocator)
-do {
-    model = try MTKMesh(mesh: sphere, device: device)
-} catch let e {
-    Swift.print("\(e)")
-}
+do { model = try MTKMesh(mesh: sphere, device: device) } 
+catch let e { print(e) }
 ```
 
-Next, we need an updating function to animate the particles on the screen. Inside, we increse the timer each frame by `0.01` and update the `y` coordinate using the timer value - creating a falling-like motion:
+Next, we need an updating function to animate the particles on the screen. Inside, we increase the timer each frame by `0.01` and update the `y` coordinate using the timer value - creating a falling-like motion:
 
 ```swift
 func update() {
@@ -55,7 +52,7 @@ func update() {
 }
 ```
 
-At this point we are ready to call this function inside the __draw()__ function and then send the data to the `GPU`:
+At this point we are ready to call this function inside the __draw__ method and then send the data to the `GPU`:
 
 ```swift
 update()
