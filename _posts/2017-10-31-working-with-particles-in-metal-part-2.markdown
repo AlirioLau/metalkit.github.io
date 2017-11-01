@@ -15,7 +15,7 @@ struct Particle {
 }
 ```
 
-Next, we create a an array of particles and a buffer to hold the data. Here we also give each particle a nice blue color and a random position to start at:
+Next, we create an array of particles and a buffer to hold the data. Here we also give each particle a nice blue color and a random position to start at:
 
 ```swift
 particles = [Particle](repeatElement(Particle(), count: 1000))
@@ -28,7 +28,7 @@ for _ in particles {
 }
 ```
 
-> Note: we devide the `x` coordinate by `10` to gather particles inside a small horizontal range, while we multiply the `y` coordinate by `10` for the opposite effect - to spread out the particles vertically a little. 
+> Note: we divide the `x` coordinate by `10` to gather particles inside a small horizontal range, while we multiply the `y` coordinate by `10` for the opposite effect - to spread out the particles vertically a little. 
 
 The next step is to create a sphere that will serve as the particle's mesh:
 
