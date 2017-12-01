@@ -21,9 +21,9 @@ func initializeBuffers() {
     for _ in 0 ..< particleCount {
         let particle = Particle(
         		position: float2(Float(arc4random() %  UInt32(side)), 
-        					Float(arc4random() % UInt32(side))), 
+        				Float(arc4random() % UInt32(side))), 
         		velocity: float2((Float(arc4random() %  10) - 5) / 10, 
-        					(Float(arc4random() %  10) - 5) / 10))
+        				(Float(arc4random() %  10) - 5) / 10))
         particles.append(particle)
     }
     let size = particles.count * MemoryLayout<Particle>.size
