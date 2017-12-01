@@ -33,7 +33,7 @@ func initializeBuffers() {
 
 > Note: we generate random positions to fill the entire window and we also generate velocities that will range between `[-5, 5]`. we also divide by `10` to slow them down a little. 
 
-The most impoartant part however, is happening when configuring the command encoder. We set the numbers of `threads per group` to be a `2D` grid determined on one side by the `thread execution width` and on the other side by the `maximum total threads per threadgroup` which are hardware characteristics specific to each `GPU` and will never change during execution. We set the number of `threads per grid` to be a one-dimensional array whose size is determined by the particle count:
+The most important part however, is happening when configuring the command encoder. We set the numbers of `threads per group` to be a `2D` grid determined on one side by the `thread execution width` and on the other side by the `maximum total threads per threadgroup` which are hardware characteristics specific to each `GPU` and will never change during execution. We set the number of `threads per grid` to be a one-dimensional array whose size is determined by the particle count:
 
 ```swift
 let w = pipelineState.threadExecutionWidth
