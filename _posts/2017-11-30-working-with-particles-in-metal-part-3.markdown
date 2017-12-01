@@ -19,7 +19,11 @@ We need neither the __timer__ variable, nor the __translate(by:)__ and __update(
 ```swift
 func initializeBuffers() {
     for _ in 0 ..< particleCount {
-        let particle = Particle(position: float2(Float(arc4random() %  UInt32(side)), Float(arc4random() % UInt32(side))), velocity: float2((Float(arc4random() %  10) - 5) / 10, (Float(arc4random() %  10) - 5) / 10))
+        let particle = Particle(
+        		position: float2(Float(arc4random() %  UInt32(side)), 
+        							Float(arc4random() % UInt32(side))), 
+        		velocity: float2((Float(arc4random() %  10) - 5) / 10, 
+        							(Float(arc4random() %  10) - 5) / 10))
         particles.append(particle)
     }
     let size = particles.count * MemoryLayout<Particle>.size
@@ -39,7 +43,7 @@ let threadsPerGrid = MTLSizeMake(particleCount, 1, 1)
 commandEncoder.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadsPerGroup)
 ```
 
-> Note: new in `Metal 2`, the __dispatchThreads(:)__ method lets us dispatch work without having to specify how many thread groups we want. In contrast to using the older __dispatchThreadgroups(:)__ method, the new method calculates the number of groups and provides `nonuniform thread groups` when the size of the grid is not a multiple of the group size, and also makes sure there are no underutilized threads. 
+> Note: new in `Metal 2`, the __dispatchThreads(:)__ method lets us dispatch work without having to specify how many thread groups we want. in contrast to using the older __dispatchThreadgroups(:)__ method, the new method calculates the number of groups and provides `nonuniform thread groups` when the size of the grid is not a multiple of the group size, and also makes sure there are no underutilized threads. 
 
 On to the kernel shader, we first match the particle struct with the one on the `CPU` and then inside the kernel we update the positions and velocities:
 
@@ -62,9 +66,9 @@ output.write(half4(1.), pos + uint2( 0, 1));
 output.write(half4(1.), pos - uint2( 1, 0));
 output.write(half4(1.), pos - uint2( 0, 1));
 ```
-> Note: we do checks for bounds and when that happens we simply reverse the velocity do the particle does not leave the screen. we also use a neat trick when drawing, by making sure the four neighboring particles are also drawn so they look a bit larger.
+> Note: we do checks for bounds and when that happens we simply reverse the velocity so the particles do not leave the screen. we also use a neat trick when drawing, by making sure the four neighboring particles are also drawn so they look a bit larger.
 
-You can set __particleCount__ to `1,000,000` if you want but it will take a few seconds to generate them before rendering them all. Because I am only rendering in a relatively small window, I am only rendering `10,000` particles so they don't look too crammed in this window space. If you run the app, you should be able to see the particles falling down like a water stream:
+You can set __particleCount__ to `1,000,000` if you want but it will take a few seconds to generate them before rendering them all. Because I am only rendering in a relatively small window, I am only rendering `10,000` particles so they don't look too crammed in this window space. If you run the app, you should be able to see the particles moving around randomly:
 
 ￼￼![alt text](https://github.com/MetalKit/images/blob/master/particles3.gif?raw=true "Particle")
 
