@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Introducing Metal 2</title>
+  <meta name="description" content="This year’s WWDC was probably the most important one ever, at least as far as we - the Metal developers - are concerned. I can wholeheartedly say it was the ...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2017/06/30/introducing-metal-2.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Introducing Metal 2</h1>
+    <p class="post-meta"><time datetime="2017-06-30T00:00:00-05:00" itemprop="datePublished">Jun 30, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>This year’s <code class="highlighter-rouge">WWDC</code> was probably the most important one ever, at least as far as we - the <code class="highlighter-rouge">Metal</code> developers - are concerned. I can wholeheartedly say it was the <a href="https://twitter.com/gpu3d/status/873049387269738497">best week of my life</a>, for sure!</p>
+
+<p>Let’s get to the <em>Games and Graphics</em> news. The <code class="highlighter-rouge">most unexpected</code> trophy goes to the renaming of <code class="highlighter-rouge">Metal</code> to <strong>Metal 2</strong>. It has the most significant additions and enhancements since it was first announced in <code class="highlighter-rouge">2014</code>, true, but let’s admit it: no one saw this one coming. The <code class="highlighter-rouge">most anticipated</code> trophy goes to the new <strong>ARKit</strong> framework. We are only a few weeks after the keynote and there are already numerous bold and funny <em>Augmented Reality</em> projects out there. <a href="https://developer.apple.com/arkit/">ARKit</a> integrates with <code class="highlighter-rouge">Metal</code> easily. Finally, the <code class="highlighter-rouge">most influencing</code> trophy goes to <strong>VR</strong>. It is because of <em>Virtual Reality</em> that we are now able to achieve lower latency, enhanced framerates, as well as more powerful internal and now also <a href="https://developer.apple.com/development-kit/external-graphics/">external GPUs</a>.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/vr.png?raw=true" alt="alt text" title="VR" /></p>
+
+<p>New features were also added to the <code class="highlighter-rouge">Model I/O</code>, <code class="highlighter-rouge">SpriteKit</code> and <code class="highlighter-rouge">SceneKit</code> frameworks. Other interesting additions are the <code class="highlighter-rouge">CoreML</code> and <code class="highlighter-rouge">Vision</code> frameworks used for <a href="https://developer.apple.com/machine-learning/">machine learning</a>. This article is only focusing on what’s new in <code class="highlighter-rouge">Metal</code>:</p>
+
+<p>1). <strong>MPS</strong> - the <em>Metal Performance Shaders</em> are now also available on <code class="highlighter-rouge">macOS</code> and the new additions to <code class="highlighter-rouge">MPS</code> include:</p>
+
+<ul>
+  <li>four new image processing primitives (<code class="highlighter-rouge">Image Keypoints</code>, <code class="highlighter-rouge">Bilinear Rescale</code>, <code class="highlighter-rouge">Image Statistics</code>, <code class="highlighter-rouge">Element-wise Arithmetic Operations</code>).</li>
+  <li>new linear algebra objects such as <code class="highlighter-rouge">MPSVector</code>, <code class="highlighter-rouge">MPSMatrix</code> and <code class="highlighter-rouge">MPSTemporaryMatrix</code>, as well as <em>BLAS-style matrix-matrix and matrix-vector multiplication</em> and <em>LAPACK-style triangular matrix factorization and linear solvers</em>.</li>
+  <li>a dozen new <code class="highlighter-rouge">CNN</code> primitives.</li>
+  <li>the <code class="highlighter-rouge">Binary</code>, <code class="highlighter-rouge">XNOR</code>, <code class="highlighter-rouge">Dilated</code>, <code class="highlighter-rouge">Sub-pixel</code> and <code class="highlighter-rouge">Transpose</code> convolutions were added to the already existing <code class="highlighter-rouge">Standard</code> convolution primitive.</li>
+  <li>a new <code class="highlighter-rouge">Neural Network Graph</code> API was added which is useful for describing neural networks using filter and image nodes.</li>
+  <li>the <code class="highlighter-rouge">Recurrent Neural Networks</code> are now coming to help the <code class="highlighter-rouge">CNNs</code> one-to-one limitation and implement one-to-many and many-to-many relationships.</li>
+</ul>
+
+<p>2). <strong>Argument Buffers</strong> - likely the most important addition to the framework this year. In the traditional argument model, for each object we would call the various functions to set buffers, textures, samplers linearly and then at the end we would have our draw call for that object.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/ArgumentBuffers1.png?raw=true" alt="alt text" title="Argument Buffers 1" /></p>
+
+<p>As you can imagine, the number of calls will increase drastically when multiplying the number of calls with the total number of objects and with the number of frames where all these objects need to be drawn. As a consequence this will limit the number of objects that will appear on the screen eventually.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/ArgumentBuffers2.png?raw=true" alt="alt text" title="Argument Buffers 2" /></p>
+
+<p><code class="highlighter-rouge">Argument Buffers</code> introduce an efficient new way of configuring how to use resources by adopting the <em>indirect</em> behavior that the constants have, and applying it to textures, samplers, states, pointers to other buffers, and so on. The argument buffer will now only have <code class="highlighter-rouge">2 API calls per object</code>: set the argument buffer and then draw. With this approach many more objects can be drawn.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/ArgumentBuffers3.png?raw=true" alt="alt text" title="Argument Buffers 3" /></p>
+
+<p>Using argument buffers is as easy as matching the shader data with the host data:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">Material</span> <span class="p">{</span>
+    <span class="n">float</span> <span class="n">intensity</span><span class="p">;</span>
+    <span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="o">&gt;</span> <span class="n">aTexture</span><span class="p">;</span>
+    <span class="n">sampler</span> <span class="n">aSampler</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">kernel</span> <span class="n">void</span> <span class="nf">compute</span><span class="p">(</span><span class="n">constant</span> <span class="kt">Material</span> <span class="o">&amp;</span><span class="n">material</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">]])</span> <span class="p">{</span>
+    <span class="o">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>On the <code class="highlighter-rouge">CPU</code>, the argument buffers are created and used by an <strong>MTLArgumentEncoder</strong> object and they can be blit between <code class="highlighter-rouge">CPU</code> and <code class="highlighter-rouge">GPU</code> easily:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">function</span> <span class="o">=</span> <span class="n">library</span><span class="o">.</span><span class="nf">makeFunction</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"compute"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">encoder</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="nf">makeIndirectArgumentEncoder</span><span class="p">(</span><span class="nv">bufferIndex</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">encoder</span><span class="o">.</span><span class="nf">setTexture</span><span class="p">(</span><span class="n">myTexture</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">encoder</span><span class="o">.</span><span class="nf">constantData</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="nf">storeBytes</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="n">myPosition</span><span class="p">,</span> <span class="nv">as</span><span class="p">:</span> <span class="n">float4</span><span class="p">)</span></code></pre></figure>
+
+<p>But it can get even better using the <code class="highlighter-rouge">dynamic indexing</code> feature. A great use case is when rendering crowds. An array of argument buffers can pack the data together for all instances (characters). Then, instead of having two calls per object, now we can have only <code class="highlighter-rouge">2 API calls per frame</code>: one to set the buffer and one to draw indexed primitives for a large instance count!</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/ArgumentBuffers4.png?raw=true" alt="alt text" title="Argument Buffers 4" /></p>
+
+<p>Then the <code class="highlighter-rouge">GPU</code> will process per-instance geometry and color. The shader will now take an array of argument buffers as input, dynamically pick the character for any instance index, and return the geometry for that object:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">vertex</span> <span class="kt">Vertex</span> <span class="nf">instanced</span><span class="p">(</span><span class="n">constant</span> <span class="kt">Character</span> <span class="o">*</span><span class="n">crowd</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">]],</span>
+                        <span class="n">uint</span> <span class="n">id</span> <span class="p">[[</span><span class="n">instance_id</span><span class="p">]])</span> <span class="p">{</span>
+    <span class="n">constant</span> <span class="kt">Character</span> <span class="o">&amp;</span><span class="n">instance</span> <span class="o">=</span> <span class="n">crowd</span><span class="p">[</span><span class="n">id</span><span class="p">];</span>
+    <span class="o">...</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Another use case for argument buffers is when running particle simulations. For this we have the <code class="highlighter-rouge">resource setting on the GPU</code> feature which refers to having an array of argument buffers, one buffer for each particle (thread). All the particle properties (position, material, and so on) are created and stored in argument buffers on the <code class="highlighter-rouge">GPU</code> so when a particle needs a specific property, such as a material, it will copy it from the argument buffers instead of getting it from the <code class="highlighter-rouge">CPU</code> thus avoiding expensive copies between them.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/ArgumentBuffers5.png?raw=true" alt="alt text" title="Argument Buffers 5" /></p>
+
+<p>A copying kernel is straightforward and lets you assign constant values, do partial or complete copies between a source and a destination object:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">kernel</span> <span class="n">void</span> <span class="nf">reuse</span><span class="p">(</span><span class="n">constant</span> <span class="kt">Material</span> <span class="o">&amp;</span><span class="n">source</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">]],</span>
+                  <span class="n">device</span> <span class="kt">Material</span> <span class="o">&amp;</span><span class="n">destination</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">]])</span> <span class="p">{</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">intensity</span> <span class="o">=</span> <span class="mf">0.5</span><span class="n">f</span><span class="p">;</span>
+    <span class="n">destination</span><span class="o">.</span><span class="n">aTexture</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">aTexture</span><span class="p">;</span>
+    <span class="n">destination</span> <span class="o">=</span> <span class="n">source</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Finally, we also have the use case of referencing other argument buffers (<code class="highlighter-rouge">multiple indirections</code>). Imagine a structure to represent an instance (character) that will have a pointer to the <code class="highlighter-rouge">Material</code> structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each <code class="highlighter-rouge">Node</code> would have a pointer to the <code class="highlighter-rouge">Instance</code> structure which will act as an array of instances in the node:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">Instance</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">position</span><span class="p">;</span>
+    <span class="n">device</span> <span class="kt">Material</span> <span class="o">*</span><span class="n">material</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kd">struct</span> <span class="kt">Node</span> <span class="p">{</span>
+    <span class="n">device</span> <span class="kt">Instance</span> <span class="o">*</span><span class="n">instances</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<blockquote>
+  <p>Note: for now, only <code class="highlighter-rouge">Tier 2</code> devices support all these argument buffer features. Starting with <code class="highlighter-rouge">Metal 2</code> the <code class="highlighter-rouge">GPU</code> devices are now classified as either <code class="highlighter-rouge">Tier 1</code> (integrated) or <code class="highlighter-rouge">Tier 2</code> (discrete).</p>
+</blockquote>
+
+<p>3). <strong>Raster Order Groups</strong> - a new fragment shader synchronization primitive that allows more granular control of the order in which fragment shaders access memory. As an example, when working with custom blending, most graphics <code class="highlighter-rouge">APIs</code> guarantee that blending happens in draw call order. However, the <code class="highlighter-rouge">GPU</code> thread parallelism needs a way to prevent race conditions. <code class="highlighter-rouge">Raster Order Groups</code> do that by providing us with an implicit <code class="highlighter-rouge">Wait</code> command.</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/RasterOrderGroups.png?raw=true" alt="alt text" title="Raster Order Groups" /></p>
+
+<p>In traditional blending mode race conditions are created:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fragment</span> <span class="n">void</span> <span class="nf">blend</span><span class="p">(</span><span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">read_write</span><span class="o">&gt;</span> <span class="n">out</span><span class="p">[[</span> <span class="nf">texture</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="p">]])</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">newColor</span> <span class="o">=</span> <span class="mf">0.5</span><span class="n">f</span><span class="p">;</span>
+    <span class="c1">// non-atomic memory access without any synchronization</span>
+    <span class="n">float4</span> <span class="n">oldColor</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="nf">read</span><span class="p">(</span><span class="n">position</span><span class="p">);</span>
+    <span class="n">float4</span> <span class="n">blended</span> <span class="o">=</span> <span class="nf">someCustomBlendingFunction</span><span class="p">(</span><span class="n">newColor</span><span class="p">,</span> <span class="n">oldColor</span><span class="p">);</span>
+    <span class="n">out</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">blended</span><span class="p">,</span> <span class="n">position</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>All that is needed is adding the <code class="highlighter-rouge">Raster Order Groups</code> attribute to the texture (or resource) with conflicting accesses:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fragment</span> <span class="n">void</span> <span class="nf">blend</span><span class="p">(</span><span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">read_write</span><span class="o">&gt;</span> 
+				<span class="n">out</span><span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="nf">raster_order_group</span><span class="p">(</span><span class="mi">0</span><span class="p">)]])</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">newColor</span> <span class="o">=</span> <span class="mf">0.5</span><span class="n">f</span><span class="p">;</span>
+    <span class="c1">// the GPU now waits on first access to raster ordered memory</span>
+    <span class="n">float4</span> <span class="n">oldColor</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="nf">read</span><span class="p">(</span><span class="n">position</span><span class="p">);</span>
+    <span class="n">float4</span> <span class="n">blended</span> <span class="o">=</span> <span class="nf">someCustomBlendingFunction</span><span class="p">(</span><span class="n">newColor</span><span class="p">,</span> <span class="n">oldColor</span><span class="p">);</span>
+    <span class="n">out</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">blended</span><span class="p">,</span> <span class="n">position</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>4). <strong>ProMotion</strong> - only for iPad Pro displays currently. Without <code class="highlighter-rouge">ProMotion</code> the typical framerate is <code class="highlighter-rouge">60</code> FPS (<code class="highlighter-rouge">16.6</code> ms/frame):</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion1.png?raw=true" alt="alt text" title="ProMotion 1" /></p>
+
+<p>With <code class="highlighter-rouge">ProMotion</code> the framerate goes up to <code class="highlighter-rouge">120</code> FPS (<code class="highlighter-rouge">8.3</code> ms/frame) which is really useful for user input such as touch gestures or pencil using:</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion2.png?raw=true" alt="alt text" title="ProMotion 2" /></p>
+
+<p><code class="highlighter-rouge">ProMotion</code> also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without <code class="highlighter-rouge">ProMotion</code> there is inconsistency in image refreshing which does not bode well for the user experience. Developers usually trade away their peak framerate to constrain all of them to <code class="highlighter-rouge">30</code> FPS rather than the targeted <code class="highlighter-rouge">48</code> FPS (<code class="highlighter-rouge">20.83</code> ms/frame), to achieve consistency:</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion3.png?raw=true" alt="alt text" title="ProMotion 3" /></p>
+
+<p>With <code class="highlighter-rouge">ProMotion</code> we now have a refresh point every <code class="highlighter-rouge">4</code> ms rather than every <code class="highlighter-rouge">16</code> ms (the vertical white lines):</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion4.png?raw=true" alt="alt text" title="ProMotion 4" /></p>
+
+<p><code class="highlighter-rouge">ProMotion</code> is also helping in cases of dropped frames. Without <code class="highlighter-rouge">ProMotion</code> we could have a frame that missed the deadline by taking too long to display:</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion5.png?raw=true" alt="alt text" title="ProMotion 5" /></p>
+
+<p><code class="highlighter-rouge">ProMotion</code> fixes this too by only extending the frame with only <code class="highlighter-rouge">4</code> more ms instead of a whole frame (<code class="highlighter-rouge">16.6</code> ms):</p>
+
+<p><img src="https://github.com/MetalKit/images/blob/master/promotion6.png?raw=true" alt="alt text" title="ProMotion 6" /></p>
+
+<p><code class="highlighter-rouge">UIKit</code> animations use <code class="highlighter-rouge">ProMotion</code> automatically but to use <code class="highlighter-rouge">ProMotion</code> with <code class="highlighter-rouge">Metal</code> views you need to opt in by disabling the minimum frame duration in the project’s <code class="highlighter-rouge">Info.plist</code> file. Then you can use one of the <strong>3</strong> presentation <code class="highlighter-rouge">APIs</code>. The traditional <strong>present(drawable:)</strong> will present the image immediately after the <code class="highlighter-rouge">GPU</code> has finished rendering the frame (<code class="highlighter-rouge">16.6</code> ms on fixed framerate displays and <code class="highlighter-rouge">4</code> ms on <code class="highlighter-rouge">ProMotion</code> displays). The second <code class="highlighter-rouge">API</code> is <strong>present(drawable, afterMinimumDuration:)</strong> and provides maximum consistency from frame to frame on fixed framerate displays. The third <code class="highlighter-rouge">API</code> is <strong>present(drawable, atTime:)</strong> and is useful when building custom animation loops or when trying to sync the display image with other outputs such as audio. Here is an example of how to implement it:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">targetTime</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="k">let</span> <span class="nv">drawable</span> <span class="o">=</span> <span class="n">metalLayer</span><span class="o">.</span><span class="nf">nextDrawable</span><span class="p">()</span>
+<span class="n">commandBuffer</span><span class="o">.</span><span class="nf">present</span><span class="p">(</span><span class="n">drawable</span><span class="p">,</span> <span class="nv">atTime</span><span class="p">:</span> <span class="n">targetTime</span><span class="p">)</span>
+<span class="c1">// after 1-2 frames</span>
+<span class="k">let</span> <span class="nv">presentationDelay</span> <span class="o">=</span> <span class="n">drawable</span><span class="o">.</span><span class="n">presentedTime</span> <span class="o">-</span> <span class="n">targetTime</span></code></pre></figure>
+
+<p>First, set a time when you want to display the drawable, then render the scene into a command buffer, then wait for the next frame(s) and finally examine the delay so you can adjust the next frame time.</p>
+
+<p>5). <strong>Direct to Display</strong> - is the new way to send content from the renderer directly to external displays (eg. head mounted devices used in <code class="highlighter-rouge">VR</code>) with the least amount of latency. There are two paths an image takes after the <code class="highlighter-rouge">GPU</code> finished rendering it and before it ends on the display. The first one is the typical <code class="highlighter-rouge">UI</code> scenario when the system is compositing it with other views and layers for a final image:</p>
+
+<p>￼<img src="https://github.com/MetalKit/images/blob/master/DirectToDisplay1.png?raw=true" alt="alt text" title="Direct To Display 1" /></p>
+
+<p>When building a full screen application that does not require blending, scaling or other views/layers, the second path is allowing the display direct access to the memory where we rendered to, thus saving a lot of system resources and avoiding a lot of overhead:</p>
+
+<p>￼￼<img src="https://github.com/MetalKit/images/blob/master/DirectToDisplay2.png?raw=true" alt="alt text" title="Direct To Display 2" /></p>
+
+<p>However, this only happens when certain conditions are met:</p>
+
+<ul>
+  <li>the layer is opaque</li>
+  <li>there is no masking or rounded corners</li>
+  <li>full screen, or with opaque black bars and background</li>
+  <li>the rendered size is at most as large as the display size</li>
+  <li>color space and pixel format is compatible with display</li>
+</ul>
+
+<p>The colorspace requirements makes it easier to know when <code class="highlighter-rouge">Direct to Display</code> mode will work. For example, it is easy to detect if you are using a <code class="highlighter-rouge">P3</code> display and disable the <code class="highlighter-rouge">P3</code> mode when trying to use the <code class="highlighter-rouge">Direct to Display</code> mode.</p>
+
+<p>6). <strong>Other Features</strong> - include but are not limited to:</p>
+
+<ul>
+  <li><strong>memory usage queries</strong> - there are now new <code class="highlighter-rouge">APIs</code> to query memory use per allocation, as well as total <code class="highlighter-rouge">GPU</code> memory allocated by the device:</li>
+</ul>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kt">MTLResource</span><span class="o">.</span><span class="n">allocatedSize</span>
+<span class="kt">MTLHeap</span><span class="o">.</span><span class="n">currentAllocatedSize</span>
+<span class="kt">MTLDevice</span><span class="o">.</span><span class="n">currentAllocatedSize</span></code></pre></figure>
+
+<ul>
+  <li><strong>SIMDGroup scoped functions</strong> - allow data sharing between <code class="highlighter-rouge">SIMD</code> groups directly in the registers by avoiding load/store operations:
+￼</li>
+</ul>
+
+<p>￼<img src="https://github.com/MetalKit/images/blob/master/SIMDGroup.png?raw=true" alt="alt text" title="SIMD Group" /></p>
+
+<ul>
+  <li><strong>non-uniform threadgroup sizes</strong> - help us not waste <code class="highlighter-rouge">GPU</code> cycles and avoid working on edge/bound cases:
+￼</li>
+</ul>
+
+<p>￼<img src="https://github.com/MetalKit/images/blob/master/nonuniform.png?raw=true" alt="alt text" title="Non-uniform Threadgroup Sizes" /></p>
+
+<ul>
+  <li><strong>Viewport Arrays</strong> on <code class="highlighter-rouge">macOS</code> now support up to <code class="highlighter-rouge">16</code> viewports for the vertex function to choose from when rendering, and is useful for <code class="highlighter-rouge">VR</code> when combined with instancing.</li>
+  <li><strong>Multisample Pattern Control</strong> - allows selecting where within a pixel the <code class="highlighter-rouge">MSAA</code> sample patters are located and it’s useful for custom anti-aliasing.</li>
+  <li><strong>Resource Heaps</strong> are now also available on <code class="highlighter-rouge">macOS</code>. It allows controlling the time of memory allocation, fast reallocation, aliasing of resources and group related resources for faster binding.</li>
+  <li>other features include:</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Feature</th>
+      <th style="text-align: left">Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Linear Textures</code></td>
+      <td style="text-align: left">Create textures from a <code class="highlighter-rouge">MTLBuffer</code> without copying.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Function Constant for Argument Indexes</code></td>
+      <td style="text-align: left">Specialize bytecodes to change the binding index for shader arguments.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Additional Vertex Array Formats</code></td>
+      <td style="text-align: left">Add some 1-/2-component vertex formats and a <code class="highlighter-rouge">BGRA8</code> vertex format.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">IOSurface Textures</code></td>
+      <td style="text-align: left">Create <code class="highlighter-rouge">MTLTextures</code> from <code class="highlighter-rouge">IOSurfaces</code> on <code class="highlighter-rouge">iOS</code>.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><code class="highlighter-rouge">Dual Source Blending</code></td>
+      <td style="text-align: left">Additional blending modes with two source parameters.</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"> </td>
+      <td style="text-align: left"> </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>I made a table with the most important new features, which states whether the feature is new in the latest version of the operating system or not.
+￼</p>
+
+<p>￼<img src="https://github.com/MetalKit/images/blob/master/features.png?raw=true" alt="alt text" title="Feature Table" /></p>
+
+<p>Finally, here are a few lines I wrote to test the differences between my integrated and discrete <code class="highlighter-rouge">GPUs</code>:
+￼</p>
+
+<p>￼<img src="https://github.com/MetalKit/images/blob/master/gpuCompare.png?raw=true" alt="alt text" title="GPU comparison" /></p>
+
+<p>All images were taken from <code class="highlighter-rouge">WWDC</code> presentations and the <a href="https://github.com/MetalKit/metal">source code</a> is posted on <code class="highlighter-rouge">Github</code> as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
