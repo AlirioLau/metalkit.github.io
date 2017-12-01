@@ -66,7 +66,7 @@ output.write(half4(1.), pos + uint2( 0, 1));
 output.write(half4(1.), pos - uint2( 1, 0));
 output.write(half4(1.), pos - uint2( 0, 1));
 ```
-> Note: we do checks for bounds and when that happens we simply reverse the velocity so the particles do not leave the screen. we also use a neat trick when drawing, by making sure the four neighboring particles are also drawn so they look a bit larger.
+> Note: we do checks for bounds and when that happens we simply reverse the velocity so the particles do not leave the screen. we also use a neat trick when drawing, by making sure the four neighboring pixels are also drawn so the particles look a bit larger. fair warning - be careful when writing the neighboring pixels that are outside of the texture. that part of the memory might belong to another program and should not be written here, so make sure to do bound checks here as well.
 
 You can set __particleCount__ to `1,000,000` if you want but it will take a few seconds to generate them before rendering them all. Because I am only rendering in a relatively small window, I am only rendering `10,000` particles so they don't look too crammed in this window space. If you run the app, you should be able to see the particles moving around randomly:
 
