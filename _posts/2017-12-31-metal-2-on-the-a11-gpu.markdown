@@ -21,7 +21,7 @@ Let's look briefly into some of these features:
 
 - [Raster Order Groups](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_raster_order_groups) - provide ordered memory access from fragment shaders and facilitate features such as order-independent transparency, dual-layer G-buffers, and voxelization.
 
-- [Imageblock Sample Coverage Control](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control) - Metal 2 on A11 tracks the number of unique samples for each pixel, updating this information as new primitives are rendered. The pixel blends one one time less than on A10 or earlier GPUs, when the covered samples share the same color. 
+- [Imageblock Sample Coverage Control](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control) - Metal 2 on A11 tracks the number of unique samples for each pixel, updating this information as new primitives are rendered. The pixel blends one iteration less than it did on A10 or earlier GPUs, when the covered samples share the same color. 
 
 - [Threadgroup Sharing](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_threadgroup_sharing) -  allows threadgroups and the threads within a threadgroup to communicate with each other using atomic operations or a memory fence rather than expensive barriers. 
 
