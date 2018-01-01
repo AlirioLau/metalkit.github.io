@@ -11,11 +11,11 @@ Below is a table I made out of the [Metal Feature Sets](https://developer.apple.
 
 ![alt text](https://github.com/MetalKit/images/blob/master/A11.png?raw=true "Particle")
 
-> Note:  I only included features that are new for `A11` and not available for `A10` or earlier. Also, some of these features are also available for `macOS` devices. 
+> Note:  I only included features that are new for `A11` and not available for `A10` or earlier. Some of these features are also available for `macOS` devices. 
 
 Let's look briefly into some of these features:
 
-- [Imageblocks](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_imageblocks) - is not a new concept on iOS devices, however, `Metal 2` on `A11` let us treat imageblocks (which are structured image data in tile memory) as data structures with granular and full control. They are integrated with fragment and compute shaders.  
+- [Imageblocks](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_imageblocks) - is not a new concept on iOS devices, however, `Metal 2` on `A11` lets us treat imageblocks (which are structured image data in tile memory) as data structures with granular and full control. They are integrated with fragment and compute shaders.  
 
 - [Tile Shading](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_tile_shading) - is a rendering technique that allows fragment and compute shaders to access persistent tile memory between the two rendering phases. Tile memory is GPU on-chip memory that improves performance by storing intermediate results locally instead of using the device memory. Tile memory from one phase is available to any subsequent fragment phases.
 
