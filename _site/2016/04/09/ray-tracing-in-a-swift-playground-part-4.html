@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Ray tracing in a Swift playground part 4</title>
+  <meta name="description" content="Let’s continue working on our ray tracer and pick up where we left off last week. First, as you are already used to, we’ll do more code cleaning. I went ahea...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2016/04/09/ray-tracing-in-a-swift-playground-part-4.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Ray tracing in a Swift playground part 4</h1>
+    <p class="post-meta"><time datetime="2016-04-09T00:00:00-05:00" itemprop="datePublished">Apr 9, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Let’s continue working on our <code class="highlighter-rouge">ray tracer</code> and pick up where we left off last week. First, as you are already used to, we’ll do more code cleaning. I went ahead and replaced all classes with structs, and also used proper naming conventions (such as capitalization of types) this time. You can see the modified code in this week’s repository. To keep this article short, I am not going over the cleaning procedure this time, but you will notice the transformations were rather minimal.</p>
+
+<p>Last time we looked at how <code class="highlighter-rouge">lambertian</code> and <code class="highlighter-rouge">metal</code> materials are rendered. The last type of material we need to look into is called <strong>dielectric</strong> and you can recognize it when looking at water or at objects made of glass. When <code class="highlighter-rouge">dielectrics</code> are hit by a ray, the ray splits in two: a <code class="highlighter-rouge">reflected</code> (bounced) ray and a <code class="highlighter-rouge">refracted</code> (propagated) ray. <code class="highlighter-rouge">Refraction</code> is described by <a href="https://en.wikipedia.org/wiki/Snell%27s_law">Snell’s law</a>. Let’s see how this law translates into code. In <code class="highlighter-rouge">material.swift</code> create a <strong>refract()</strong> function:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">refract</span><span class="p">(</span><span class="nv">v</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="nv">n</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="nv">ni_over_nt</span><span class="p">:</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">float3</span><span class="p">?</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">uv</span> <span class="o">=</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">dt</span> <span class="o">=</span> <span class="nf">dot</span><span class="p">(</span><span class="n">uv</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">discriminant</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">ni_over_nt</span> <span class="o">*</span> <span class="n">ni_over_nt</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">dt</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">ni_over_nt</span> <span class="o">*</span> <span class="p">(</span><span class="n">uv</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="n">dt</span><span class="p">)</span> <span class="o">-</span> <span class="n">n</span> <span class="o">*</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">nil</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Next, let’s create the <strong>Dielectric</strong> struct. Notice that <code class="highlighter-rouge">attenuation</code> is always <strong>1</strong> because <code class="highlighter-rouge">dielectrics</code> never absorb anything from an incident ray:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">Dielectric</span><span class="p">:</span> <span class="kt">Material</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">ref_index</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mi">1</span>
+    
+    <span class="kd">func</span> <span class="nf">scatter</span><span class="p">(</span><span class="nv">ray_in</span><span class="p">:</span> <span class="kt">Ray</span><span class="p">,</span> <span class="n">_</span> <span class="nv">rec</span><span class="p">:</span> <span class="kt">Hit_record</span><span class="p">,</span> <span class="k">inout</span> <span class="n">_</span> <span class="nv">attenuation</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="k">inout</span> <span class="n">_</span> <span class="nv">scattered</span><span class="p">:</span> <span class="kt">Ray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="p">{</span>
+        <span class="k">var</span> <span class="nv">ni_over_nt</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">var</span> <span class="nv">outward_normal</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">()</span>
+        <span class="k">let</span> <span class="nv">reflected</span> <span class="o">=</span> <span class="nf">reflect</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="nv">n</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span>
+        <span class="n">attenuation</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nf">dot</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+            <span class="n">outward_normal</span> <span class="o">=</span> <span class="o">-</span><span class="n">rec</span><span class="o">.</span><span class="n">normal</span>
+            <span class="n">ni_over_nt</span> <span class="o">=</span> <span class="n">ref_index</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">outward_normal</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span>
+            <span class="n">ni_over_nt</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ref_index</span>
+        <span class="p">}</span>
+        <span class="k">let</span> <span class="nv">refracted</span> <span class="o">=</span> <span class="nf">refract</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="nv">n</span><span class="p">:</span> <span class="n">outward_normal</span><span class="p">,</span> <span class="nv">ni_over_nt</span><span class="p">:</span> <span class="n">ni_over_nt</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">refracted</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+            <span class="n">scattered</span> <span class="o">=</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">refracted</span><span class="o">!</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">scattered</span> <span class="o">=</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">reflected</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">false</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="kc">true</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>We first compute an outward normal depending on whether the dot product between the ray and the hit point is positive or not, and then we use that to compute the refracted ray. In case it comes out <code class="highlighter-rouge">nil</code>, we reflect the ray, otherwise we refract it. In <code class="highlighter-rouge">pixel.swift</code> replace the second <code class="highlighter-rouge">metal</code> sphere with a <code class="highlighter-rouge">dielectric</code> one:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">object</span> <span class="o">=</span> <span class="nf">sphere</span><span class="p">(</span><span class="nv">c</span><span class="p">:</span> <span class="nf">float3</span><span class="p">(</span><span class="nv">x</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">z</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nv">r</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span> <span class="nv">m</span><span class="p">:</span> <span class="kt">Dielectric</span><span class="p">())</span></code></pre></figure>
+
+<p>In the main playground page, see the generated new image:</p>
+
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing8.png" alt="alt text" title="Raytracing 8" /></p>
+
+<p>Glass surfaces have reflectivity that varies with the angle. When you look at it perpendicularly, the reflectivity is the lowest possible, if any. The smaller the viewing angle gets, the higher the reflectivity is, and other objects from the world are mirrored more clearly by the glass surface. This effect can be computed with the Schlick polynomial approximation:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">schlick</span><span class="p">(</span><span class="nv">cosine</span><span class="p">:</span> <span class="kt">Float</span><span class="p">,</span> <span class="n">_</span> <span class="nv">index</span><span class="p">:</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Float</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">r0</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">index</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">index</span><span class="p">)</span>
+    <span class="n">r0</span> <span class="o">=</span> <span class="n">r0</span> <span class="o">*</span> <span class="n">r0</span>
+    <span class="k">return</span> <span class="n">r0</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">r0</span><span class="p">)</span> <span class="o">*</span> <span class="nf">powf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cosine</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The <strong>scatter()</strong> function needs to be adapted to use this approximation:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">scatter</span><span class="p">(</span><span class="nv">ray_in</span><span class="p">:</span> <span class="kt">Ray</span><span class="p">,</span> <span class="n">_</span> <span class="nv">rec</span><span class="p">:</span> <span class="kt">Hit_record</span><span class="p">,</span> <span class="k">inout</span> <span class="n">_</span> <span class="nv">attenuation</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="k">inout</span> <span class="n">_</span> <span class="nv">scattered</span><span class="p">:</span> <span class="kt">Ray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Bool</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">reflect_prob</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">var</span> <span class="nv">cosine</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">var</span> <span class="nv">ni_over_nt</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">var</span> <span class="nv">outward_normal</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">()</span>
+    <span class="k">let</span> <span class="nv">reflected</span> <span class="o">=</span> <span class="nf">reflect</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="nv">n</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span>
+    <span class="n">attenuation</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nf">dot</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">{</span>
+        <span class="n">outward_normal</span> <span class="o">=</span> <span class="o">-</span><span class="n">rec</span><span class="o">.</span><span class="n">normal</span>
+        <span class="n">ni_over_nt</span> <span class="o">=</span> <span class="n">ref_index</span>
+        <span class="n">cosine</span> <span class="o">=</span> <span class="n">ref_index</span> <span class="o">*</span> <span class="nf">dot</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">/</span> <span class="nf">length</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">outward_normal</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span>
+        <span class="n">ni_over_nt</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">ref_index</span>
+        <span class="n">cosine</span> <span class="o">=</span> <span class="o">-</span><span class="nf">dot</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="n">rec</span><span class="o">.</span><span class="n">normal</span><span class="p">)</span> <span class="o">/</span> <span class="nf">length</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">let</span> <span class="nv">refracted</span> <span class="o">=</span> <span class="nf">refract</span><span class="p">(</span><span class="n">ray_in</span><span class="o">.</span><span class="n">direction</span><span class="p">,</span> <span class="nv">n</span><span class="p">:</span> <span class="n">outward_normal</span><span class="p">,</span> <span class="nv">ni_over_nt</span><span class="p">:</span> <span class="n">ni_over_nt</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">refracted</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+        <span class="n">reflect_prob</span> <span class="o">=</span> <span class="nf">schlick</span><span class="p">(</span><span class="n">cosine</span><span class="p">,</span> <span class="n">ref_index</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">scattered</span> <span class="o">=</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">reflected</span><span class="p">)</span>
+        <span class="n">reflect_prob</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="kt">Float</span><span class="p">(</span><span class="nf">drand48</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">reflect_prob</span> <span class="p">{</span>
+        <span class="n">scattered</span> <span class="o">=</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">reflected</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">scattered</span> <span class="o">=</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">rec</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">refracted</span><span class="o">!</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="kc">true</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Note that we are now refracting based on a reflectivity threshold we set to <strong>1</strong>. There is an easy way (trick) to get a hollow glass surface. If the radius is negative, even though the geometry remains unaffected, the normal will point inward and the result will be a nice looking hollow glass sphere. Let’s add one more <code class="highlighter-rouge">dielectric</code> sphere with a negative radius:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">object</span> <span class="o">=</span> <span class="nf">sphere</span><span class="p">(</span><span class="nv">c</span><span class="p">:</span> <span class="nf">float3</span><span class="p">(</span><span class="nv">x</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nv">y</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">z</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="nv">r</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.49</span><span class="p">,</span> <span class="nv">m</span><span class="p">:</span> <span class="kt">Dielectric</span><span class="p">())</span></code></pre></figure>
+
+<p>You should be able to see the hollow glass sphere now. Before wrapping up, we need to do one more thing - fix the camera, so we can look at objects from different angles and distances. First, we need a <code class="highlighter-rouge">field of view</code> for our camera. Then, we need a <code class="highlighter-rouge">lookFrom</code> point and a <code class="highlighter-rouge">lookAt</code> point to set the direction our camera will look. Finally, we need an <code class="highlighter-rouge">up</code> vector so we can rotate the camera around its direction, and always know where <code class="highlighter-rouge">up</code> is. In <code class="highlighter-rouge">ray.swift</code> let’s replace our old camera with this one:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">Camera</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">lower_left_corner</span><span class="p">,</span> <span class="n">horizontal</span><span class="p">,</span> <span class="n">vertical</span><span class="p">,</span> <span class="n">origin</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="nv">w</span><span class="p">:</span> <span class="n">float3</span>
+    <span class="k">var</span> <span class="nv">lens_radius</span><span class="p">:</span> <span class="kt">Float</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="nf">init</span><span class="p">(</span><span class="nv">lookFrom</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="nv">lookAt</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="nv">vup</span><span class="p">:</span> <span class="n">float3</span><span class="p">,</span> <span class="nv">vfov</span><span class="p">:</span> <span class="kt">Float</span><span class="p">,</span> <span class="nv">aspect</span><span class="p">:</span> <span class="kt">Float</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">theta</span> <span class="o">=</span> <span class="n">vfov</span> <span class="o">*</span> <span class="kt">Float</span><span class="p">(</span><span class="kt">M_PI</span><span class="p">)</span> <span class="o">/</span> <span class="mi">180</span>
+        <span class="k">let</span> <span class="nv">half_height</span> <span class="o">=</span> <span class="nf">tan</span><span class="p">(</span><span class="n">theta</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="k">let</span> <span class="nv">half_width</span> <span class="o">=</span> <span class="n">aspect</span> <span class="o">*</span> <span class="n">half_height</span>
+        <span class="n">origin</span> <span class="o">=</span> <span class="n">lookFrom</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">lookFrom</span> <span class="o">-</span> <span class="n">lookAt</span><span class="p">)</span>
+        <span class="n">u</span> <span class="o">=</span> <span class="nf">normalize</span><span class="p">(</span><span class="nf">cross</span><span class="p">(</span><span class="n">vup</span><span class="p">,</span> <span class="n">w</span><span class="p">))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="nf">cross</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+        <span class="n">lower_left_corner</span> <span class="o">=</span> <span class="n">origin</span> <span class="o">-</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">u</span> <span class="o">-</span> <span class="n">half_height</span> <span class="o">*</span> <span class="n">v</span> <span class="o">-</span> <span class="n">w</span>
+        <span class="n">horizontal</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_width</span> <span class="o">*</span> <span class="n">u</span>
+        <span class="n">vertical</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">half_height</span> <span class="o">*</span> <span class="n">v</span>
+    <span class="p">}</span>
+    <span class="kd">func</span> <span class="nf">get_ray</span><span class="p">(</span><span class="nv">s</span><span class="p">:</span> <span class="kt">Float</span><span class="p">,</span> <span class="n">_</span> <span class="nv">t</span><span class="p">:</span> <span class="kt">Float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Ray</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kt">Ray</span><span class="p">(</span><span class="nv">origin</span><span class="p">:</span> <span class="n">origin</span><span class="p">,</span> <span class="nv">direction</span><span class="p">:</span> <span class="n">lower_left_corner</span> <span class="o">+</span> <span class="n">s</span> <span class="o">*</span> <span class="n">horizontal</span> <span class="o">+</span> <span class="n">t</span> <span class="o">*</span> <span class="n">vertical</span> <span class="o">-</span> <span class="n">origin</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>In <code class="highlighter-rouge">pixel.swift</code> replace the line where we make a call to the camera, with this code:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">lookFrom</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">lookAt</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">()</span>
+<span class="k">let</span> <span class="nv">vup</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">cam</span> <span class="o">=</span> <span class="kt">Camera</span><span class="p">(</span><span class="nv">lookFrom</span><span class="p">:</span> <span class="n">lookFrom</span><span class="p">,</span> <span class="nv">lookAt</span><span class="p">:</span> <span class="n">lookAt</span><span class="p">,</span> <span class="nv">vup</span><span class="p">:</span> <span class="n">vup</span><span class="p">,</span> <span class="nv">vfov</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span> <span class="nv">aspect</span><span class="p">:</span> <span class="kt">Float</span><span class="p">(</span><span class="n">width</span><span class="p">)</span> <span class="o">/</span> <span class="kt">Float</span><span class="p">(</span><span class="n">height</span><span class="p">))</span></code></pre></figure>
+
+<p>In the main playground page, see the generated new image:</p>
+
+<p><img src="https://github.com/metalkit/images/raw/master/raytracing9.png" alt="alt text" title="Raytracing 9" /></p>
+
+<p>The <a href="https://github.com/MetalKit/raytracing">source code</a> is posted on Github as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

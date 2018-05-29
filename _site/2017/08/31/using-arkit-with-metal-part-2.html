@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using ARKit with Metal part 2</title>
+  <meta name="description" content="As underlined last time, ￼there are three layers in an ARKit application: Rendering, Tracking and Scene Understanding. Last time we analyzed in great detail ...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2017/08/31/using-arkit-with-metal-part-2.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using ARKit with Metal part 2</h1>
+    <p class="post-meta"><time datetime="2017-08-31T00:00:00-05:00" itemprop="datePublished">Aug 31, 2017</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>As underlined last time, ￼there are three layers in an <strong>ARKit</strong> application: <code class="highlighter-rouge">Rendering</code>, <code class="highlighter-rouge">Tracking</code> and <code class="highlighter-rouge">Scene Understanding</code>. Last time we analyzed in great detail how <em>Rendering</em> is done in <code class="highlighter-rouge">Metal</code> using a custom view. <code class="highlighter-rouge">ARKit</code> uses <code class="highlighter-rouge">Visual Inertial Odometry</code> for accurate <em>Tracking</em> of the world around it and to combine camera sensor data with <code class="highlighter-rouge">CoreMotion</code> data. No additional calibration is necessary for image stability while we are in motion. In this article we look at <strong>Scene Understanding</strong> - ways of describing scene attributes by using plane detection, hit-testing and light estimation. <code class="highlighter-rouge">ARKit</code> can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is <strong>off</strong> by default) by simply adding one more line before running the session configuration:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">override</span> <span class="kd">func</span> <span class="nf">viewWillAppear</span><span class="p">(</span><span class="n">_</span> <span class="nv">animated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="o">.</span><span class="nf">viewWillAppear</span><span class="p">(</span><span class="n">animated</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">configuration</span> <span class="o">=</span> <span class="kt">ARWorldTrackingConfiguration</span><span class="p">()</span>
+    <span class="n">configuration</span><span class="o">.</span><span class="n">planeDetection</span> <span class="o">=</span> <span class="o">.</span><span class="n">horizontal</span>
+    <span class="n">session</span><span class="o">.</span><span class="nf">run</span><span class="p">(</span><span class="n">configuration</span><span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<blockquote>
+  <p>Note that only <strong>horizontal</strong> plane detection is possible with the current <code class="highlighter-rouge">API</code> version.</p>
+</blockquote>
+
+<p>The <strong>ARSessionObserver</strong> protocol’s methods are used for handling session errors, tracking changes and interruptions:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didFailWithError</span> <span class="nv">error</span><span class="p">:</span> <span class="kt">Error</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">cameraDidChangeTrackingState</span> <span class="nv">camera</span><span class="p">:</span> <span class="kt">ARCamera</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didOutputAudioSampleBuffer</span> <span class="nv">audioSampleBuffer</span><span class="p">:</span> <span class="kt">CMSampleBuffer</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">sessionWasInterrupted</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">)</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">sessionInterruptionEnded</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">)</span> <span class="p">{}</span></code></pre></figure>
+
+<p>However, there are other delegate methods that belong to the <strong>ARSessionDelegate</strong> protocol (which extends <code class="highlighter-rouge">ARSessionObserver</code>) that let us work with anchors. Put a <strong>print()</strong> call inside the first one:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didAdd</span> <span class="nv">anchors</span><span class="p">:</span> <span class="p">[</span><span class="kt">ARAnchor</span><span class="p">])</span> <span class="p">{</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">anchors</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didRemove</span> <span class="nv">anchors</span><span class="p">:</span> <span class="p">[</span><span class="kt">ARAnchor</span><span class="p">])</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didUpdate</span> <span class="nv">anchors</span><span class="p">:</span> <span class="p">[</span><span class="kt">ARAnchor</span><span class="p">])</span> <span class="p">{}</span>
+<span class="kd">func</span> <span class="nf">session</span><span class="p">(</span><span class="n">_</span> <span class="nv">session</span><span class="p">:</span> <span class="kt">ARSession</span><span class="p">,</span> <span class="n">didUpdate</span> <span class="nv">frame</span><span class="p">:</span> <span class="kt">ARFrame</span><span class="p">)</span> <span class="p">{}</span></code></pre></figure>
+
+<p>Let’s move to the <strong>Renderer.swift</strong> file now. First, create a few class properties we need to work with. These variables will help us create and display a debug plane on the screen:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">var</span> <span class="nv">debugUniformBuffer</span><span class="p">:</span> <span class="kt">MTLBuffer</span><span class="o">!</span>
+<span class="k">var</span> <span class="nv">debugPipelineState</span><span class="p">:</span> <span class="kt">MTLRenderPipelineState</span><span class="o">!</span>
+<span class="k">var</span> <span class="nv">debugDepthState</span><span class="p">:</span> <span class="kt">MTLDepthStencilState</span><span class="o">!</span><span class="k">var</span> <span class="nv">debugMesh</span><span class="p">:</span> <span class="kt">MTKMesh</span><span class="o">!</span>
+<span class="k">var</span> <span class="nv">debugUniformBufferOffset</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">var</span> <span class="nv">debugUniformBufferAddress</span><span class="p">:</span> <span class="kt">UnsafeMutableRawPointer</span><span class="o">!</span>
+<span class="k">var</span> <span class="nv">debugInstanceCount</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span></code></pre></figure>
+
+<p>Next, in <strong>setupPipeline()</strong> we create the buffer:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">debugUniformBuffer</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeBuffer</span><span class="p">(</span><span class="nv">length</span><span class="p">:</span> <span class="n">anchorUniformBufferSize</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="o">.</span><span class="n">storageModeShared</span><span class="p">)</span></code></pre></figure>
+
+<p>We need to create new vertex and fragment functions for our plane, as well as new render pipeline and depth stencil states. Right before the line where the command queue is created, add these lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">debugGeometryVertexFunction</span> <span class="o">=</span> <span class="n">defaultLibrary</span><span class="o">.</span><span class="nf">makeFunction</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"vertexDebugPlane"</span><span class="p">)</span><span class="o">!</span>
+<span class="k">let</span> <span class="nv">debugGeometryFragmentFunction</span> <span class="o">=</span> <span class="n">defaultLibrary</span><span class="o">.</span><span class="nf">makeFunction</span><span class="p">(</span><span class="nv">name</span><span class="p">:</span> <span class="s">"fragmentDebugPlane"</span><span class="p">)</span><span class="o">!</span>
+<span class="n">anchorPipelineStateDescriptor</span><span class="o">.</span><span class="n">vertexFunction</span> <span class="o">=</span>  <span class="n">debugGeometryVertexFunction</span>
+<span class="n">anchorPipelineStateDescriptor</span><span class="o">.</span><span class="n">fragmentFunction</span> <span class="o">=</span> <span class="n">debugGeometryFragmentFunction</span>
+<span class="k">do</span> <span class="p">{</span> <span class="k">try</span> <span class="n">debugPipelineState</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeRenderPipelineState</span><span class="p">(</span><span class="nv">descriptor</span><span class="p">:</span> <span class="n">anchorPipelineStateDescriptor</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="k">let</span> <span class="nv">error</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">}</span>
+<span class="n">debugDepthState</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">makeDepthStencilState</span><span class="p">(</span><span class="nv">descriptor</span><span class="p">:</span> <span class="n">anchorDepthStateDescriptor</span><span class="p">)</span></code></pre></figure>
+
+<p>Next, in <strong>setupAssets()</strong> we need to create a new <code class="highlighter-rouge">Model I/O</code> plane mesh and then create the <code class="highlighter-rouge">Metal</code> mesh from it. At the end of the function add these lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">mdlMesh</span> <span class="o">=</span> <span class="kt">MDLMesh</span><span class="p">(</span><span class="nv">planeWithExtent</span><span class="p">:</span> <span class="nf">vector3</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="nv">segments</span><span class="p">:</span> <span class="nf">vector2</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="nv">geometryType</span><span class="p">:</span> <span class="o">.</span><span class="n">triangles</span><span class="p">,</span> <span class="nv">allocator</span><span class="p">:</span> <span class="n">metalAllocator</span><span class="p">)</span>
+<span class="n">mdlMesh</span><span class="o">.</span><span class="n">vertexDescriptor</span> <span class="o">=</span> <span class="n">vertexDescriptor</span>
+<span class="k">do</span> <span class="p">{</span> <span class="k">try</span> <span class="n">debugMesh</span> <span class="o">=</span> <span class="kt">MTKMesh</span><span class="p">(</span><span class="nv">mesh</span><span class="p">:</span> <span class="n">mdlMesh</span><span class="p">,</span> <span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="p">)</span>
+<span class="p">}</span> <span class="k">catch</span> <span class="k">let</span> <span class="nv">error</span> <span class="p">{</span> <span class="nf">print</span><span class="p">(</span><span class="n">error</span><span class="p">)</span> <span class="p">}</span></code></pre></figure>
+
+<p>Next, in <strong>updateBufferStates()</strong> we need to update the address of the buffer where the plane resides. Add the following lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">debugUniformBufferOffset</span> <span class="o">=</span> <span class="n">alignedInstanceUniformSize</span> <span class="o">*</span> <span class="n">uniformBufferIndex</span>
+<span class="n">debugUniformBufferAddress</span> <span class="o">=</span> <span class="n">debugUniformBuffer</span><span class="o">.</span><span class="nf">contents</span><span class="p">()</span><span class="o">.</span><span class="nf">advanced</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">debugUniformBufferOffset</span><span class="p">)</span></code></pre></figure>
+
+<p>Next, in <strong>updateAnchors()</strong> we need to update the transform matrices and the anchors count. Add the following lines before the loop:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">count</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">anchors</span><span class="o">.</span><span class="n">filter</span><span class="p">{</span> <span class="nv">$0</span><span class="o">.</span><span class="nf">isKind</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="kt">ARPlaneAnchor</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">}</span><span class="o">.</span><span class="n">count</span>
+<span class="n">debugInstanceCount</span> <span class="o">=</span> <span class="nf">min</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">maxAnchorInstanceCount</span> <span class="o">-</span> <span class="p">(</span><span class="n">anchorInstanceCount</span> <span class="o">-</span> <span class="n">count</span><span class="p">))</span></code></pre></figure>
+
+<p>Then, inside the loop replace the last three lines with the following lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">if</span> <span class="n">anchor</span><span class="o">.</span><span class="nf">isKind</span><span class="p">(</span><span class="nv">of</span><span class="p">:</span> <span class="kt">ARPlaneAnchor</span><span class="o">.</span><span class="k">self</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">transform</span> <span class="o">=</span> <span class="n">anchor</span><span class="o">.</span><span class="n">transform</span> <span class="o">*</span> <span class="nf">rotationMatrix</span><span class="p">(</span><span class="nv">rotation</span><span class="p">:</span> <span class="nf">float3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kt">Float</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">let</span> <span class="nv">modelMatrix</span> <span class="o">=</span> <span class="nf">simd_mul</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">coordinateSpaceTransform</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">debugUniforms</span> <span class="o">=</span> <span class="n">debugUniformBufferAddress</span><span class="o">.</span><span class="nf">assumingMemoryBound</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="kt">InstanceUniforms</span><span class="o">.</span><span class="k">self</span><span class="p">)</span><span class="o">.</span><span class="nf">advanced</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">index</span><span class="p">)</span>
+    <span class="n">debugUniforms</span><span class="o">.</span><span class="n">pointee</span><span class="o">.</span><span class="n">modelMatrix</span> <span class="o">=</span> <span class="n">modelMatrix</span>
+<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">modelMatrix</span> <span class="o">=</span> <span class="nf">simd_mul</span><span class="p">(</span><span class="n">anchor</span><span class="o">.</span><span class="n">transform</span><span class="p">,</span> <span class="n">coordinateSpaceTransform</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">anchorUniforms</span> <span class="o">=</span> <span class="n">anchorUniformBufferAddress</span><span class="o">.</span><span class="nf">assumingMemoryBound</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="kt">InstanceUniforms</span><span class="o">.</span><span class="k">self</span><span class="p">)</span><span class="o">.</span><span class="nf">advanced</span><span class="p">(</span><span class="nv">by</span><span class="p">:</span> <span class="n">index</span><span class="p">)</span>
+    <span class="n">anchorUniforms</span><span class="o">.</span><span class="n">pointee</span><span class="o">.</span><span class="n">modelMatrix</span> <span class="o">=</span> <span class="n">modelMatrix</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>We had to rotate the plane <strong>90</strong> degrees by the <strong>Z</strong> axis so we can make it <code class="highlighter-rouge">horizontal</code>. Notice that we used a custom method named <strong>rotationMatrix()</strong> so let’s define it. We have seen this matrix in the early articles when we first introduced <code class="highlighter-rouge">3D</code> transforms:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">rotationMatrix</span><span class="p">(</span><span class="nv">rotation</span><span class="p">:</span> <span class="n">float3</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">float4x4</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="nv">matrix</span><span class="p">:</span> <span class="n">float4x4</span> <span class="o">=</span> <span class="n">matrix_identity_float4x4</span>
+    <span class="k">let</span> <span class="nv">x</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">x</span>
+    <span class="k">let</span> <span class="nv">y</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">y</span>
+    <span class="k">let</span> <span class="nv">z</span> <span class="o">=</span> <span class="n">rotation</span><span class="o">.</span><span class="n">z</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="nf">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span> <span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">+</span> <span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="o">-</span><span class="nf">cos</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="nf">sin</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="nf">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="nf">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="nf">cos</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="n">w</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">matrix</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Next, in <strong>drawAnchorGeometry()</strong> we need to make sure we have at least one anchor before drawing it. Replace the first line with this one:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">guard</span> <span class="n">anchorInstanceCount</span> <span class="o">-</span> <span class="n">debugInstanceCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span></code></pre></figure>
+
+<p>Next, let’s finally create the <strong>drawDebugGeometry()</strong> function that draws our plane. It’s very similar to the anchor drawing function:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">drawDebugGeometry</span><span class="p">(</span><span class="nv">renderEncoder</span><span class="p">:</span> <span class="kt">MTLRenderCommandEncoder</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">guard</span> <span class="n">debugInstanceCount</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">{</span> <span class="k">return</span> <span class="p">}</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">pushDebugGroup</span><span class="p">(</span><span class="s">"DrawDebugPlanes"</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setCullMode</span><span class="p">(</span><span class="o">.</span><span class="n">back</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setRenderPipelineState</span><span class="p">(</span><span class="n">debugPipelineState</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setDepthStencilState</span><span class="p">(</span><span class="n">debugDepthState</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setVertexBuffer</span><span class="p">(</span><span class="n">debugUniformBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="n">debugUniformBufferOffset</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setVertexBuffer</span><span class="p">(</span><span class="n">sharedUniformBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="n">sharedUniformBufferOffset</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setFragmentBuffer</span><span class="p">(</span><span class="n">sharedUniformBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="n">sharedUniformBufferOffset</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">bufferIndex</span> <span class="k">in</span> <span class="mi">0</span><span class="o">..&lt;</span><span class="n">debugMesh</span><span class="o">.</span><span class="n">vertexBuffers</span><span class="o">.</span><span class="n">count</span> <span class="p">{</span>
+        <span class="k">let</span> <span class="nv">vertexBuffer</span> <span class="o">=</span> <span class="n">debugMesh</span><span class="o">.</span><span class="n">vertexBuffers</span><span class="p">[</span><span class="n">bufferIndex</span><span class="p">]</span>
+        <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">setVertexBuffer</span><span class="p">(</span><span class="n">vertexBuffer</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="n">vertexBuffer</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="nv">index</span><span class="p">:</span><span class="n">bufferIndex</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="n">submesh</span> <span class="k">in</span> <span class="n">debugMesh</span><span class="o">.</span><span class="n">submeshes</span> <span class="p">{</span>
+        <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">drawIndexedPrimitives</span><span class="p">(</span><span class="nv">type</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">primitiveType</span><span class="p">,</span> <span class="nv">indexCount</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexCount</span><span class="p">,</span> <span class="nv">indexType</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexType</span><span class="p">,</span> <span class="nv">indexBuffer</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexBuffer</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="nv">indexBufferOffset</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexBuffer</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="nv">instanceCount</span><span class="p">:</span> <span class="n">debugInstanceCount</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">renderEncoder</span><span class="o">.</span><span class="nf">popDebugGroup</span><span class="p">()</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>There is one more thing left to do in <code class="highlighter-rouge">Renderer</code> and that is - call this function in <strong>update()</strong> right above the line where we end the encoding:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="nf">drawDebugGeometry</span><span class="p">(</span><span class="nv">renderEncoder</span><span class="p">:</span> <span class="n">renderEncoder</span><span class="p">)</span></code></pre></figure>
+
+<p>Finally, let’s go to the <strong>Shaders.metal</strong> file. We need a new struct with just the vertex position passed via a vertex descriptor:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">typedef</span> <span class="kd">struct</span> <span class="p">{</span>
+    <span class="n">float3</span> <span class="n">position</span> <span class="p">[[</span><span class="nf">attribute</span><span class="p">(</span><span class="mi">0</span><span class="p">)]];</span>
+<span class="p">}</span> <span class="kt">DebugVertex</span><span class="p">;</span></code></pre></figure>
+
+<p>In the vertex shader we update the vertex position using the model-view matrix:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">vertex</span> <span class="n">float4</span> <span class="nf">vertexDebugPlane</span><span class="p">(</span><span class="kt">DebugVertex</span> <span class="k">in</span> <span class="p">[[</span> <span class="n">stage_in</span><span class="p">]],</span>
+                               <span class="n">constant</span> <span class="kt">SharedUniforms</span> <span class="o">&amp;</span><span class="n">sharedUniforms</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="p">]],</span>
+                               <span class="n">constant</span> <span class="kt">InstanceUniforms</span> <span class="o">*</span><span class="n">instanceUniforms</span> <span class="p">[[</span> <span class="nf">buffer</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="p">]],</span>
+                               <span class="n">ushort</span> <span class="n">vid</span> <span class="p">[[</span><span class="n">vertex_id</span><span class="p">]],</span>
+                               <span class="n">ushort</span> <span class="n">iid</span> <span class="p">[[</span><span class="n">instance_id</span><span class="p">]])</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">position</span> <span class="o">=</span> <span class="nf">float4</span><span class="p">(</span><span class="k">in</span><span class="o">.</span><span class="n">position</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+    <span class="n">float4x4</span> <span class="n">modelMatrix</span> <span class="o">=</span> <span class="n">instanceUniforms</span><span class="p">[</span><span class="n">iid</span><span class="p">]</span><span class="o">.</span><span class="n">modelMatrix</span><span class="p">;</span>
+    <span class="n">float4x4</span> <span class="n">modelViewMatrix</span> <span class="o">=</span> <span class="n">sharedUniforms</span><span class="o">.</span><span class="n">viewMatrix</span> <span class="o">*</span> <span class="n">modelMatrix</span><span class="p">;</span>
+    <span class="n">float4</span> <span class="n">outPosition</span> <span class="o">=</span> <span class="n">sharedUniforms</span><span class="o">.</span><span class="n">projectionMatrix</span> <span class="o">*</span> <span class="n">modelViewMatrix</span> <span class="o">*</span> <span class="n">position</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">outPosition</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>And last, in the fragment shader we give the plane a bold color to make it noticeable in the view:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fragment</span> <span class="n">float4</span> <span class="nf">fragmentDebugPlane</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nf">float4</span><span class="p">(</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.42</span><span class="p">,</span> <span class="mf">0.62</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>If you run the app, you should be able to see a rectangle added when the app detects a plane, like this:</p>
+
+<p>￼￼<img src="https://github.com/MetalKit/images/blob/master/plane.gif?raw=true" alt="alt text" title="Plane detection" /></p>
+
+<p>What we could do next is update/remove planes as we detect more or as we move away from the previously detected one. The other delegate methods can help us achieve just that. Then, we could look at collisions and physics. Just a thought for the future.</p>
+
+<p>I want to thank <a href="https://twitter.com/carolinebegbie">Caroline</a> for being the designated (plane) detective for this article! The <a href="https://github.com/MetalKit/metal">source code</a> is posted on <code class="highlighter-rouge">Github</code> as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

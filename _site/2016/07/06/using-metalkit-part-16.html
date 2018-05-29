@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using MetalKit part 16</title>
+  <meta name="description" content="A couple of weeks ago, at the WWDC 2016, the Apple engineers released a new document, the Metal Best Practices Guide which includes useful information about ...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2016/07/06/using-metalkit-part-16.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using MetalKit part 16</h1>
+    <p class="post-meta"><time datetime="2016-07-06T00:00:00-05:00" itemprop="datePublished">Jul 6, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>A couple of weeks ago, at the <code class="highlighter-rouge">WWDC 2016</code>, the <code class="highlighter-rouge">Apple</code> engineers released a new document, the <strong>Metal Best Practices Guide</strong> which includes useful information about organizing your code for better performance in your <code class="highlighter-rouge">Metal</code> apps. Because the documentation is quite extensive, we are just going to outline the main concepts in this article. An efficient <code class="highlighter-rouge">Metal</code> app requires:</p>
+
+<ul>
+  <li>Low <code class="highlighter-rouge">CPU</code> overhead.</li>
+  <li>Optimal <code class="highlighter-rouge">GPU</code> performance.</li>
+  <li>Continuous processor parallelism.</li>
+  <li>Effective resource management.</li>
+</ul>
+
+<h2 id="1-resource-management"><strong>1 Resource Management</strong></h2>
+
+<h3 id="11-persistent-objects"><em>1.1 Persistent Objects</em></h3>
+
+<p><strong>Best Practice</strong>: Create persistent objects early and reuse them often.</p>
+
+<p>The <code class="highlighter-rouge">Metal</code> framework provides several protocols to manage persistent objects throughout the lifetime of your app. These objects are expensive to create but are usually initialized once and reused often. Do not create these objects at the beginning of every render or compute loop.</p>
+
+<ul>
+  <li>Initialize Your Device and Command Queue First</li>
+  <li>Compile Your Functions and Build Your Library at Build Time</li>
+  <li>Build Your Pipelines Once and Reuse Them Often</li>
+  <li>Allocate Resource Storage Up Front</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/PersistentObjects.html">Persistent Objects</a> section of the documentation.</p>
+
+<h3 id="12-resource-options"><em>1.2 Resource Options</em></h3>
+
+<p><strong>Best Practice</strong>: Set appropriate resource storage modes and texture usage options for your resources.</p>
+
+<p><code class="highlighter-rouge">Metal</code> resources must be configured appropriately to take advantage of fast memory access and driver performance optimizations. Resource storage modes allow you to define the storage location and access permissions for your <code class="highlighter-rouge">MTLBuffer</code> and <code class="highlighter-rouge">MTLTexture</code> objects. Texture usage options allow you to explicitly declare how you intend to use your <code class="highlighter-rouge">MTLTexture</code> objects.</p>
+
+<ul>
+  <li>Familiarize Yourself with Device Memory Models</li>
+  <li>Choose an Appropriate Resource Storage Mode (<code class="highlighter-rouge">iOS</code> and <code class="highlighter-rouge">tvOS</code>)</li>
+  <li>Choose an Appropriate Resource Storage Mode (<code class="highlighter-rouge">OS X</code>)</li>
+  <li>Set Appropriate Texture Usage Flags</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/ResourceOptions.html">Resource Options</a> section of the documentation.</p>
+
+<h3 id="13-triple-buffering"><em>1.3 Triple Buffering</em></h3>
+
+<p><strong>Best Practice</strong>: Implement a triple buffering model to update dynamic buffer data.</p>
+
+<p>Dynamic buffer data refers to frequently-updated data stored in a buffer. To avoid creating new buffers per frame and to minimize processor idle time between frames, implementing a triple buffering model is strongly recommended.</p>
+
+<ul>
+  <li>Prevent Access Conflicts and Reduce Processor Idle Time</li>
+  <li>Reduce Memory Overhead and Frame Latency</li>
+  <li>Allow Time for Command Buffer Transactions</li>
+  <li>Implement a Triple Buffering Model</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/TripleBuffering.html">Triple Buffering</a> section of the documentation.</p>
+
+<h3 id="14-buffer-bindings"><em>1.4 Buffer Bindings</em></h3>
+
+<p><strong>Best Practice</strong>: Use an appropriate method to bind your buffer data to a graphics or compute function.</p>
+
+<p><code class="highlighter-rouge">Metal</code> provides several <code class="highlighter-rouge">API</code> options for binding buffer data to a graphics or compute function. The <strong>setVertexBytes:length:atIndex:</strong> method is the best option for binding an amount of dynamic buffer data (a transient buffer) that is less than <strong>4 KB</strong> to a vertex function. If the data size is larger than 4 KB, you should create a <strong>MTLBuffer</strong> once and update its contents as needed.</p>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/BufferBindings.html">Buffer Bindings</a> section of the documentation.</p>
+
+<h2 id="2-display-management"><strong>2 Display Management</strong></h2>
+
+<h3 id="21-drawables"><em>2.1 Drawables</em></h3>
+
+<p><strong>Best Practice</strong>: Hold a drawable as briefly as possible.</p>
+
+<p>The command buffer is used to schedule a drawable’s presentation with the <strong>presentDrawable:</strong> method before the command buffer itself is scheduled for execution, however, the drawable itself is actually presented after the command buffer has completed execution.</p>
+
+<ul>
+  <li>Use a MetalKit View to Acquire a Drawable</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Drawables.html">Drawables</a> section of the documentation.</p>
+
+<h3 id="22-native-screen-scale-ios-and-tvos"><em>2.2 Native Screen Scale (iOS and tvOS)</em></h3>
+
+<p><strong>Best Practice</strong>: Render at the exact pixel size of your target display.</p>
+
+<p>The pixel size of your drawables should always match the exact pixel size of their target display. This is critical to avoid rendering to off-screen pixels or incurring an additional sampling stage.</p>
+
+<ul>
+  <li>Use a MetalKit View to Support Native Screen Scale</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/NativeScreenScale.html">Native Screen Scale</a> section of the documentation.</p>
+
+<h3 id="23-frame-rate-ios-and-tvos"><em>2.3 Frame Rate (iOS and tvOS)</em></h3>
+
+<p><strong>Best Practice</strong>: For apps that can’t maintain a <strong>60 FPS</strong> frame rate, present your drawables at a steady frame rate.</p>
+
+<p>The display refresh rate of <code class="highlighter-rouge">iOS</code> devices is <code class="highlighter-rouge">60 Hz</code>. Apps that are consistently unable to complete a frame’s work within this time should target a lower frame rate to avoid jitter. The display refresh rate of <code class="highlighter-rouge">tvOS</code> devices is usually, but not always, <code class="highlighter-rouge">60 Hz</code>.</p>
+
+<ul>
+  <li>Use the Display Link</li>
+  <li>Adjust the Frame Interval</li>
+  <li>Adjust the Drawable Presentation Time</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FrameRate.html">Frame Rate</a> section of the documentation.</p>
+
+<h2 id="3-command-generation"><strong>3 Command Generation</strong></h2>
+
+<h3 id="31-load-and-store-actions"><em>3.1 Load and Store Actions</em></h3>
+
+<p><strong>Best Practice</strong>: Set appropriate load and store actions for your render targets.</p>
+
+<p>Actions performed on your <code class="highlighter-rouge">Metal</code> render targets must be configured appropriately to avoid costly and unnecessary rendering work at the start (load action) or end (store action) of a rendering pass.</p>
+
+<ul>
+  <li>Choose an Appropriate Load Action</li>
+  <li>Choose an Appropriate Store Action</li>
+  <li>Evaluate Actions Between Rendering Passes</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/LoadandStoreActions.html">Load and Store Actions</a> section of the documentation.</p>
+
+<h3 id="32-render-command-encoders-ios-and-tvos"><em>3.2 Render Command Encoders (iOS and tvOS)</em></h3>
+
+<p><strong>Best Practice</strong>: Merge render command encoders when possible.</p>
+
+<p>Eliminating unnecessary render command encoders reduces memory bandwidth and increases performance.</p>
+
+<ul>
+  <li>Evaluate Rendering Pass Order</li>
+  <li>Evaluate Sampling Dependencies</li>
+  <li>Evaluate Actions Between Rendering Passes</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/RenderCommandEncoders.html">Render Command Encoders</a> section of the documentation.</p>
+
+<h3 id="33-command-buffers"><em>3.3 Command Buffers</em></h3>
+
+<p><strong>Best Practice</strong>: Submit the fewest command buffers per frame without underutilizing the <code class="highlighter-rouge">GPU</code>.</p>
+
+<p>Command buffers are the unit of work submission in <code class="highlighter-rouge">Metal</code>; they are created by the <code class="highlighter-rouge">CPU</code> and executed by the <code class="highlighter-rouge">GPU</code>. This relationship allows you to balance <code class="highlighter-rouge">CPU</code> and <code class="highlighter-rouge">GPU</code> work by adjusting the number of command buffers submitted per frame.</p>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/CommandBuffers.html">Command Buffers</a> section of the documentation.</p>
+
+<h3 id="34-indirect-buffers"><em>3.4 Indirect Buffers</em></h3>
+
+<p><strong>Best Practice</strong>: Use indirect buffers if your draw or dispatch call arguments are dynamically generated by the <code class="highlighter-rouge">GPU</code>.</p>
+
+<p>Indirect buffers are <code class="highlighter-rouge">MTLBuffer</code> objects with a specific data layout representing draw or dispatch call arguments.</p>
+
+<ul>
+  <li>Eliminate Unnecessary Data Transfers and Reduce Processor Idle Time</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/IndirectBuffers.html">Indirect Buffers</a> section of the documentation.</p>
+
+<h2 id="4-compilation"><strong>4 Compilation</strong></h2>
+
+<h3 id="41-functions-and-libraries"><em>4.1 Functions and Libraries</em></h3>
+
+<p><strong>Best Practice</strong>: Compile your functions and build your library at build time.</p>
+
+<p>Compiling <code class="highlighter-rouge">Metal Shading Language</code> source code is one of the most expensive stages in a <code class="highlighter-rouge">Metal</code> app. <code class="highlighter-rouge">Metal</code> is designed to minimize this cost by allowing you to compile graphics and compute functions at build time, then load them at runtime as a library.</p>
+
+<ul>
+  <li>Build Your Library at Build Time</li>
+  <li>Group Your Functions into a Single Library</li>
+</ul>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/FunctionsandLibraries.html">Functions and Libraries</a> section of the documentation.</p>
+
+<h3 id="42-pipelines"><em>4.2 Pipelines</em></h3>
+
+<p><strong>Best Practice</strong>: Build your render and compute pipelines asynchronously.</p>
+
+<p>Having multiple render or compute pipelines allows your app to use different state configurations for specific tasks. Building these pipelines asynchronously maximizes performance and parallelism. It is recommended that you build all known pipelines up front and avoid lazy loading.</p>
+
+<p>For more information, consult the <a href="https://developer.apple.com/library/prerelease/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Pipelines.html">Pipelines</a> section of the documentation.</p>
+
+<p>This guide, along with the <a href="https://developer.apple.com/library/prerelease/content/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/Introduction/Introduction.html"><strong>Metal Programming Guide</strong></a> and the <a href="https://developer.apple.com/library/prerelease/content/documentation/Metal/Reference/MetalShadingLanguageGuide/Introduction/Introduction.html"><strong>Metal Shading Language Guide</strong></a> both already updated for <code class="highlighter-rouge">iOS 10</code>, <code class="highlighter-rouge">tvOS 10</code> and <code class="highlighter-rouge">OS X 10.12</code>, give you the trilogy of documents containing everything you need to start creating performant <code class="highlighter-rouge">Metal</code> apps.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
