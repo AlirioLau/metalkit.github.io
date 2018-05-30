@@ -6,7 +6,7 @@ summary: <div><div style="display:inline-block;"><img src = "https://raw.githubu
 layout: post
 ---
 
-My new book is out! It is was an amazing journey we, the authors, took in writing the first ever Metal book for game engine developers. If you were wondering why there was no blog post for almost half a year now, this was the reason :)
+My new book is out! It was such an amazing journey we, the authors, took in writing the first ever Metal book for game engine developers. If you were wondering why there was no blog post for almost half a year now, this was the reason :)
 
 Use this link [https://store.raywenderlich.com/products/metal-by-tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) if you want to purchase the book. For only a limited time the price is discounted.
 
