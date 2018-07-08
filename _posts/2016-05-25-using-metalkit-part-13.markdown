@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 13
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter13_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving on to 3D objects in the kernel function. Using the sphere equation to get distances to points in space. Calculating normals calculating and then the color at each normalized coordinate. Learning about diffuse (Lambertian) basic light. Using uniforms again to animate the light source position around the sphere.</div></div> 
 layout: post
 ---

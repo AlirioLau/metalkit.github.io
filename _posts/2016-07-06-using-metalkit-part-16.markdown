@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 16
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">The Metal Best Practices Guide offers advices for Resource Management (persistent objects, resource options, triple buffering, buffer bindings), Display Management (drawables, native screen scale, frame rate), Command Generation (load and store actions, render command encoders, command buffers, indirect buffers) and Compilation (functions and libraries, pipelines).</div></div>  
 layout: post
 ---

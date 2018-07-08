@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 12
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter12_3.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continue working on the fractal from the previous part. Using uniforms to send the GPU updated information about a timer and about the mouse click coordinates. Blending the color with the current coordinates to achieve new effects.</div></div>
 layout: post
 ---

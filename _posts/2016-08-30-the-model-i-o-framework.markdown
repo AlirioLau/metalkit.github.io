@@ -1,7 +1,7 @@
 ---
 published: true
 title: The Model I/O framework
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/modelio.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Model I/O - a framework that helps us create more realistic and interactive graphics. Learning how we can use it to import/export 3D assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering.</div></div>
 layout: post
 ---

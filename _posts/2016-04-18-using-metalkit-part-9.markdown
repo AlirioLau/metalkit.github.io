@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 9
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter09_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving to 3D rendering. Introducing index buffers that are useful for vertex reusing. Presenting the front-facing winding orders and the culling modes. Introducing the concept of depth. Building a model-view-projection matrix. Describing the viewing frustum. Using rotation updating each frame to create an animated spinning effect.</div></div>
 layout: post
 ---

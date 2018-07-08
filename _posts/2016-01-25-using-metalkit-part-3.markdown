@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 3
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter04_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Using structs of vectors for vertices. Vector swizzling in MSL. Synchronizing struct data between the CPU and the GPU. Vertex and Fragment function syntax - function qualifiers, return types, address space qualifier, attributes. Interpolating color using the information stored in the vertex structs.</div></div>
 layout: post
 ---

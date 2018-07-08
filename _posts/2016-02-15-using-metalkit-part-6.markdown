@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 6
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking at the differences between using the Metal and MetalKit frameworks. MetalKit provides easy texture loading, a Metal-aware view and interfacing with Model I/O.</div></div>  
 layout: post
 ---

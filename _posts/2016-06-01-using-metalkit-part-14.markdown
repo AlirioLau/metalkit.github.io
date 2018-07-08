@@ -1,7 +1,7 @@
 ---
 published: true
 title: Using MetalKit part 14
-author: <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter14_1.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Understanding basic value noise and how randomness plays an essential part in generating it. Creating a custom randomness function. Bilinearly interpolating a grid using a Cubic Hermite Spline and a Fractional Brownian Motion function. Add the timer uniform again to animate the noise content.</div></div>
 layout: post
 ---

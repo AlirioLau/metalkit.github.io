@@ -1,7 +1,7 @@
 ---
 published: true
 title: Shadows in Metal part 1
-author: by <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: by <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Shadows in Metal. Building custom functions and operators such as modulus. Creating a light source and animating it around the scene. Creating a shadows function based on the distance and direction to the light. Marching along the light ray and improving the number of steps needed for faster shadows.</div></div>
 layout: post
 ---

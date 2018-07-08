@@ -1,7 +1,7 @@
 ---
 published: true
 title: Shadows in Metal part 2
-author: by <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: by <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Soft Shadows in Metal. Returning to Raymarching to build a complex 3D scene using distance operation functions. Learning how to calculate normals and the visualizing them. Learning how to use normals to calculate diffuse and specular lighting. Determining hard shadows as well as soft shadows for objects in a 3D scene.</div></div>
 layout: post
 ---

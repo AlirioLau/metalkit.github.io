@@ -1,7 +1,7 @@
 ---
 published: true
 title: Raymarching in Metal
-author: by <a href = "https://twitter.com/MTLDevice" target="_blank">Marius Horga</a>
+author: by <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
 summary: <div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/raymarching.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Raymarching in Metal. Continue on improving previously used Signed Distance Fields functions. Seeing the similarities and differences from Ray Tracing. Using the ray as camera and marching along with it. Instancing an object to create more complex scenes.</div></div>
 layout: post
 ---
