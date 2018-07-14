@@ -13,6 +13,8 @@ This is going to be a really short post because of two reasons:
 
 In a nutshell, the `Metal Performance Shaders` framework now has a high performance intersector that helps speeding up ray-triangle intersections using an acceleration structure that contains all the vertices in the scene necessary for calculating intersections.
 
+This project is only capable of rendering planes and boxes but in [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) you will be learning about how to render any shape or volume because you will be using a model loader.
+
 If you build and run the project you should be able to see something similar: 
 
 ![alt text](https://raw.githubusercontent.com/MetalKit/images/master/raytracing-mps.png?raw=true "book")
