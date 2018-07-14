@@ -9,7 +9,7 @@ layout: post
 This is going to be a really short post because of two reasons:
 
 1. This concept is explained by `Apple` really well in [this documentation page](https://developer.apple.com/documentation/metalperformanceshaders/metal_for_accelerating_ray_tracing). All I did was to port their code from `Objective-C` to `Swift` since I have not seen a `Swift` version to date.
-2. My book, [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials), will have an entire chapter dedicate to the `Metal Performance Shaders` framework and raytracing.
+2. My book, [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials), will have an entire chapter dedicated to the `Metal Performance Shaders` framework and raytracing.
 
 In a nutshell, the `Metal Performance Shaders` framework now has a high performance intersector that helps speeding up ray-triangle intersections using an acceleration structure that contains all the vertices in the scene necessary for calculating intersections.
 
