@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The Model I/O framework</title>
+  <meta name="description" content="Model I/O was introduced in 2015 for iOS 9 and OS X 10.11 and it is a framework that helps us create more realistic and interactive graphics. We can use it t...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2016/08/30/the-model-i-o-framework.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">The Model I/O framework</h1>
+    <p class="post-meta"><time datetime="2016-08-30T00:00:00-05:00" itemprop="datePublished">Aug 30, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p><strong>Model I/O</strong> was introduced in <code class="highlighter-rouge">2015</code> for <code class="highlighter-rouge">iOS 9</code> and <code class="highlighter-rouge">OS X 10.11</code> and it is a framework that helps us create more realistic and interactive graphics. We can use it to import/export <code class="highlighter-rouge">3D</code> assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering. Model I/O easily integrates our assets with our code in various <code class="highlighter-rouge">3D APIs</code>:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_1.png" alt="alt text" title="1" /></p>
+
+<p>In order to import an asset we simply do:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">var</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"/Users/YourUsername/Desktop/imported.obj"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">asset</span> <span class="o">=</span> <span class="kt">MDLAsset</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="o">!</span><span class="p">)</span></code></pre></figure>
+
+<p>To export an asset we do:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">url</span> <span class="o">=</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">string</span><span class="p">:</span> <span class="s">"/Users/YourUsername/Desktop/exported.obj"</span><span class="p">)</span>
+<span class="k">try!</span> <span class="n">asset</span><span class="o">.</span><span class="nf">export</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="n">url</span><span class="o">!</span><span class="p">)</span></code></pre></figure>
+
+<p>Model I/O will save both the <strong>.obj</strong> file and an additional <strong>.mtl</strong> file that contains information about the object materials, such as in this example:</p>
+
+<figure class="highlight"><pre><code class="language-text" data-lang="text"># Apple ModelI/O MTL File: exported.mtl
+
+newmtl material_1
+	Kd 0.8 0.8 0.8
+	Ka 0 0 0
+	Ks 0 0 0
+	ao 0 0 0
+	subsurface 0 0 0
+	metallic 0 0 0
+	specularTint 0 0 0
+	roughness 0.9 0 0
+	anisotropicRotation 0 0 0
+	sheen 0.05 0 0
+	sheenTint 0 0 0
+	clearCoat 0 0 0
+	clearCoatGloss 0 0 0</code></pre></figure>
+
+<p>Integrating <code class="highlighter-rouge">Model I/O</code> with <code class="highlighter-rouge">Metal</code> takes four steps:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_2.png" alt="alt text" title="2" /></p>
+
+<h3 id="step-1-set-up-the-render-pipeline-state">Step 1: set up the render pipeline state</h3>
+
+<p>First we create a vertex descriptor so we can pass input to the vertex function. The vertex descriptor is needed to describe the vertex attribute inputs to a render state pipeline. We need <code class="highlighter-rouge">3 x 4</code> bytes for the vertex position, <code class="highlighter-rouge">4 x 1</code> byte for color, <code class="highlighter-rouge">2 x 2</code> bytes for the texture coordinates and <code class="highlighter-rouge">4 x 1</code> byte for ambient occlusion. At the end we tell the descriptor how large (<strong>24</strong>) our <code class="highlighter-rouge">stride</code> is in total:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">vertexDescriptor</span> <span class="o">=</span> <span class="kt">MTLVertexDescriptor</span><span class="p">()</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="kt">MTLVertexFormat</span><span class="o">.</span><span class="n">float3</span> <span class="c1">// position
+</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="mi">12</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="kt">MTLVertexFormat</span><span class="o">.</span><span class="n">uChar4</span> <span class="c1">// color
+</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="kt">MTLVertexFormat</span><span class="o">.</span><span class="n">half2</span> <span class="c1">// texture
+</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">format</span> <span class="o">=</span> <span class="kt">MTLVertexFormat</span><span class="o">.</span><span class="n">float</span> <span class="c1">// occlusion
+</span>
+<span class="n">vertexDescriptor</span><span class="o">.</span><span class="n">layouts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">stride</span> <span class="o">=</span> <span class="mi">24</span>
+<span class="k">let</span> <span class="nv">renderPipelineDescriptor</span> <span class="o">=</span> <span class="kt">MTLRenderPipelineDescriptor</span><span class="p">()</span>
+<span class="n">renderPipelineDescriptor</span><span class="o">.</span><span class="n">vertexDescriptor</span> <span class="o">=</span> <span class="n">vertexDescriptor</span>
+<span class="k">let</span> <span class="nv">rps</span> <span class="o">=</span> <span class="n">device</span><span class="o">.</span><span class="nf">newRenderPipelineStateWithDescriptor</span><span class="p">(</span><span class="n">renderPipelineDescriptor</span><span class="p">)</span></code></pre></figure>
+
+<h3 id="step-2-set-up-the-asset-initialization">Step 2: set up the asset initialization</h3>
+
+<p>We need to also create a <code class="highlighter-rouge">Model I/O</code> vertex descriptor to describe the layout of the vertex attributes in a mesh. We use a model named <strong>Farmhouse.obj</strong> that also has a texture <strong>Farmhouse.png</strong> (both already added to the sample project for you):</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">desc</span> <span class="o">=</span> <span class="kt">MTKModelIOVertexDescriptorFromMetal</span><span class="p">(</span><span class="n">vertexDescriptor</span><span class="p">)</span>
+<span class="k">var</span> <span class="nv">attribute</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">as!</span> <span class="kt">MDLVertexAttribute</span>
+<span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kt">MDLVertexAttributePosition</span>
+<span class="n">attribute</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">as!</span> <span class="kt">MDLVertexAttribute</span>
+<span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kt">MDLVertexAttributeColor</span>
+<span class="n">attribute</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">as!</span> <span class="kt">MDLVertexAttribute</span>
+<span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kt">MDLVertexAttributeTextureCoordinate</span>
+<span class="n">attribute</span> <span class="o">=</span> <span class="n">desc</span><span class="o">.</span><span class="n">attributes</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">as!</span> <span class="kt">MDLVertexAttribute</span>
+<span class="n">attribute</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="kt">MDLVertexAttributeOcclusionValue</span>
+<span class="k">let</span> <span class="nv">mtkBufferAllocator</span> <span class="o">=</span> <span class="kt">MTKMeshBufferAllocator</span><span class="p">(</span><span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="o">!</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">url</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">url</span><span class="p">(</span><span class="nv">forResource</span><span class="p">:</span> <span class="s">"Farmhouse"</span><span class="p">,</span> <span class="nv">withExtension</span><span class="p">:</span> <span class="s">"obj"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">asset</span> <span class="o">=</span> <span class="kt">MDLAsset</span><span class="p">(</span><span class="nv">url</span><span class="p">:</span> <span class="n">url</span><span class="o">!</span><span class="p">,</span> <span class="nv">vertexDescriptor</span><span class="p">:</span> <span class="n">desc</span><span class="p">,</span> <span class="nv">bufferAllocator</span><span class="p">:</span> <span class="n">mtkBufferAllocator</span><span class="p">)</span></code></pre></figure>
+
+<p>Next, we load the texture for our asset:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">loader</span> <span class="o">=</span> <span class="kt">MTKTextureLoader</span><span class="p">(</span><span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">file</span> <span class="o">=</span> <span class="kt">Bundle</span><span class="o">.</span><span class="n">main</span><span class="o">.</span><span class="nf">path</span><span class="p">(</span><span class="nv">forResource</span><span class="p">:</span> <span class="s">"Farmhouse"</span><span class="p">,</span> <span class="nv">ofType</span><span class="p">:</span> <span class="s">"png"</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">data</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">Data</span><span class="p">(</span><span class="nv">contentsOf</span><span class="p">:</span> <span class="kt">URL</span><span class="p">(</span><span class="nv">fileURLWithPath</span><span class="p">:</span> <span class="n">file</span><span class="p">))</span>
+<span class="k">let</span> <span class="nv">texture</span> <span class="o">=</span> <span class="k">try</span> <span class="n">loader</span><span class="o">.</span><span class="nf">newTexture</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">data</span><span class="p">,</span> <span class="nv">options</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span></code></pre></figure>
+
+<h3 id="step-3-set-up--mesh-and-submesh-objects">Step 3: set up <code class="highlighter-rouge">MetalKit</code> mesh and submesh objects</h3>
+
+<p>We are now creating the meshes and submeshes needed in the final, fourth step. We also compute the <strong>Ambient Occlusion</strong>, which is a measure of geometry obstruction, and it tells us how much of the ambient light actually reaches any given pixel or point of our object, and and how much of this light is blocked by surrounding meshes. <code class="highlighter-rouge">Model I/O</code> provides a <code class="highlighter-rouge">UV</code> mapper that creates a <code class="highlighter-rouge">2D</code> texture and wraps it around the object’s <code class="highlighter-rouge">3D</code> mesh. For every pixel in the texture we can compute the ambient occlusion value, which is just one extra float added for each vertex:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">mesh</span> <span class="o">=</span> <span class="n">asset</span><span class="o">.</span><span class="nf">object</span><span class="p">(</span><span class="nv">at</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span> <span class="k">as?</span> <span class="kt">MDLMesh</span>
+<span class="n">mesh</span><span class="o">.</span><span class="nf">generateAmbientOcclusionVertexColors</span><span class="p">(</span><span class="nv">withQuality</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">attenuationFactor</span><span class="p">:</span> <span class="mf">0.98</span><span class="p">,</span> <span class="nv">objectsToConsider</span><span class="p">:</span> <span class="p">[</span><span class="n">mesh</span><span class="p">],</span> <span class="nv">vertexAttributeNamed</span><span class="p">:</span> <span class="kt">MDLVertexAttributeOcclusionValue</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">meshes</span> <span class="o">=</span> <span class="k">try</span> <span class="kt">MTKMesh</span><span class="o">.</span><span class="nf">newMeshes</span><span class="p">(</span><span class="nv">from</span><span class="p">:</span> <span class="n">asset</span><span class="p">,</span> <span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="o">!</span><span class="p">,</span> <span class="nv">sourceMeshes</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span></code></pre></figure>
+
+<h3 id="step-4-set-up--rendering-and-drawing-of-meshes">Step 4: set up <code class="highlighter-rouge">Metal</code> rendering and drawing of meshes</h3>
+
+<p>Finally, we configure the command encoder with the mesh data that it needs to draw:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">mesh</span> <span class="o">=</span> <span class="p">(</span><span class="n">meshes</span><span class="p">?</span><span class="o">.</span><span class="n">first</span><span class="p">)</span><span class="o">!</span>
+<span class="k">let</span> <span class="nv">vertexBuffer</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">vertexBuffers</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">commandEncoder</span><span class="o">.</span><span class="nf">setVertexBuffer</span><span class="p">(</span><span class="n">vertexBuffer</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="n">vertexBuffer</span><span class="o">.</span><span class="n">offset</span><span class="p">,</span> <span class="nv">at</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span>
+<span class="k">let</span> <span class="nv">submesh</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">submeshes</span><span class="o">.</span><span class="n">first</span><span class="o">!</span>
+<span class="n">commandEncoder</span><span class="o">.</span><span class="nf">drawIndexedPrimitives</span><span class="p">(</span><span class="n">submesh</span><span class="o">.</span><span class="n">primitiveType</span><span class="p">,</span> <span class="nv">indexCount</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexCount</span><span class="p">,</span> <span class="nv">indexType</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexType</span><span class="p">,</span> <span class="nv">indexBuffer</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexBuffer</span><span class="o">.</span><span class="n">buffer</span><span class="p">,</span> <span class="nv">indexBufferOffset</span><span class="p">:</span> <span class="n">submesh</span><span class="o">.</span><span class="n">indexBuffer</span><span class="o">.</span><span class="n">offset</span><span class="p">)</span></code></pre></figure>
+
+<p>Next, we will work on our shader functions. First we set up our structs for the vertices and uniforms:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">struct</span> <span class="kt">VertexIn</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">position</span> <span class="p">[[</span><span class="nf">attribute</span><span class="p">(</span><span class="mi">0</span><span class="p">)]];</span>
+    <span class="n">float4</span> <span class="n">color</span> <span class="p">[[</span><span class="nf">attribute</span><span class="p">(</span><span class="mi">1</span><span class="p">)]];</span>
+    <span class="n">float2</span> <span class="n">texCoords</span> <span class="p">[[</span><span class="nf">attribute</span><span class="p">(</span><span class="mi">2</span><span class="p">)]];</span>
+    <span class="n">float</span> <span class="n">occlusion</span> <span class="p">[[</span><span class="nf">attribute</span><span class="p">(</span><span class="mi">3</span><span class="p">)]];</span>
+<span class="p">};</span>
+
+<span class="kd">struct</span> <span class="kt">VertexOut</span> <span class="p">{</span>
+    <span class="n">float4</span> <span class="n">position</span> <span class="p">[[</span><span class="n">position</span><span class="p">]];</span>
+    <span class="n">float4</span> <span class="n">color</span><span class="p">;</span>
+    <span class="n">float2</span> <span class="n">texCoords</span><span class="p">;</span>
+    <span class="n">float</span> <span class="n">occlusion</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">struct</span> <span class="kt">Uniforms</span> <span class="p">{</span>
+    <span class="n">float4x4</span> <span class="n">modelViewProjectionMatrix</span><span class="p">;</span>
+<span class="p">};</span></code></pre></figure>
+
+<p>Notice that we are matching the information we set up in the vertex descriptor, with the <code class="highlighter-rouge">VertexIn</code> struct.
+For the vertex function, we use a <strong>[[stage_in]]</strong> attribute because we are passing per-vertex inputs as an argument to this function:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">vertex</span> <span class="kt">VertexOut</span> <span class="nf">vertex_func</span><span class="p">(</span><span class="n">const</span> <span class="kt">VertexIn</span> <span class="n">vertices</span> <span class="p">[[</span><span class="n">stage_in</span><span class="p">]],</span>
+                             <span class="n">constant</span> <span class="kt">Uniforms</span> <span class="o">&amp;</span><span class="n">uniforms</span> <span class="p">[[</span><span class="nf">buffer</span><span class="p">(</span><span class="mi">1</span><span class="p">)]],</span>
+                             <span class="n">uint</span> <span class="n">vertexId</span> <span class="p">[[</span><span class="n">vertex_id</span><span class="p">]])</span>
+<span class="p">{</span>
+    <span class="n">float4x4</span> <span class="n">mvpMatrix</span> <span class="o">=</span> <span class="n">uniforms</span><span class="o">.</span><span class="n">modelViewProjectionMatrix</span><span class="p">;</span>
+    <span class="n">float4</span> <span class="n">position</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">position</span><span class="p">;</span>
+    <span class="kt">VertexOut</span> <span class="n">out</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="n">mvpMatrix</span> <span class="o">*</span> <span class="n">position</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">color</span> <span class="o">=</span> <span class="nf">float4</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">texCoords</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">texCoords</span><span class="p">;</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">occlusion</span> <span class="o">=</span> <span class="n">vertices</span><span class="o">.</span><span class="n">occlusion</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">out</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The fragment function reads the per-fragment inputs passed from the vertex function and also processes the texture we passed via the command encoder:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">fragment</span> <span class="n">half4</span> <span class="nf">fragment_func</span><span class="p">(</span><span class="kt">VertexOut</span> <span class="n">fragments</span> <span class="p">[[</span><span class="n">stage_in</span><span class="p">]],</span>
+                             <span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="o">&gt;</span> <span class="n">textures</span> <span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">0</span><span class="p">)]])</span>
+<span class="p">{</span>
+    <span class="n">float4</span> <span class="n">baseColor</span> <span class="o">=</span> <span class="n">fragments</span><span class="o">.</span><span class="n">color</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nf">half4</span><span class="p">(</span><span class="n">baseColor</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>If you run the playground, you will see this output image:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_3.png" alt="alt text" title="3" /></p>
+
+<p>That’s a pretty dull white model. Let’s apply the ambient occlusion to it by replacing the last line in the fragment function with these lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">float4</span> <span class="n">occlusion</span> <span class="o">=</span> <span class="n">fragments</span><span class="o">.</span><span class="n">occlusion</span><span class="p">;</span>
+<span class="k">return</span> <span class="nf">half4</span><span class="p">(</span><span class="n">baseColor</span> <span class="o">*</span> <span class="n">occlusion</span><span class="p">);</span></code></pre></figure>
+
+<p>If you run the playground again, you will see this output image:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_4.png" alt="alt text" title="4" /></p>
+
+<p>The ambient occlusion also seems a bit raw and that is because our model is quite flat, without any curves or surface irregularities which would give way more credit to the realism that the ambient occlusion brings. Next, let’s apply the texture. Replace the last line in the fragment function with these lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">constexpr</span> <span class="n">sampler</span> <span class="n">samplers</span><span class="p">;</span>
+<span class="n">float4</span> <span class="n">texture</span> <span class="o">=</span> <span class="n">textures</span><span class="o">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">samplers</span><span class="p">,</span> <span class="n">fragments</span><span class="o">.</span><span class="n">texCoords</span><span class="p">);</span>
+<span class="k">return</span> <span class="nf">half4</span><span class="p">(</span><span class="n">baseColor</span> <span class="o">*</span> <span class="n">texture</span><span class="p">);</span></code></pre></figure>
+
+<p>If you run the playground again, you will see this output image:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_5.png" alt="alt text" title="5" /></p>
+
+<p>The texture looks really great on this model, but it would look even more realistic if we brought the ambient occlusion back. Replace the last line in the fragment function with this line:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">return</span> <span class="nf">half4</span><span class="p">(</span><span class="n">baseColor</span> <span class="o">*</span> <span class="n">occlusion</span> <span class="o">*</span> <span class="n">texture</span><span class="p">);</span></code></pre></figure>
+
+<p>If you run the playground again, you will see this output image:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/modelio_6.png" alt="alt text" title="6" /></p>
+
+<p>Not bad for a few lines of code, right? <code class="highlighter-rouge">Model I/O</code> is such a great framework for <code class="highlighter-rouge">3D</code> graphics and game programmers. There are a couple of articles on the web about using <code class="highlighter-rouge">Model I/O</code> with <code class="highlighter-rouge">SceneKit</code>, however, I thought using it with <code class="highlighter-rouge">Metal</code> is even more interesting! The <a href="https://github.com/MetalKit/modelio">source code</a> is posted on Github as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

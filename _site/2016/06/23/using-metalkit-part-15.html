@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using MetalKit part 15</title>
+  <meta name="description" content="At the end of part 13 we concluded we can make our planet look more realistic in two ways: either apply a texture to it, or add some noise to the planet colo...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://devimages.apple.com.edgekey.net/assets/elements/icons/metal/metal-128x128_2x.png" />
+  <link rel="canonical" href="http://localhost:4000/2016/06/23/using-metalkit-part-15.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using MetalKit part 15</h1>
+    <p class="post-meta"><time datetime="2016-06-23T00:00:00-05:00" itemprop="datePublished">Jun 23, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>At the end of <code class="highlighter-rouge">part 13</code> we concluded we can make our planet look more realistic in two ways: either apply a texture to it, or add some noise to the <code class="highlighter-rouge">planet</code> color. We showed how to add noise in <code class="highlighter-rouge">part 14</code>. This week we look at <strong>textures</strong> and <strong>samplers</strong>. Textures are useful because they can provide a greater level of detail to surfaces than color computing for each vertex could.</p>
+
+<p>Let’s pick up where we left off in <a href="http://metalkit.org/2016/05/25/using-metalkit-part-13.html">Part 13</a> since we do not need the noise code this time. First, in <code class="highlighter-rouge">MetalView.swift</code> let’s remove the <code class="highlighter-rouge">mouseDown</code> function as we are not going to need it anymore. Also remove the <code class="highlighter-rouge">mouseBuffer</code> and <code class="highlighter-rouge">pos</code> variables, as well as any references to them in the code. Then, create a new texture object:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">var</span> <span class="nv">texture</span><span class="p">:</span> <span class="kt">MTLTexture</span><span class="o">!</span></code></pre></figure>
+
+<p>Next, replace this line (it’s likely you removed it already in the above cleaning step):</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">commandEncoder</span><span class="o">.</span><span class="nf">setBuffer</span><span class="p">(</span><span class="n">mouseBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">atIndex</span><span class="p">:</span> <span class="mi">2</span><span class="p">)</span></code></pre></figure>
+
+<p>with this line:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">commandEncoder</span><span class="o">.</span><span class="nf">setTexture</span><span class="p">(</span><span class="n">texture</span><span class="p">,</span> <span class="nv">atIndex</span><span class="p">:</span> <span class="mi">1</span><span class="p">)</span></code></pre></figure>
+
+<p>and also change the buffer index for our <code class="highlighter-rouge">timer</code> from <strong>1</strong> to <strong>0</strong>:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">commandEncoder</span><span class="o">.</span><span class="nf">setBuffer</span><span class="p">(</span><span class="n">timerBuffer</span><span class="p">,</span> <span class="nv">offset</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="nv">atIndex</span><span class="p">:</span> <span class="mi">0</span><span class="p">)</span></code></pre></figure>
+
+<p>I added an image named <strong>texture.jpg</strong> in the <code class="highlighter-rouge">Resources</code> folder of our playground, but you can add yours instead if you want. Let’s create a function that sets up or texture using this image:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="kd">func</span> <span class="nf">setUpTexture</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">let</span> <span class="nv">path</span> <span class="o">=</span> <span class="kt">NSBundle</span><span class="o">.</span><span class="nf">mainBundle</span><span class="p">()</span><span class="o">.</span><span class="nf">pathForResource</span><span class="p">(</span><span class="s">"texture"</span><span class="p">,</span> <span class="nv">ofType</span><span class="p">:</span> <span class="s">"jpg"</span><span class="p">)</span>
+    <span class="k">let</span> <span class="nv">textureLoader</span> <span class="o">=</span> <span class="kt">MTKTextureLoader</span><span class="p">(</span><span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="o">!</span><span class="p">)</span>
+    <span class="n">texture</span> <span class="o">=</span> <span class="k">try!</span> <span class="n">textureLoader</span><span class="o">.</span><span class="nf">newTextureWithContentsOfURL</span><span class="p">(</span><span class="kt">NSURL</span><span class="p">(</span><span class="nv">fileURLWithPath</span><span class="p">:</span> <span class="n">path</span><span class="o">!</span><span class="p">),</span> <span class="nv">options</span><span class="p">:</span> <span class="kc">nil</span><span class="p">)</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Next, call this function in our <code class="highlighter-rouge">init</code> function:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">override</span> <span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="n">frame</span> <span class="nv">frameRect</span><span class="p">:</span> <span class="kt">CGRect</span><span class="p">,</span> <span class="nv">device</span><span class="p">:</span> <span class="kt">MTLDevice</span><span class="p">?)</span> <span class="p">{</span>
+    <span class="k">super</span><span class="o">.</span><span class="nf">init</span><span class="p">(</span><span class="nv">frame</span><span class="p">:</span> <span class="n">frameRect</span><span class="p">,</span> <span class="nv">device</span><span class="p">:</span> <span class="n">device</span><span class="p">)</span>
+    <span class="nf">registerShaders</span><span class="p">()</span>
+    <span class="nf">setUpTexture</span><span class="p">()</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Now, let’s clean our kernel in <strong>Shaders.metal</strong> to only include these lines:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">kernel</span> <span class="n">void</span> <span class="nf">compute</span><span class="p">(</span><span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">write</span><span class="o">&gt;</span> <span class="n">output</span> <span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">0</span><span class="p">)]],</span>
+                    <span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">read</span><span class="o">&gt;</span> <span class="n">input</span> <span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">1</span><span class="p">)]],</span>
+                    <span class="n">constant</span> <span class="n">float</span> <span class="o">&amp;</span><span class="n">timer</span> <span class="p">[[</span><span class="nf">buffer</span><span class="p">(</span><span class="mi">1</span><span class="p">)]],</span>
+                    <span class="n">uint2</span> <span class="n">gid</span> <span class="p">[[</span><span class="n">thread_position_in_grid</span><span class="p">]])</span>
+<span class="p">{</span>
+    <span class="n">float4</span> <span class="n">color</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">read</span><span class="p">(</span><span class="n">gid</span><span class="p">);</span>
+    <span class="n">gid</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">get_height</span><span class="p">()</span> <span class="o">-</span> <span class="n">gid</span><span class="o">.</span><span class="n">y</span><span class="p">;</span>
+    <span class="n">output</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">color</span><span class="p">,</span> <span class="n">gid</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>You will first notice that we get the <code class="highlighter-rouge">input</code> texture through the <strong>[[texture(1)]]</strong> attribute since that is the index we set it to in the command encoder. Also, the access we requested for it is <strong>read</strong>. Then we read it into the <code class="highlighter-rouge">color</code> variable, however, it comes in flipped upside-down. In order to fix this, on the next line we just flip the <strong>Y</strong> coordinate for each pixel. The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter15_1.png" alt="alt text" title="1" /></p>
+
+<p>If you open the image and compare it with the output, you will notice it is now correctly oriented. Next, we want to bring back our planet and the dark sky around it. Replace the <code class="highlighter-rouge">output</code> line with this block of code:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">int</span> <span class="n">width</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">get_width</span><span class="p">();</span>
+<span class="n">int</span> <span class="n">height</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">get_height</span><span class="p">();</span>
+<span class="n">float2</span> <span class="n">uv</span> <span class="o">=</span> <span class="nf">float2</span><span class="p">(</span><span class="n">gid</span><span class="p">)</span> <span class="o">/</span> <span class="nf">float2</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">);</span>
+<span class="n">uv</span> <span class="o">=</span> <span class="n">uv</span> <span class="o">*</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="n">float</span> <span class="n">radius</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">;</span>
+<span class="n">float</span> <span class="n">distance</span> <span class="o">=</span> <span class="nf">length</span><span class="p">(</span><span class="n">uv</span><span class="p">)</span> <span class="o">-</span> <span class="n">radius</span><span class="p">;</span>
+<span class="n">output</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="nv">color</span> <span class="p">:</span> <span class="nf">float4</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">gid</span><span class="p">);</span></code></pre></figure>
+
+<p>This code looks familiar since we already discussed in the previous chapters how to create the planet and the black space surrounding it. The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter15_2.png" alt="alt text" title="2" /></p>
+
+<p>So far so good! We next want to make our planet rotate again. Replace the <code class="highlighter-rouge">output</code> line with this block of code:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">uv</span> <span class="o">=</span> <span class="nf">fmod</span><span class="p">(</span><span class="nf">float2</span><span class="p">(</span><span class="n">gid</span><span class="p">)</span> <span class="o">+</span> <span class="nf">float2</span><span class="p">(</span><span class="n">timer</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nf">float2</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">));</span>
+<span class="n">color</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">read</span><span class="p">(</span><span class="nf">uint2</span><span class="p">(</span><span class="n">uv</span><span class="p">));</span>
+<span class="n">output</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="nv">color</span> <span class="p">:</span> <span class="nf">float4</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">gid</span><span class="p">);</span></code></pre></figure>
+
+<p>This code again looks familiar from the previous chapters where we discussed how to use <code class="highlighter-rouge">timer</code> to animate the planet. The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter15_3.gif" alt="alt text" title="3" /></p>
+
+<p>This is a bit awkward! The output looks like a spotlight. Replace the last three lines we added with this block of code:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">uv</span> <span class="o">=</span> <span class="n">uv</span> <span class="o">*</span> <span class="mi">2</span><span class="p">;</span>
+<span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+<span class="n">constexpr</span> <span class="n">sampler</span> <span class="nf">textureSampler</span><span class="p">(</span><span class="nv">coord</span><span class="p">::</span><span class="n">normalized</span><span class="p">,</span>
+                                 <span class="nv">address</span><span class="p">::</span><span class="k">repeat</span><span class="p">,</span>
+                                 <span class="nv">min_filter</span><span class="p">::</span><span class="n">linear</span><span class="p">,</span>
+                                 <span class="nv">mag_filter</span><span class="p">::</span><span class="n">linear</span><span class="p">,</span>
+                                 <span class="nv">mip_filter</span><span class="p">::</span><span class="n">linear</span> <span class="p">);</span>
+<span class="n">float3</span> <span class="n">norm</span> <span class="o">=</span> <span class="nf">float3</span><span class="p">(</span><span class="n">uv</span><span class="p">,</span> <span class="nf">sqrt</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="nf">dot</span><span class="p">(</span><span class="n">uv</span><span class="p">,</span> <span class="n">uv</span><span class="p">)));</span>
+<span class="n">float</span> <span class="n">pi</span> <span class="o">=</span> <span class="mf">3.14</span><span class="p">;</span>
+<span class="n">float</span> <span class="n">s</span> <span class="o">=</span> <span class="nf">atan2</span><span class="p">(</span> <span class="n">norm</span><span class="o">.</span><span class="n">z</span><span class="p">,</span> <span class="n">norm</span><span class="o">.</span><span class="n">x</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">);</span>
+<span class="n">float</span> <span class="n">t</span> <span class="o">=</span> <span class="nf">asin</span><span class="p">(</span> <span class="n">norm</span><span class="o">.</span><span class="n">y</span> <span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span><span class="p">);</span>
+<span class="n">t</span> <span class="o">+=</span> <span class="mf">0.5</span><span class="p">;</span>
+<span class="n">color</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="nf">sample</span><span class="p">(</span><span class="n">textureSampler</span><span class="p">,</span> <span class="nf">float2</span><span class="p">(</span><span class="n">s</span> <span class="o">+</span> <span class="n">timer</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">t</span><span class="p">));</span>
+<span class="n">output</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="nv">color</span> <span class="p">:</span> <span class="nf">float4</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">gid</span><span class="p">);</span></code></pre></figure>
+
+<p>First, we  scale down to half the size of the texture and set the radius to <strong>1</strong> so we can match the planet object size with the texture size. Then comes the magic. Let me introduce the <strong>sampler</strong>. A <code class="highlighter-rouge">sampler</code> is an object that contains various rendering states that a texture needs to configure: its coordinates, the addressing mode (set to <code class="highlighter-rouge">repeat</code> here) and the filtering method (set to <code class="highlighter-rouge">linear</code> here). Next, we calculate the <code class="highlighter-rouge">normal</code> at each point on the sphere, then we compute the angles around the sphere using the normals. Finally, we calculate the <code class="highlighter-rouge">color</code> by sampling it instead of reading it as we did before. There is one more thing to do. In the kernel list of arguments, let’s also reconfigure the texture access to <code class="highlighter-rouge">sample</code> instead of <code class="highlighter-rouge">read</code>. Replace this line:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">read</span><span class="o">&gt;</span> <span class="n">input</span> <span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">1</span><span class="p">)]],</span></code></pre></figure>
+
+<p>with this line:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="n">texture2d</span><span class="o">&lt;</span><span class="n">float</span><span class="p">,</span> <span class="nv">access</span><span class="p">::</span><span class="n">sample</span><span class="o">&gt;</span> <span class="n">input</span> <span class="p">[[</span><span class="nf">texture</span><span class="p">(</span><span class="mi">1</span><span class="p">)]],</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter15_4.gif" alt="alt text" title="4" /></p>
+
+<p>Now this is what I call a realistic planet surface! Many thanks again to <a href="https://twitter.com/_psonice">Chris</a> for his assistance. The <a href="https://github.com/MetalKit/metal">source code</a> is posted on Github as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

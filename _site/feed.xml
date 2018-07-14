@@ -1,0 +1,1188 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xml" href="http://localhost:4000/feed.xslt.xml"?><feed xmlns="http://www.w3.org/2005/Atom"><generator uri="http://jekyllrb.com" version="3.3.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2018-07-13T23:42:24-05:00</updated><id>http://localhost:4000//</id><title type="html">The Metal Framework</title><subtitle>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</subtitle><entry><title type="html">Metal By Tutorials book!</title><link href="http://localhost:4000/2018/05/29/metal-by-tutorials-book-copy.html" rel="alternate" type="text/html" title="Metal By Tutorials book!" /><published>2018-05-29T00:00:00-05:00</published><updated>2018-05-29T00:00:00-05:00</updated><id>http://localhost:4000/2018/05/29/metal-by-tutorials-book%20copy</id><content type="html" xml:base="http://localhost:4000/2018/05/29/metal-by-tutorials-book-copy.html">My new book is out! It was such an amazing journey we, the authors, took in writing the first ever Metal book for game engine developers. If you were wondering why there was no blog post for almost half a year now, this was the reason :)
+
+Use this link [https://store.raywenderlich.com/products/metal-by-tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) if you want to purchase the book. For only a limited time the price is discounted.
+
+&lt;span style=&quot;display:block;text-align:center&quot;&gt;![alt text](https://github.com/MetalKit/images/blob/master/MbT.png?raw=true &quot;book&quot;){:height=&quot;412px&quot; width=&quot;320px&quot;}&lt;/span&gt;
+
+I want to thank my co-author, [Caroline Begbie](https://twitter.com/carolinebegbie), and the publisher, [Ray Wenderlich](http://raywenderlich.com), for helping me make this book a reality. 
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">My new book is out! It was such an amazing journey we, the authors, took in writing the first ever Metal book for game engine developers. If you were wondering why there was no blog post for almost half a year now, this was the reason :)</summary></entry><entry><title type="html">Metal 2 on the A11 GPU</title><link href="http://localhost:4000/2017/12/31/metal-2-on-the-a11-gpu.html" rel="alternate" type="text/html" title="Metal 2 on the A11 GPU" /><published>2017-12-31T00:00:00-06:00</published><updated>2017-12-31T00:00:00-06:00</updated><id>http://localhost:4000/2017/12/31/metal-2-on-the-a11-gpu</id><content type="html" xml:base="http://localhost:4000/2017/12/31/metal-2-on-the-a11-gpu.html">When the new `A11`-powered `iPhone` models (8, 8 Plus and X) were announced in the _September Event keynote_, the new [GPU Family 4](https://developer.apple.com/documentation/metal/about_gpu_family_4) webpage and a series of [new Metal videos](https://developer.apple.com/videos/metal) labeled `Fall 2017` were published. The new processor, called __A11 Bionic__, has the first `Apple-designed GPU` which comes with three cores. Internal tests state it is __30%__ faster than the previous `GPU` inside the `A10`. It also features a new `Neural Engine` hardware addition, for machine learning.
+
+Below is a table I made out of the [Metal Feature Sets](https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf) document. It includes only what `Metal 2` introduces for the `A11` devices.
+
+![alt text](https://github.com/MetalKit/images/blob/master/A11.png?raw=true &quot;Particle&quot;)
+
+&gt; Note:  I only included features that are new for `A11` and not available for `A10` or earlier. Some of these features are also available for `macOS` devices. 
+
+Let's look briefly into some of these features:
+
+- [Imageblocks](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_imageblocks) - is not a new concept on iOS devices, however, `Metal 2` on `A11` lets us treat imageblocks (which are structured image data in tile memory) as data structures with granular and full control. They are integrated with fragment and compute shaders.  
+
+- [Tile Shading](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_tile_shading) - is a rendering technique that allows fragment and compute shaders to access persistent tile memory between the two rendering phases. Tile memory is GPU on-chip memory that improves performance by storing intermediate results locally instead of using the device memory. Tile memory from one phase is available to any subsequent fragment phases.
+
+- [Raster Order Groups](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_raster_order_groups) - provide ordered memory access from fragment shaders and facilitate features such as order-independent transparency, dual-layer G-buffers, and voxelization.
+
+- [Imageblock Sample Coverage Control](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_enhanced_msaa_and_imageblock_sample_coverage_control) - Metal 2 on A11 tracks the number of unique samples for each pixel, updating this information as new primitives are rendered. The pixel blends one iteration less than it did on A10 or earlier GPUs, when the covered samples share the same color. 
+
+- [Threadgroup Sharing](https://developer.apple.com/documentation/metal/about_gpu_family_4/about_threadgroup_sharing) -  allows threadgroups and the threads within a threadgroup to communicate with each other using atomic operations or a memory fence rather than expensive barriers. 
+
+Even though it is not necessarily `Metal` related, at the same event, the [Face Tracking with ARKit](https://developer.apple.com/videos/play/fall2017/601/) video and [Creating Face-Based AR Experiences](https://developer.apple.com/documentation/arkit/creating_face_based_ar_experiences) webpage were also published. `Face Tracking`, however, is only possible on the `iPhone X` because it is the only one at the moment that has a `TrueDepth` front camera. The most immediate application of face tracking we have all seen during the _September Event keynote_, were the amazing __Animoji__! The new `Neural Engine` hardware is responsible for `FaceID` and `Animoji`, among other machine learning tasks. Since I purchased an `iPhone X` recently, it might give me some ideas for a new post in the `Using ARKit with Metal` series.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">When the new A11-powered iPhone models (8, 8 Plus and X) were announced in the September Event keynote, the new GPU Family 4 webpage and a series of new Metal videos labeled Fall 2017 were published. The new processor, called A11 Bionic, has the first Apple-designed GPU which comes with three cores. Internal tests state it is 30% faster than the previous GPU inside the A10. It also features a new Neural Engine hardware addition, for machine learning.</summary></entry><entry><title type="html">Working with Particles in Metal part 3</title><link href="http://localhost:4000/2017/11/30/working-with-particles-in-metal-part-3.html" rel="alternate" type="text/html" title="Working with Particles in Metal part 3" /><published>2017-11-30T00:00:00-06:00</published><updated>2017-11-30T00:00:00-06:00</updated><id>http://localhost:4000/2017/11/30/working-with-particles-in-metal-part-3</id><content type="html" xml:base="http://localhost:4000/2017/11/30/working-with-particles-in-metal-part-3.html">Last time we looked at how to manipulate vertices from `Model I/O` objects on the `GPU`. In this part we are going to show yet another way to create particles using compute threads. We can reuse the playground from last time and we start by modifying the __Particle__ struct in our metal view delegate class to only include two members that we will update on the `GPU` - __position__ and __velocity__:
+
+```swift
+struct Particle {
+    var position: float2
+    var velocity: float2
+}
+```
+
+We need neither the __timer__ variable, nor the __translate(by:)__ and __update()__ methods anymore so you can delete them. The significant change happens inside the __initializeBuffers()__ method:
+
+```swift
+func initializeBuffers() {
+    for _ in 0 ..&lt; particleCount {
+        let particle = Particle(
+        		position: float2(Float(arc4random() %  UInt32(side)), 
+        				Float(arc4random() % UInt32(side))), 
+        		velocity: float2((Float(arc4random() %  10) - 5) / 10, 
+        				(Float(arc4random() %  10) - 5) / 10))
+        particles.append(particle)
+    }
+    let size = particles.count * MemoryLayout&lt;Particle&gt;.size
+    particleBuffer = device.makeBuffer(bytes: &amp;particles, length: size, options: [])
+}
+```
+
+&gt; Note: we generate random positions to fill the entire window and we also generate velocities that will range between `[-5, 5]`. we also divide by `10` to slow them down a little. 
+
+The most important part however, is happening when configuring the command encoder. We set the numbers of `threads per group` to be a `2D` grid determined on one side by the `thread execution width` and on the other side by the `maximum total threads per threadgroup` which are hardware characteristics specific to each `GPU` and will never change during execution. We set the number of `threads per grid` to be a one-dimensional array whose size is determined by the particle count:
+
+```swift
+let w = pipelineState.threadExecutionWidth
+let h = pipelineState.maxTotalThreadsPerThreadgroup / w
+let threadsPerGroup = MTLSizeMake(w, h, 1)
+let threadsPerGrid = MTLSizeMake(particleCount, 1, 1)
+commandEncoder.dispatchThreads(threadsPerGrid, threadsPerThreadgroup: threadsPerGroup)
+```
+
+&gt; Note: new in `Metal 2`, the __dispatchThreads(:)__ method lets us dispatch work without having to specify how many thread groups we want. in contrast to using the older __dispatchThreadgroups(:)__ method, the new method calculates the number of groups and provides `nonuniform thread groups` when the size of the grid is not a multiple of the group size, and also makes sure there are no underutilized threads. 
+
+On to the kernel shader, we first match the particle struct with the one on the `CPU` and then inside the kernel we update the positions and velocities:
+
+```swift
+Particle particle = particles[id];
+float2 position = particle.position;
+float2 velocity = particle.velocity;
+int width = output.get_width();
+int height = output.get_height();
+if (position.x &lt; 0 || position.x &gt; width) { velocity.x *= -1; }
+if (position.y &lt; 0 || position.y &gt; height) { velocity.y *= -1; }
+position += velocity;
+particle.position = position;
+particle.velocity = velocity;
+particles[id] = particle;
+uint2 pos = uint2(position.x, position.y);
+output.write(half4(1.), pos);
+output.write(half4(1.), pos + uint2( 1, 0));
+output.write(half4(1.), pos + uint2( 0, 1));
+output.write(half4(1.), pos - uint2( 1, 0));
+output.write(half4(1.), pos - uint2( 0, 1));
+```
+&gt; Note: we do checks for bounds and when that happens we simply reverse the velocity so the particles do not leave the screen. we also use a neat trick when drawing, by making sure the four neighboring pixels are also drawn so the particles look a bit larger. fair warning - be careful when writing the neighboring pixels that are outside of the texture. that part of the memory might belong to another program and should not be written here, so make sure to do bound checks here as well.
+
+You can set __particleCount__ to `1,000,000` if you want but it will take a few seconds to generate them before rendering them all. Because I am only rendering in a relatively small window, I am only rendering `10,000` particles so they don't look too crammed in this window space. If you run the app, you should be able to see the particles moving around randomly:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/particles3.gif?raw=true &quot;Particle&quot;)
+
+This article concludes the rendering particles series. I want to thank [FlexMonkey](https://twitter.com/flexmonkey) for sharing great insights about compute concepts. The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Last time we looked at how to manipulate vertices from Model I/O objects on the GPU. In this part we are going to show yet another way to create particles using compute threads. We can reuse the playground from last time and we start by modifying the Particle struct in our metal view delegate class to only include two members that we will update on the GPU - position and velocity:</summary></entry><entry><title type="html">Working with Particles in Metal part 2</title><link href="http://localhost:4000/2017/10/31/working-with-particles-in-metal-part-2.html" rel="alternate" type="text/html" title="Working with Particles in Metal part 2" /><published>2017-10-31T00:00:00-05:00</published><updated>2017-10-31T00:00:00-05:00</updated><id>http://localhost:4000/2017/10/31/working-with-particles-in-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/10/31/working-with-particles-in-metal-part-2.html">Last time we looked at how to quickly prototype a particle-like object directly inside a shader, using distance functions. That was acceptable for moving an object based on time elapsed. However, if we want to work with vertices we would need to define the particles on the `CPU` and send the vertex data to the `GPU`. We use again a minimal playground we used in the past for `3D` rendering, and we start by creating a __Particle__ struct in our metal view delegate class:
+
+```swift
+struct Particle {
+    var initialMatrix = matrix_identity_float4x4
+    var matrix = matrix_identity_float4x4
+    var color = float4()
+}
+```
+
+Next, we create an array of particles and a buffer to hold the data. Here we also give each particle a nice blue color and a random position to start at:
+
+```swift
+particles = [Particle](repeatElement(Particle(), count: 1000))
+particlesBuffer = device.makeBuffer(length: particles.count * MemoryLayout&lt;Particle&gt;.stride, options: [])!
+var pointer = particlesBuffer.contents().bindMemory(to: Particle.self, capacity: particles.count)
+for _ in particles {
+    pointer.pointee.initialMatrix = translate(by: [Float(drand48()) / 10, Float(drand48()) * 10, 0])
+    pointer.pointee.color = float4(0.2, 0.6, 0.9, 1)
+    pointer = pointer.advanced(by: 1)
+}
+```
+
+&gt; Note: we divide the `x` coordinate by `10` to gather particles inside a small horizontal range, while we multiply the `y` coordinate by `10` for the opposite effect - to spread out the particles vertically a little. 
+
+The next step is to create a sphere that will serve as the particle's mesh:
+
+```swift
+let allocator = MTKMeshBufferAllocator(device: device)
+let sphere = MDLMesh(sphereWithExtent: [0.01, 0.01, 0.01], segments: [8, 8], inwardNormals: false, geometryType: .triangles, allocator: allocator)
+do { model = try MTKMesh(mesh: sphere, device: device) } 
+catch let e { print(e) }
+```
+
+Next, we need an updating function to animate the particles on the screen. Inside, we increase the timer each frame by `0.01` and update the `y` coordinate using the timer value - creating a falling-like motion:
+
+```swift
+func update() {
+    timer += 0.01
+    var pointer = particlesBuffer.contents().bindMemory(to: Particle.self, capacity: particles.count)
+    for _ in particles {
+        pointer.pointee.matrix = translate(by: [0, -3 * timer, 0]) * pointer.pointee.initialMatrix
+        pointer = pointer.advanced(by: 1)
+    }
+}
+```
+
+At this point we are ready to call this function inside the __draw__ method and then send the data to the `GPU`:
+
+```swift
+update()
+let submesh = model.submeshes[0]
+commandEncoder.setVertexBuffer(model.vertexBuffers[0].buffer, offset: 0, index: 0)
+commandEncoder.setVertexBuffer(particlesBuffer, offset: 0, index: 1)
+commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: 0, instanceCount: particles.count)
+```
+
+In the __Shaders.metal__ file we have a struct for the incoming and outgoing vertices, as well as one for the particle instances:
+
+```clike
+struct VertexIn {
+    float4 position [[attribute(0)]];
+};
+
+struct VertexOut {
+    float4 position [[position]];
+    float4 color;
+};
+
+struct Particle {
+    float4x4 initial_matrix;
+    float4x4 matrix;
+    float4 color;
+};
+```
+
+The vertex shader uses the __instance_id__ attribute which we use to create many instances of the same one sphere we sent to the `GPU` in the vertex buffer at index `0`. We then assign to each instance one of the positions we stored and sent to the `GPU` in the buffer at index `1`.
+
+```clike
+vertex VertexOut vertex_main(const VertexIn vertex_in [[stage_in]],
+                             constant Particle *particles [[buffer(1)]],
+                             uint instanceid [[instance_id]]) {
+    VertexOut vertex_out;
+    Particle particle = particles[instanceid];
+    vertex_out.position = particle.matrix * vertex_in.position ;
+    vertex_out.color = particle.color;
+    return vertex_out;
+}
+```
+
+Finally, in the fragment shader we return the color we passed through in the vertex shader:
+
+```clike
+fragment float4 fragment_main(VertexOut vertex_in [[stage_in]]) {
+    return vertex_in.color;
+}
+```
+
+If you run the app, you should be able to see the particles falling down like a water stream:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/particles.gif?raw=true &quot;Particle&quot;)
+
+There is yet another, much more efficient approach to rendering particles on the `GPU`. We'll look into that next time. I want to thank [Caroline](https://twitter.com/carolinebegbie) for her valuable assistance with instancing. The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Last time we looked at how to quickly prototype a particle-like object directly inside a shader, using distance functions. That was acceptable for moving an object based on time elapsed. However, if we want to work with vertices we would need to define the particles on the CPU and send the vertex data to the GPU. We use again a minimal playground we used in the past for 3D rendering, and we start by creating a Particle struct in our metal view delegate class:</summary></entry><entry><title type="html">Working with Particles in Metal</title><link href="http://localhost:4000/2017/09/30/working-with-particles-in-metal.html" rel="alternate" type="text/html" title="Working with Particles in Metal" /><published>2017-09-30T00:00:00-05:00</published><updated>2017-09-30T00:00:00-05:00</updated><id>http://localhost:4000/2017/09/30/working-with-particles-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/09/30/working-with-particles-in-metal.html">Today, we're going to start a new series about particles in `Metal`. Since most of the time particles are tiny objects, we are not usually concerned about their geometry. This makes them fit for a compute shader because later on we will want to have granular control over particle-particle interactions and this is a case fit for a high degree of parallelism control which a compute shader allows us to have. Let's use the last playground we worked on when we did ambient occlusion and continue from there. That playground is useful here because it already has a __time__ variable that the `CPU` passes to the `GPU`. Let's start with a fresh __Shaders.metal__ file, and just give the background a nice color:
+
+{% highlight swift %}#include &lt;metal_stdlib&gt;
+using namespace metal;
+
+kernel void compute(texture2d&lt;float, access::write&gt; output [[texture(0)]],
+                    constant float &amp;time [[buffer(0)]],
+                    uint2 gid [[thread_position_in_grid]]) {
+    float width = output.get_width();
+    float height = output.get_height();
+    float2 uv = float2(gid) / float2(width, height);
+    float aspect = width / height;
+    uv.x *= aspect;
+    output.write(float4(0.2, 0.5, 0.7, 1), gid);
+}
+{% endhighlight %}
+
+Next, let's create a particle object that only has a position (center) and a radius:
+
+{% highlight swift %}struct Particle {
+    float2 center;
+    float radius;
+};
+{% endhighlight %}
+
+We also need a way to know where the particle is on the screen, so let's create a distance function for that:
+
+{% highlight swift %}float distanceToParticle(float2 point, Particle p) {
+    return length(point - p.center) - p.radius;
+}
+{% endhighlight %}
+
+Inside the kernel, right above the last line, let's create a new particle and place it at the top of the screen, midway on the `X` axis. Give it a radius of `0.05`:
+
+{% highlight swift %}float2 center = float2(aspect / 2, time);
+float radius = 0.05;
+Particle p = Particle{center, radius};
+{% endhighlight %}
+
+&gt; Note: we used the `time` as the `Y` coordinate of the particle but this is only a trick to show basic movement. Soon, we will replace this variable with a coordinate that changes under the laws of physics. 
+
+Replace the last line of the kernel with these lines and run the app. You should see the particle falling down at a steady rate:
+
+{% highlight swift %}float distance = distanceToParticle(uv, p);
+float4 color = float4(1, 0.7, 0, 1);
+if (distance &gt; 0) { color = float4(0.2, 0.5, 0.7, 1); }
+output.write(float4(color), gid);
+{% endhighlight %}
+
+The particle, however, will keep going down forever. To make it stop at the bottom, enforce this condition right before creating the particle:
+
+{% highlight swift %}float stop = 1 - radius;
+if (time &gt;= stop) { center.y = stop; }
+else center.y = time;
+{% endhighlight %}
+
+&gt; Note: both `time` and the `uv` variables go from `0-1` so we create a `stop` point which is the window height less the particle radius. 
+
+That was a very basic collision detection rule. If you run the app, you should be able to see the particle falling down uniformly and stopping at the bottom, like this:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/particle.gif?raw=true &quot;Particle&quot;)
+
+Next time we will go deeper into particle dynamics and implement the laws of motion from physics. The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today, we’re going to start a new series about particles in Metal. Since most of the time particles are tiny objects, we are not usually concerned about their geometry. This makes them fit for a compute shader because later on we will want to have granular control over particle-particle interactions and this is a case fit for a high degree of parallelism control which a compute shader allows us to have. Let’s use the last playground we worked on when we did ambient occlusion and continue from there. That playground is useful here because it already has a time variable that the CPU passes to the GPU. Let’s start with a fresh Shaders.metal file, and just give the background a nice color:</summary></entry><entry><title type="html">Using ARKit with Metal part 2</title><link href="http://localhost:4000/2017/08/31/using-arkit-with-metal-part-2.html" rel="alternate" type="text/html" title="Using ARKit with Metal part 2" /><published>2017-08-31T00:00:00-05:00</published><updated>2017-08-31T00:00:00-05:00</updated><id>http://localhost:4000/2017/08/31/using-arkit-with-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/08/31/using-arkit-with-metal-part-2.html">As underlined last time, ￼there are three layers in an __ARKit__ application: `Rendering`, `Tracking` and `Scene Understanding`. Last time we analyzed in great detail how _Rendering_ is done in `Metal` using a custom view. `ARKit` uses `Visual Inertial Odometry` for accurate _Tracking_ of the world around it and to combine camera sensor data with `CoreMotion` data. No additional calibration is necessary for image stability while we are in motion. In this article we look at **Scene Understanding** - ways of describing scene attributes by using plane detection, hit-testing and light estimation. `ARKit` can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is __off__ by default) by simply adding one more line before running the session configuration:
+
+{% highlight swift %}override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    let configuration = ARWorldTrackingConfiguration()
+    configuration.planeDetection = .horizontal
+    session.run(configuration)
+}
+{% endhighlight %}
+
+&gt; Note that only __horizontal__ plane detection is possible with the current `API` version.
+
+The __ARSessionObserver__ protocol's methods are used for handling session errors, tracking changes and interruptions:
+    
+{% highlight swift %}func session(_ session: ARSession, didFailWithError error: Error) {}
+func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) {}
+func session(_ session: ARSession, didOutputAudioSampleBuffer audioSampleBuffer: CMSampleBuffer) {}
+func sessionWasInterrupted(_ session: ARSession) {}
+func sessionInterruptionEnded(_ session: ARSession) {}
+{% endhighlight %}
+
+However, there are other delegate methods that belong to the __ARSessionDelegate__ protocol (which extends `ARSessionObserver`) that let us work with anchors. Put a __print()__ call inside the first one:
+
+{% highlight swift %}func session(_ session: ARSession, didAdd anchors: [ARAnchor]) {
+    print(anchors)
+}
+func session(_ session: ARSession, didRemove anchors: [ARAnchor]) {}
+func session(_ session: ARSession, didUpdate anchors: [ARAnchor]) {}
+func session(_ session: ARSession, didUpdate frame: ARFrame) {}
+{% endhighlight %}
+
+Let's move to the __Renderer.swift__ file now. First, create a few class properties we need to work with. These variables will help us create and display a debug plane on the screen:
+
+{% highlight swift %}var debugUniformBuffer: MTLBuffer!
+var debugPipelineState: MTLRenderPipelineState!
+var debugDepthState: MTLDepthStencilState!var debugMesh: MTKMesh!
+var debugUniformBufferOffset: Int = 0
+var debugUniformBufferAddress: UnsafeMutableRawPointer!
+var debugInstanceCount: Int = 0
+{% endhighlight %}
+
+Next, in __setupPipeline()__ we create the buffer:
+
+{% highlight swift %}debugUniformBuffer = device.makeBuffer(length: anchorUniformBufferSize, options: .storageModeShared)
+{% endhighlight %}
+
+We need to create new vertex and fragment functions for our plane, as well as new render pipeline and depth stencil states. Right before the line where the command queue is created, add these lines:
+
+{% highlight swift %}let debugGeometryVertexFunction = defaultLibrary.makeFunction(name: &quot;vertexDebugPlane&quot;)!
+let debugGeometryFragmentFunction = defaultLibrary.makeFunction(name: &quot;fragmentDebugPlane&quot;)!
+anchorPipelineStateDescriptor.vertexFunction =  debugGeometryVertexFunction
+anchorPipelineStateDescriptor.fragmentFunction = debugGeometryFragmentFunction
+do { try debugPipelineState = device.makeRenderPipelineState(descriptor: anchorPipelineStateDescriptor)
+} catch let error { print(error) }
+debugDepthState = device.makeDepthStencilState(descriptor: anchorDepthStateDescriptor)
+{% endhighlight %}
+
+Next, in __setupAssets()__ we need to create a new `Model I/O` plane mesh and then create the `Metal` mesh from it. At the end of the function add these lines:
+
+{% highlight swift %}mdlMesh = MDLMesh(planeWithExtent: vector3(0.1, 0.1, 0.1), segments: vector2(1, 1), geometryType: .triangles, allocator: metalAllocator)
+mdlMesh.vertexDescriptor = vertexDescriptor
+do { try debugMesh = MTKMesh(mesh: mdlMesh, device: device)
+} catch let error { print(error) }
+{% endhighlight %}
+
+Next, in __updateBufferStates()__ we need to update the address of the buffer where the plane resides. Add the following lines:
+
+{% highlight swift %}debugUniformBufferOffset = alignedInstanceUniformSize * uniformBufferIndex
+debugUniformBufferAddress = debugUniformBuffer.contents().advanced(by: debugUniformBufferOffset)
+{% endhighlight %}
+
+Next, in __updateAnchors()__ we need to update the transform matrices and the anchors count. Add the following lines before the loop:
+
+{% highlight swift %}let count = frame.anchors.filter{ $0.isKind(of: ARPlaneAnchor.self) }.count
+debugInstanceCount = min(count, maxAnchorInstanceCount - (anchorInstanceCount - count))
+{% endhighlight %}
+
+Then, inside the loop replace the last three lines with the following lines:
+
+{% highlight swift %}if anchor.isKind(of: ARPlaneAnchor.self) {
+    let transform = anchor.transform * rotationMatrix(rotation: float3(0, 0, Float.pi/2))
+    let modelMatrix = simd_mul(transform, coordinateSpaceTransform)
+    let debugUniforms = debugUniformBufferAddress.assumingMemoryBound(to: InstanceUniforms.self).advanced(by: index)
+    debugUniforms.pointee.modelMatrix = modelMatrix
+} else {
+    let modelMatrix = simd_mul(anchor.transform, coordinateSpaceTransform)
+    let anchorUniforms = anchorUniformBufferAddress.assumingMemoryBound(to: InstanceUniforms.self).advanced(by: index)
+    anchorUniforms.pointee.modelMatrix = modelMatrix
+}
+{% endhighlight %}
+
+We had to rotate the plane __90__ degrees by the __Z__ axis so we can make it `horizontal`. Notice that we used a custom method named __rotationMatrix()__ so let's define it. We have seen this matrix in the early articles when we first introduced `3D` transforms:
+
+{% highlight swift %}func rotationMatrix(rotation: float3) -&gt; float4x4 {
+    var matrix: float4x4 = matrix_identity_float4x4
+    let x = rotation.x
+    let y = rotation.y
+    let z = rotation.z
+    matrix.columns.0.x = cos(y) * cos(z)
+    matrix.columns.0.y = cos(z) * sin(x) * sin(y) - cos(x) * sin(z)
+    matrix.columns.0.z = cos(x) * cos(z) * sin(y) + sin(x) * sin(z)
+    matrix.columns.1.x = cos(y) * sin(z)
+    matrix.columns.1.y = cos(x) * cos(z) + sin(x) * sin(y) * sin(z)
+    matrix.columns.1.z = -cos(z) * sin(x) + cos(x) * sin(y) * sin(z)
+    matrix.columns.2.x = -sin(y)
+    matrix.columns.2.y = cos(y) * sin(x)
+    matrix.columns.2.z = cos(x) * cos(y)
+    matrix.columns.3.w = 1.0
+    return matrix
+}
+{% endhighlight %}
+
+Next, in __drawAnchorGeometry()__ we need to make sure we have at least one anchor before drawing it. Replace the first line with this one:
+
+{% highlight swift %}guard anchorInstanceCount - debugInstanceCount &gt; 0 else { return }
+{% endhighlight %}
+
+Next, let's finally create the __drawDebugGeometry()__ function that draws our plane. It's very similar to the anchor drawing function:
+
+{% highlight swift %}func drawDebugGeometry(renderEncoder: MTLRenderCommandEncoder) {
+    guard debugInstanceCount &gt; 0 else { return }
+    renderEncoder.pushDebugGroup(&quot;DrawDebugPlanes&quot;)
+    renderEncoder.setCullMode(.back)
+    renderEncoder.setRenderPipelineState(debugPipelineState)
+    renderEncoder.setDepthStencilState(debugDepthState)
+    renderEncoder.setVertexBuffer(debugUniformBuffer, offset: debugUniformBufferOffset, index: 2)
+    renderEncoder.setVertexBuffer(sharedUniformBuffer, offset: sharedUniformBufferOffset, index: 3)
+    renderEncoder.setFragmentBuffer(sharedUniformBuffer, offset: sharedUniformBufferOffset, index: 3)
+    for bufferIndex in 0..&lt;debugMesh.vertexBuffers.count {
+        let vertexBuffer = debugMesh.vertexBuffers[bufferIndex]
+        renderEncoder.setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, index:bufferIndex)
+    }
+    for submesh in debugMesh.submeshes {
+        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: debugInstanceCount)
+    }
+    renderEncoder.popDebugGroup()
+}
+{% endhighlight %}
+
+There is one more thing left to do in `Renderer` and that is - call this function in __update()__ right above the line where we end the encoding:
+
+{% highlight swift %}drawDebugGeometry(renderEncoder: renderEncoder)
+{% endhighlight %}
+
+Finally, let's go to the __Shaders.metal__ file. We need a new struct with just the vertex position passed via a vertex descriptor:
+
+{% highlight swift %}typedef struct {
+    float3 position [[attribute(0)]];
+} DebugVertex;
+{% endhighlight %}
+
+In the vertex shader we update the vertex position using the model-view matrix:
+
+{% highlight swift %}vertex float4 vertexDebugPlane(DebugVertex in [[ stage_in]],
+                               constant SharedUniforms &amp;sharedUniforms [[ buffer(3) ]],
+                               constant InstanceUniforms *instanceUniforms [[ buffer(2) ]],
+                               ushort vid [[vertex_id]],
+                               ushort iid [[instance_id]]) {
+    float4 position = float4(in.position, 1.0);
+    float4x4 modelMatrix = instanceUniforms[iid].modelMatrix;
+    float4x4 modelViewMatrix = sharedUniforms.viewMatrix * modelMatrix;
+    float4 outPosition = sharedUniforms.projectionMatrix * modelViewMatrix * position;
+    return outPosition;
+}
+{% endhighlight %}
+
+And last, in the fragment shader we give the plane a bold color to make it noticeable in the view:
+
+{% highlight swift %}fragment float4 fragmentDebugPlane() {
+    return float4(0.99, 0.42, 0.62, 1.0);
+}
+{% endhighlight %}
+
+If you run the app, you should be able to see a rectangle added when the app detects a plane, like this:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/plane.gif?raw=true &quot;Plane detection&quot;)
+
+What we could do next is update/remove planes as we detect more or as we move away from the previously detected one. The other delegate methods can help us achieve just that. Then, we could look at collisions and physics. Just a thought for the future. 
+
+I want to thank [Caroline](https://twitter.com/carolinebegbie) for being the designated (plane) detective for this article! The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">As underlined last time, ￼there are three layers in an ARKit application: Rendering, Tracking and Scene Understanding. Last time we analyzed in great detail how Rendering is done in Metal using a custom view. ARKit uses Visual Inertial Odometry for accurate Tracking of the world around it and to combine camera sensor data with CoreMotion data. No additional calibration is necessary for image stability while we are in motion. In this article we look at Scene Understanding - ways of describing scene attributes by using plane detection, hit-testing and light estimation. ARKit can analyze the scene presented by the camera view and find horizontal planes such as floors. First, we need to enable the plane detection feature (which is off by default) by simply adding one more line before running the session configuration:</summary></entry><entry><title type="html">Using ARKit with Metal</title><link href="http://localhost:4000/2017/07/29/using-arkit-with-metal.html" rel="alternate" type="text/html" title="Using ARKit with Metal" /><published>2017-07-29T00:00:00-05:00</published><updated>2017-07-29T00:00:00-05:00</updated><id>http://localhost:4000/2017/07/29/using-arkit-with-metal</id><content type="html" xml:base="http://localhost:4000/2017/07/29/using-arkit-with-metal.html">**Augmented Reality** provides a way of overlaying virtual content on top of real world views usually obtained from a mobile device camera. Last month at `WWDC 2017` we were all thrilled to see `Apple`'s new **ARKit** framework which is a high level `API` that works with `A9`-powered devices or newer, running on `iOS 11`. Some of the ARKit experiments we've already seen are outstanding, such as this one below: 
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/ARKit.gif?raw=true &quot;ARKit&quot;)
+
+There are three distinct layers in an `ARKit` application:
+
+- **Tracking** - no external setup is necessary to do world tracking using visual inertial odometry.
+- **Scene Understanding** - the ability of detecting scene attributes using plane detection, hit-testing and light estimation.
+- **Rendering** - can be easily integrated because of the template `AR` views provided by `SpriteKit` and `SceneKit` but it can also be customized for `Metal`. All the pre-render processing is done by `ARKit` which is also responsible for image capturing using `AVFoundation` and `CoreMotion`.
+
+In this first part of the series we will be looking mostly at `Rendering` in `Metal` and talk about the other two stages in the next part of this series. In an `AR` application, the `Tracking` and `Scene Understanding` are handled entirely by the `ARKit` framework while `Rendering` can be handled by either `SpriteKit`, `SceneKit` or `Metal`: 
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/ARKit1.png?raw=true &quot;ARKit 1&quot;)
+
+To get started, we need to have an **ARSession** instance that is set up by an **ARSessionConfiguration** object. Then, we call the __run()__ function on this configuration. The session also has __AVCaptureSession__ and __CMMotionManager__ objects running at the same time to get image and motion data for tracking. Finally, the session will output the current frame to an __ARFrame__ object:
+
+![alt text](https://github.com/MetalKit/images/blob/master/ARKit2.png?raw=true &quot;ARKit 2&quot;)
+
+The `ARSessionConfiguration` object contains information about the type of tracking the session will have. The `ARSessionConfiguration` base configuration class provides __3__ degrees of freedom tracking (the device _orientation_) while its subclass, __ARWorldTrackingSessionConfiguration__, provides __6__ degrees of freedom tracking (the device _position_ and _orientation_). 
+
+![alt text](https://github.com/MetalKit/images/blob/master/ARKit4.png?raw=true &quot;ARKit 4&quot;)
+
+When a device does not support world tracking, it falls back to the base  configuration:
+
+{% highlight swift %}if ARWorldTrackingSessionConfiguration.isSupported { 
+    configuration = ARWorldTrackingSessionConfiguration()
+} else {
+    configuration = ARSessionConfiguration() 
+}
+{% endhighlight %}
+
+An `ARFrame` contains the captured image, tracking information and well as scene information via __ARAnchor__ objects that contain information about real world position and orientation and can be easily added, updated or removed from sessions. `Tracking` is the ability to determine the physical location in real time. The `World Tracking` however, determines both position and orientation, it works with physical distances, it’s relative to the starting position and provides `3D`-feature points. 
+
+The last component of an `ARFrame` are __ARCamera__ objects which facilitate transforms (translation, rotation, scaling) and carry tracking state and camera intrinsics. The quality of tracking relies heavily on uninterrupted sensor data, static scenes and is more accurate when scenes have textured environment with plenty of complexity. Tracking state has three values: __Not Available__ (camera only has the identity matrix), __Limited__ (scene has insufficient features or is not static enough) and __Normal__ (camera is populated with data). Session interruptions are caused by camera input not being available or when tracking is stopped:
+
+{% highlight swift %}func session(_ session: ARSession, cameraDidChangeTrackingState camera: ARCamera) { 
+    if case .limited(let reason) = camera.trackingState {
+        // Notify user of limited tracking state
+    } 
+}
+func sessionWasInterrupted(_ session: ARSession) { 
+    showOverlay()
+}
+func sessionInterruptionEnded(_ session: ARSession) { 
+    hideOverlay()
+    // Optionally restart experience
+}
+{% endhighlight %}
+
+`Rendering` can be done in `SceneKit` using the `ARSCNView`'s delegate to add, update or remove nodes. Similarly, rendering can be done in `SpriteKit` using the `ARSKView` delegate which maps `SKNodes` to `ARAnchor` objects. Since `SpriteKit` is `2D`, it cannot use the real world camera position, so it projects the anchor positions into the `ARSKView` and then renders the sprite as a billboard (plane) at this projected location, so the sprite will always be facing the camera. For `Metal`, there is no customized `AR` view so that responsibility falls in programmer’s hands. For processing of rendered images we need to: 
+
+- draw background camera image (generate a texture from the pixel buffer)
+- update the virtual camera
+- update the lighting
+- update the transforms for geometry
+
+All this information is in the `ARFrame` object. To access the frame, there are two options: _polling_ or using a _delegate_. We are going to describe the latter. I took the `ARKit` template for `Metal` and stripped it down to a minimum so I can better understand how it works. First thing I did was to remove all the `C` dependencies so bridging is not necessary anymore. It will be useful in the future to have it in place so types and enum constants can be shared between `API` code and shaders but for the purpose of this article it is not needed.
+
+Next, on to __ViewController__ which will act as both our `MTKView` and `ARSession` delegates. We create a `Renderer` instance that will work with the delegates for real time updates to the application: 
+
+{% highlight swift %}var session: ARSession!
+var renderer: Renderer!
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+    session = ARSession()
+    session.delegate = self
+    if let view = self.view as? MTKView {
+        view.device = MTLCreateSystemDefaultDevice()
+        view.delegate = self
+        renderer = Renderer(session: session, metalDevice: view.device!, renderDestination: view)
+        renderer.drawRectResized(size: view.bounds.size)
+    }
+    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.handleTap(gestureRecognize:)))
+    view.addGestureRecognizer(tapGesture)
+}
+{% endhighlight %}
+
+As you can see, we also added a gesture recognizer which we will use to add virtual content to our view. We first get the session’s current frame, then create a translation to put our object in front of the camera (__0.3__ meters in this case) and finally add a new anchor to our session using this transform:
+    
+{% highlight swift %}func handleTap(gestureRecognize: UITapGestureRecognizer) {
+    if let currentFrame = session.currentFrame {
+        var translation = matrix_identity_float4x4
+        translation.columns.3.z = -0.3
+        let transform = simd_mul(currentFrame.camera.transform, translation)
+        let anchor = ARAnchor(transform: transform)
+        session.add(anchor: anchor)
+    }
+}
+{% endhighlight %}
+
+We use the __viewWillAppear()__ and __viewWillDisappear()__ methods to start and pause the session:
+    
+{% highlight swift %}override func viewWillAppear(_ animated: Bool) {
+    super.viewWillAppear(animated)
+    let configuration = ARWorldTrackingSessionConfiguration()
+    session.run(configuration)
+}
+
+override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    session.pause()
+}
+{% endhighlight %}
+
+What’s left is only the delegate methods which we need to react to view updates or session errors and interruptions:
+    
+{% highlight swift %}func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+    renderer.drawRectResized(size: size)
+}
+
+func draw(in view: MTKView) {
+    renderer.update()
+}
+
+func session(_ session: ARSession, didFailWithError error: Error) {}
+
+func sessionWasInterrupted(_ session: ARSession) {}
+
+func sessionInterruptionEnded(_ session: ARSession) {}
+{% endhighlight %}
+
+Let's move to the __Renderer.swift__ file now. The first thing to notice is the use of a very handy protocol that will give us access to all the `MTKView` properties we need for the draw call later:
+
+{% highlight swift %}protocol RenderDestinationProvider {
+    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
+    var currentDrawable: CAMetalDrawable? { get }
+    var colorPixelFormat: MTLPixelFormat { get set }
+    var depthStencilPixelFormat: MTLPixelFormat { get set }
+    var sampleCount: Int { get set }
+}
+{% endhighlight %}
+
+Now you can simply extend the `MTKView` class (in `ViewController`) so it conforms to this protocol:
+
+{% highlight swift %}extension MTKView : RenderDestinationProvider {}
+{% endhighlight %}
+
+To have a high level view of the `Renderer` class, here is the pseudocode:
+
+{% highlight swift %}init() {
+    setupPipeline()
+    setupAssets()
+}
+    
+func update() {
+    updateBufferStates()
+    updateSharedUniforms()
+    updateAnchors()
+    updateCapturedImageTextures()
+    updateImagePlane()
+    drawCapturedImage()
+    drawAnchorGeometry()
+}
+{% endhighlight %}
+    
+As always, we first setup the pipeline, here with the __setupPipeline()__ function. Then, in __setupAssets()__ we create our model which will be loaded every time we use our tap gesture recognizer. The `MTKView` delegate will call the __update()__ function for the needed updates and draw calls. Let's look at each of them in detail. First we have __updateBufferStates()__ which updates the locations we write to in our buffers for the current frame (we use a ring buffer with __3__ slots in this case):
+       
+{% highlight swift %}func updateBufferStates() {
+    uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
+    sharedUniformBufferOffset = alignedSharedUniformSize * uniformBufferIndex
+    anchorUniformBufferOffset = alignedInstanceUniformSize * uniformBufferIndex
+    sharedUniformBufferAddress = sharedUniformBuffer.contents().advanced(by: sharedUniformBufferOffset)
+    anchorUniformBufferAddress = anchorUniformBuffer.contents().advanced(by: anchorUniformBufferOffset)
+}
+{% endhighlight %}
+
+Next, in __updateSharedUniforms()__ we update the shared uniforms of the frame and set up lighting for the scene:
+
+{% highlight swift %}func updateSharedUniforms(frame: ARFrame) {
+    let uniforms = sharedUniformBufferAddress.assumingMemoryBound(to: SharedUniforms.self)
+    uniforms.pointee.viewMatrix = simd_inverse(frame.camera.transform)
+    uniforms.pointee.projectionMatrix = frame.camera.projectionMatrix(withViewportSize: viewportSize, orientation: .landscapeRight, zNear: 0.001, zFar: 1000)
+    var ambientIntensity: Float = 1.0
+    if let lightEstimate = frame.lightEstimate {
+        ambientIntensity = Float(lightEstimate.ambientIntensity) / 1000.0
+    }
+    let ambientLightColor: vector_float3 = vector3(0.5, 0.5, 0.5)
+    uniforms.pointee.ambientLightColor = ambientLightColor * ambientIntensity
+    var directionalLightDirection : vector_float3 = vector3(0.0, 0.0, -1.0)
+    directionalLightDirection = simd_normalize(directionalLightDirection)
+    uniforms.pointee.directionalLightDirection = directionalLightDirection
+    let directionalLightColor: vector_float3 = vector3(0.6, 0.6, 0.6)
+    uniforms.pointee.directionalLightColor = directionalLightColor * ambientIntensity
+    uniforms.pointee.materialShininess = 30
+}
+{% endhighlight %}
+
+Next, in __updateAnchors()__ we update the anchor uniform buffer with transforms of the current frame's anchors:
+
+{% highlight swift %}func updateAnchors(frame: ARFrame) {
+    anchorInstanceCount = min(frame.anchors.count, maxAnchorInstanceCount)
+    var anchorOffset: Int = 0
+    if anchorInstanceCount == maxAnchorInstanceCount {
+        anchorOffset = max(frame.anchors.count - maxAnchorInstanceCount, 0)
+    }
+    for index in 0..&lt;anchorInstanceCount {
+        let anchor = frame.anchors[index + anchorOffset]
+        var coordinateSpaceTransform = matrix_identity_float4x4
+        coordinateSpaceTransform.columns.2.z = -1.0
+        let modelMatrix = simd_mul(anchor.transform, coordinateSpaceTransform)
+        let anchorUniforms = anchorUniformBufferAddress.assumingMemoryBound(to: InstanceUniforms.self).advanced(by: index)
+        anchorUniforms.pointee.modelMatrix = modelMatrix
+    }
+}
+{% endhighlight %}
+
+Next, in __updateCapturedImageTextures()__ we create two textures from the provided frame's captured image:
+
+{% highlight swift %}func updateCapturedImageTextures(frame: ARFrame) {
+    let pixelBuffer = frame.capturedImage
+    if (CVPixelBufferGetPlaneCount(pixelBuffer) &lt; 2) { return }
+    capturedImageTextureY = createTexture(fromPixelBuffer: pixelBuffer, pixelFormat:.r8Unorm, planeIndex:0)!
+    capturedImageTextureCbCr = createTexture(fromPixelBuffer: pixelBuffer, pixelFormat:.rg8Unorm, planeIndex:1)!
+}
+{% endhighlight %}
+
+Next, in __updateImagePlane()__ we update the texture coordinates of our image plane to aspect fill the viewport:
+        
+{% highlight swift %}func updateImagePlane(frame: ARFrame) {
+    let displayToCameraTransform = frame.displayTransform(withViewportSize: viewportSize, orientation: .landscapeRight).inverted()
+    let vertexData = imagePlaneVertexBuffer.contents().assumingMemoryBound(to: Float.self)
+    for index in 0...3 {
+        let textureCoordIndex = 4 * index + 2
+        let textureCoord = CGPoint(x: CGFloat(planeVertexData[textureCoordIndex]), y: CGFloat(planeVertexData[textureCoordIndex + 1]))
+        let transformedCoord = textureCoord.applying(displayToCameraTransform)
+        vertexData[textureCoordIndex] = Float(transformedCoord.x)
+        vertexData[textureCoordIndex + 1] = Float(transformedCoord.y)
+    }
+}
+{% endhighlight %}
+
+Next, in __drawCapturedImage()__ we draw the camera feed in the scene:
+
+{% highlight swift %}func drawCapturedImage(renderEncoder: MTLRenderCommandEncoder) {
+    guard capturedImageTextureY != nil &amp;&amp; capturedImageTextureCbCr != nil else { return }
+    renderEncoder.pushDebugGroup(&quot;DrawCapturedImage&quot;)
+    renderEncoder.setCullMode(.none)
+    renderEncoder.setRenderPipelineState(capturedImagePipelineState)
+    renderEncoder.setDepthStencilState(capturedImageDepthState)
+    renderEncoder.setVertexBuffer(imagePlaneVertexBuffer, offset: 0, index: 0)
+    renderEncoder.setFragmentTexture(capturedImageTextureY, index: 1)
+    renderEncoder.setFragmentTexture(capturedImageTextureCbCr, index: 2)
+    renderEncoder.drawPrimitives(type: .triangleStrip, vertexStart: 0, vertexCount: 4)
+    renderEncoder.popDebugGroup()
+}
+{% endhighlight %}
+    
+Finally, in __drawAnchorGeometry()__ we draw the anchors for the virtual content we created:
+
+{% highlight swift %}func drawAnchorGeometry(renderEncoder: MTLRenderCommandEncoder) {
+    guard anchorInstanceCount &gt; 0 else { return }
+    renderEncoder.pushDebugGroup(&quot;DrawAnchors&quot;)
+    renderEncoder.setCullMode(.back)
+    renderEncoder.setRenderPipelineState(anchorPipelineState)
+    renderEncoder.setDepthStencilState(anchorDepthState)
+    renderEncoder.setVertexBuffer(anchorUniformBuffer, offset: anchorUniformBufferOffset, index: 2)
+    renderEncoder.setVertexBuffer(sharedUniformBuffer, offset: sharedUniformBufferOffset, index: 3)
+    renderEncoder.setFragmentBuffer(sharedUniformBuffer, offset: sharedUniformBufferOffset, index: 3)
+    for bufferIndex in 0..&lt;mesh.vertexBuffers.count {
+        let vertexBuffer = mesh.vertexBuffers[bufferIndex]
+        renderEncoder.setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, index:bufferIndex)
+    }
+    for submesh in mesh.submeshes {
+        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: anchorInstanceCount)
+    }
+    renderEncoder.popDebugGroup()
+}
+{% endhighlight %}
+
+Back to the __setupPipeline()__ function which we briefly mentioned earlier. We create two render pipeline state objects, one for the captured image (the camera feed) and one for the anchors we create when placing virtual objects in the scene. As expected, each of the state objects will have their own pair of vertex and fragment functions - which brings us to the last file we need to look at - the __Shaders.metal__ file. In the first pair of shaders for the captured image, we pass through the image vertex's position and texture coordinate in the vertex shader:
+
+{% highlight swift %}vertex ImageColorInOut capturedImageVertexTransform(ImageVertex in [[stage_in]]) {
+    ImageColorInOut out;
+    out.position = float4(in.position, 0.0, 1.0);
+    out.texCoord = in.texCoord;
+    return out;
+}
+{% endhighlight %}
+
+In the fragment shader we sample the two textures to get the color at the given texture coordinate after which we return the converted `RGB` color:
+
+{% highlight swift %}fragment float4 capturedImageFragmentShader(ImageColorInOut in [[stage_in]],
+                                            texture2d&lt;float, access::sample&gt; textureY [[ texture(1) ]],
+                                            texture2d&lt;float, access::sample&gt; textureCbCr [[ texture(2) ]]) {
+    constexpr sampler colorSampler(mip_filter::linear, mag_filter::linear, min_filter::linear);
+    const float4x4 ycbcrToRGBTransform = float4x4(float4(+1.0000f, +1.0000f, +1.0000f, +0.0000f),
+                                                  float4(+0.0000f, -0.3441f, +1.7720f, +0.0000f),
+                                                  float4(+1.4020f, -0.7141f, +0.0000f, +0.0000f),
+                                                  float4(-0.7010f, +0.5291f, -0.8860f, +1.0000f));
+    float4 ycbcr = float4(textureY.sample(colorSampler, in.texCoord).r, textureCbCr.sample(colorSampler, in.texCoord).rg, 1.0);
+    return ycbcrToRGBTransform * ycbcr;
+}
+{% endhighlight %}
+
+In the second pair of shaders for the anchor geometry, in the vertex shader we calculate the position of our vertex in clip space and output for clipping and rasterization, then color each face a different color, then calculate the positon of our vertex in eye space and finally rotate our normals to world coordinates:
+
+{% highlight swift %}vertex ColorInOut anchorGeometryVertexTransform(Vertex in [[stage_in]],
+                                                constant SharedUniforms &amp;sharedUniforms [[ buffer(3) ]],
+                                                constant InstanceUniforms *instanceUniforms [[ buffer(2) ]],
+                                                ushort vid [[vertex_id]],
+                                                ushort iid [[instance_id]]) {
+    ColorInOut out;
+    float4 position = float4(in.position, 1.0);
+    float4x4 modelMatrix = instanceUniforms[iid].modelMatrix;
+    float4x4 modelViewMatrix = sharedUniforms.viewMatrix * modelMatrix;
+    out.position = sharedUniforms.projectionMatrix * modelViewMatrix * position;
+    ushort colorID = vid / 4 % 6;
+    out.color = colorID == 0 ? float4(0.0, 1.0, 0.0, 1.0)  // Right face
+              : colorID == 1 ? float4(1.0, 0.0, 0.0, 1.0)  // Left face
+              : colorID == 2 ? float4(0.0, 0.0, 1.0, 1.0)  // Top face
+              : colorID == 3 ? float4(1.0, 0.5, 0.0, 1.0)  // Bottom face
+              : colorID == 4 ? float4(1.0, 1.0, 0.0, 1.0)  // Back face
+              :                float4(1.0, 1.0, 1.0, 1.0); // Front face
+    out.eyePosition = half3((modelViewMatrix * position).xyz);
+    float4 normal = modelMatrix * float4(in.normal.x, in.normal.y, in.normal.z, 0.0f);
+    out.normal = normalize(half3(normal.xyz));
+    return out;
+}
+{% endhighlight %}
+
+In the fragment shader, we calculate the contribution of the directional light as a sum of diffuse and specular terms, then we compute the final color by multiplying the sample from the color maps by the fragment's lighting value and finally use the color we just computed and the alpha channel of the color map for this fragment's alpha value:
+
+{% highlight swift %}fragment float4 anchorGeometryFragmentLighting(ColorInOut in [[stage_in]],
+                                               constant SharedUniforms &amp;uniforms [[ buffer(3) ]]) {
+    float3 normal = float3(in.normal);
+    float3 directionalContribution = float3(0);
+    {
+        float nDotL = saturate(dot(normal, -uniforms.directionalLightDirection));
+        float3 diffuseTerm = uniforms.directionalLightColor * nDotL;
+        float3 halfwayVector = normalize(-uniforms.directionalLightDirection - float3(in.eyePosition));
+        float reflectionAngle = saturate(dot(normal, halfwayVector));
+        float specularIntensity = saturate(powr(reflectionAngle, uniforms.materialShininess));
+        float3 specularTerm = uniforms.directionalLightColor * specularIntensity;
+        directionalContribution = diffuseTerm + specularTerm;
+    }
+    float3 ambientContribution = uniforms.ambientLightColor;
+    float3 lightContributions = ambientContribution + directionalContribution;
+    float3 color = in.color.rgb * lightContributions;
+    return float4(color, in.color.w);
+}
+{% endhighlight %}
+
+If you run the app, you should be able to tap on the screen to add cubes on top of your live camera view, and move away or closer or around the cubes to see their different colors on each face, like this:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/ARKit1.gif?raw=true &quot;ARKit 1&quot;)
+
+In the next part of the series we will look more into `Tracking` and `Scene Understanding` and see how plane detection, hit-testing, collisions and physics can make our experience even greater. The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Augmented Reality provides a way of overlaying virtual content on top of real world views usually obtained from a mobile device camera. Last month at WWDC 2017 we were all thrilled to see Apple’s new ARKit framework which is a high level API that works with A9-powered devices or newer, running on iOS 11. Some of the ARKit experiments we’ve already seen are outstanding, such as this one below:</summary></entry><entry><title type="html">Introducing Metal 2</title><link href="http://localhost:4000/2017/06/30/introducing-metal-2.html" rel="alternate" type="text/html" title="Introducing Metal 2" /><published>2017-06-30T00:00:00-05:00</published><updated>2017-06-30T00:00:00-05:00</updated><id>http://localhost:4000/2017/06/30/introducing-metal-2</id><content type="html" xml:base="http://localhost:4000/2017/06/30/introducing-metal-2.html">This year's `WWDC` was probably the most important one ever, at least as far as we - the `Metal` developers - are concerned. I can wholeheartedly say it was the [best week of my life](https://twitter.com/gpu3d/status/873049387269738497), for sure!
+
+Let's get to the _Games and Graphics_ news. The `most unexpected` trophy goes to the renaming of `Metal` to __Metal 2__. It has the most significant additions and enhancements since it was first announced in `2014`, true, but let's admit it: no one saw this one coming. The `most anticipated` trophy goes to the new __ARKit__ framework. We are only a few weeks after the keynote and there are already numerous bold and funny _Augmented Reality_ projects out there. [ARKit](https://developer.apple.com/arkit/) integrates with `Metal` easily. Finally, the `most influencing` trophy goes to __VR__. It is because of _Virtual Reality_ that we are now able to achieve lower latency, enhanced framerates, as well as more powerful internal and now also [external GPUs](https://developer.apple.com/development-kit/external-graphics/). 
+
+![alt text](https://github.com/MetalKit/images/blob/master/vr.png?raw=true &quot;VR&quot;)
+
+New features were also added to the `Model I/O`, `SpriteKit` and `SceneKit` frameworks. Other interesting additions are the `CoreML` and `Vision` frameworks used for [machine learning](https://developer.apple.com/machine-learning/). This article is only focusing on what's new in `Metal`:
+
+1). __MPS__ - the _Metal Performance Shaders_ are now also available on `macOS` and the new additions to `MPS` include:
+
+* four new image processing primitives (`Image Keypoints`, `Bilinear Rescale`, `Image Statistics`, `Element-wise Arithmetic Operations`).
+* new linear algebra objects such as `MPSVector`, `MPSMatrix` and `MPSTemporaryMatrix`, as well as _BLAS-style matrix-matrix and matrix-vector multiplication_ and _LAPACK-style triangular matrix factorization and linear solvers_.
+* a dozen new `CNN` primitives.
+* the `Binary`, `XNOR`, `Dilated`, `Sub-pixel` and `Transpose` convolutions were added to the already existing `Standard` convolution primitive.
+* a new `Neural Network Graph` API was added which is useful for describing neural networks using filter and image nodes.
+* the `Recurrent Neural Networks` are now coming to help the `CNNs` one-to-one limitation and implement one-to-many and many-to-many relationships.
+        
+2). __Argument Buffers__ - likely the most important addition to the framework this year. In the traditional argument model, for each object we would call the various functions to set buffers, textures, samplers linearly and then at the end we would have our draw call for that object.
+
+![alt text](https://github.com/MetalKit/images/blob/master/ArgumentBuffers1.png?raw=true &quot;Argument Buffers 1&quot;)
+
+As you can imagine, the number of calls will increase drastically when multiplying the number of calls with the total number of objects and with the number of frames where all these objects need to be drawn. As a consequence this will limit the number of objects that will appear on the screen eventually. 
+
+![alt text](https://github.com/MetalKit/images/blob/master/ArgumentBuffers2.png?raw=true &quot;Argument Buffers 2&quot;)
+
+`Argument Buffers` introduce an efficient new way of configuring how to use resources by adopting the _indirect_ behavior that the constants have, and applying it to textures, samplers, states, pointers to other buffers, and so on. The argument buffer will now only have `2 API calls per object`: set the argument buffer and then draw. With this approach many more objects can be drawn. 
+
+![alt text](https://github.com/MetalKit/images/blob/master/ArgumentBuffers3.png?raw=true &quot;Argument Buffers 3&quot;)
+
+Using argument buffers is as easy as matching the shader data with the host data:
+
+{% highlight swift %}struct Material {
+    float intensity;
+    texture2d&lt;float&gt; aTexture;
+    sampler aSampler;
+}
+
+kernel void compute(constant Material &amp;material [[ buffer(0) ]]) {
+    ...
+}
+{% endhighlight %}
+
+On the `CPU`, the argument buffers are created and used by an __MTLArgumentEncoder__ object and they can be blit between `CPU` and `GPU` easily:
+
+{% highlight swift %}let function = library.makeFunction(name: &quot;compute&quot;)
+let encoder = function.makeIndirectArgumentEncoder(bufferIndex: 0)
+encoder.setTexture(myTexture, index: 0)
+encoder.constantData(at: 1).storeBytes(of: myPosition, as: float4)
+{% endhighlight %}
+
+But it can get even better using the `dynamic indexing` feature. A great use case is when rendering crowds. An array of argument buffers can pack the data together for all instances (characters). Then, instead of having two calls per object, now we can have only `2 API calls per frame`: one to set the buffer and one to draw indexed primitives for a large instance count! 
+
+![alt text](https://github.com/MetalKit/images/blob/master/ArgumentBuffers4.png?raw=true &quot;Argument Buffers 4&quot;)
+
+Then the `GPU` will process per-instance geometry and color. The shader will now take an array of argument buffers as input, dynamically pick the character for any instance index, and return the geometry for that object:
+
+{% highlight swift %}vertex Vertex instanced(constant Character *crowd [[ buffer(0) ]],
+                        uint id [[instance_id]]) {
+    constant Character &amp;instance = crowd[id];
+    ...
+}
+{% endhighlight %}
+
+Another use case for argument buffers is when running particle simulations. For this we have the `resource setting on the GPU` feature which refers to having an array of argument buffers, one buffer for each particle (thread). All the particle properties (position, material, and so on) are created and stored in argument buffers on the `GPU` so when a particle needs a specific property, such as a material, it will copy it from the argument buffers instead of getting it from the `CPU` thus avoiding expensive copies between them. 
+
+![alt text](https://github.com/MetalKit/images/blob/master/ArgumentBuffers5.png?raw=true &quot;Argument Buffers 5&quot;)
+
+A copying kernel is straightforward and lets you assign constant values, do partial or complete copies between a source and a destination object:
+
+{% highlight swift %}kernel void reuse(constant Material &amp;source [[ buffer(0) ]],
+                  device Material &amp;destination [[ buffer(1) ]]) {
+    destination.intensity = 0.5f;
+    destination.aTexture = source.aTexture;
+    destination = source;
+}
+{% endhighlight %}
+
+Finally, we also have the use case of referencing other argument buffers (`multiple indirections`). Imagine a structure to represent an instance (character) that will have a pointer to the `Material` structure such that many instances can point to the same material. Likewise, imagine another structure to represent a tree of nodes where each `Node` would have a pointer to the `Instance` structure which will act as an array of instances in the node:
+
+{% highlight swift %}struct Instance {
+    float4 position;
+    device Material *material;
+}
+
+struct Node {
+    device Instance *instances;
+}
+{% endhighlight %}
+
+&gt; Note: for now, only `Tier 2` devices support all these argument buffer features. Starting with `Metal 2` the `GPU` devices are now classified as either `Tier 1` (integrated) or `Tier 2` (discrete).
+
+3). __Raster Order Groups__ - a new fragment shader synchronization primitive that allows more granular control of the order in which fragment shaders access memory. As an example, when working with custom blending, most graphics `APIs` guarantee that blending happens in draw call order. However, the `GPU` thread parallelism needs a way to prevent race conditions. `Raster Order Groups` do that by providing us with an implicit `Wait` command. 
+
+![alt text](https://github.com/MetalKit/images/blob/master/RasterOrderGroups.png?raw=true &quot;Raster Order Groups&quot;)
+
+In traditional blending mode race conditions are created:
+
+{% highlight swift %}fragment void blend(texture2d&lt;float, access::read_write&gt; out[[ texture(0) ]]) {
+    float4 newColor = 0.5f;
+    // non-atomic memory access without any synchronization
+    float4 oldColor = out.read(position);
+    float4 blended = someCustomBlendingFunction(newColor, oldColor);
+    out.write(blended, position);
+}
+{% endhighlight %}
+
+All that is needed is adding the `Raster Order Groups` attribute to the texture (or resource) with conflicting accesses:
+
+{% highlight swift %}fragment void blend(texture2d&lt;float, access::read_write&gt; 
+				out[[texture(0), raster_order_group(0)]]) {
+    float4 newColor = 0.5f;
+    // the GPU now waits on first access to raster ordered memory
+    float4 oldColor = out.read(position);
+    float4 blended = someCustomBlendingFunction(newColor, oldColor);
+    out.write(blended, position);
+}
+{% endhighlight %}
+
+4). __ProMotion__ - only for iPad Pro displays currently. Without `ProMotion` the typical framerate is `60` FPS (`16.6` ms/frame):
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion1.png?raw=true &quot;ProMotion 1&quot;)
+
+With `ProMotion` the framerate goes up to `120` FPS (`8.3` ms/frame) which is really useful for user input such as touch gestures or pencil using:
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion2.png?raw=true &quot;ProMotion 2&quot;)
+
+`ProMotion` also gives us flexibility in when to refresh the display image so we do not need to have a fixed framerate. Without `ProMotion` there is inconsistency in image refreshing which does not bode well for the user experience. Developers usually trade away their peak framerate to constrain all of them to `30` FPS rather than the targeted `48` FPS (`20.83` ms/frame), to achieve consistency:
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion3.png?raw=true &quot;ProMotion 3&quot;)
+
+With `ProMotion` we now have a refresh point every `4` ms rather than every `16` ms (the vertical white lines):
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion4.png?raw=true &quot;ProMotion 4&quot;)
+
+`ProMotion` is also helping in cases of dropped frames. Without `ProMotion` we could have a frame that missed the deadline by taking too long to display:
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion5.png?raw=true &quot;ProMotion 5&quot;)
+
+`ProMotion` fixes this too by only extending the frame with only `4` more ms instead of a whole frame (`16.6` ms):
+
+![alt text](https://github.com/MetalKit/images/blob/master/promotion6.png?raw=true &quot;ProMotion 6&quot;)
+
+`UIKit` animations use `ProMotion` automatically but to use `ProMotion` with `Metal` views you need to opt in by disabling the minimum frame duration in the project’s `Info.plist` file. Then you can use one of the __3__ presentation `APIs`. The traditional __present(drawable:)__ will present the image immediately after the `GPU` has finished rendering the frame (`16.6` ms on fixed framerate displays and `4` ms on `ProMotion` displays). The second `API` is __present(drawable, afterMinimumDuration:)__ and provides maximum consistency from frame to frame on fixed framerate displays. The third `API` is __present(drawable, atTime:)__ and is useful when building custom animation loops or when trying to sync the display image with other outputs such as audio. Here is an example of how to implement it:
+
+{% highlight swift %}let targetTime = 0.1
+let drawable = metalLayer.nextDrawable()
+commandBuffer.present(drawable, atTime: targetTime)
+// after 1-2 frames
+let presentationDelay = drawable.presentedTime - targetTime
+{% endhighlight %}
+
+First, set a time when you want to display the drawable, then render the scene into a command buffer, then wait for the next frame(s) and finally examine the delay so you can adjust the next frame time.
+
+5). __Direct to Display__ - is the new way to send content from the renderer directly to external displays (eg. head mounted devices used in `VR`) with the least amount of latency. There are two paths an image takes after the `GPU` finished rendering it and before it ends on the display. The first one is the typical `UI` scenario when the system is compositing it with other views and layers for a final image:
+
+￼![alt text](https://github.com/MetalKit/images/blob/master/DirectToDisplay1.png?raw=true &quot;Direct To Display 1&quot;)
+
+When building a full screen application that does not require blending, scaling or other views/layers, the second path is allowing the display direct access to the memory where we rendered to, thus saving a lot of system resources and avoiding a lot of overhead:
+
+￼￼![alt text](https://github.com/MetalKit/images/blob/master/DirectToDisplay2.png?raw=true &quot;Direct To Display 2&quot;)
+
+However, this only happens when certain conditions are met:
+
+* the layer is opaque
+* there is no masking or rounded corners
+* full screen, or with opaque black bars and background
+* the rendered size is at most as large as the display size
+* color space and pixel format is compatible with display
+
+The colorspace requirements makes it easier to know when `Direct to Display` mode will work. For example, it is easy to detect if you are using a `P3` display and disable the `P3` mode when trying to use the `Direct to Display` mode.
+
+6). __Other Features__ - include but are not limited to:
+
+* __memory usage queries__ - there are now new `APIs` to query memory use per allocation, as well as total `GPU` memory allocated by the device:
+{% highlight swift %}MTLResource.allocatedSize
+MTLHeap.currentAllocatedSize
+MTLDevice.currentAllocatedSize
+{% endhighlight %}
+* __SIMDGroup scoped functions__ - allow data sharing between `SIMD` groups directly in the registers by avoiding load/store operations:
+￼
+
+￼![alt text](https://github.com/MetalKit/images/blob/master/SIMDGroup.png?raw=true &quot;SIMD Group&quot;)
+
+* __non-uniform threadgroup sizes__ - help us not waste `GPU` cycles and avoid working on edge/bound cases:
+￼
+
+￼![alt text](https://github.com/MetalKit/images/blob/master/nonuniform.png?raw=true &quot;Non-uniform Threadgroup Sizes&quot;)
+
+* __Viewport Arrays__ on `macOS` now support up to `16` viewports for the vertex function to choose from when rendering, and is useful for `VR` when combined with instancing.
+* __Multisample Pattern Control__ - allows selecting where within a pixel the `MSAA` sample patters are located and it’s useful for custom anti-aliasing.
+* __Resource Heaps__ are now also available on `macOS`. It allows controlling the time of memory allocation, fast reallocation, aliasing of resources and group related resources for faster binding.
+* other features include:
+
+|Feature|Description|
+|:--|:--|
+|`Linear Textures`|Create textures from a `MTLBuffer` without copying.|
+|`Function Constant for Argument Indexes`|Specialize bytecodes to change the binding index for shader arguments.|
+|`Additional Vertex Array Formats`|Add some 1-/2-component vertex formats and a `BGRA8` vertex format.|
+|`IOSurface Textures`|Create `MTLTextures` from `IOSurfaces` on `iOS`.|
+|`Dual Source Blending`|Additional blending modes with two source parameters.|
+||
+
+I made a table with the most important new features, which states whether the feature is new in the latest version of the operating system or not.
+￼
+
+￼![alt text](https://github.com/MetalKit/images/blob/master/features.png?raw=true &quot;Feature Table&quot;)
+
+Finally, here are a few lines I wrote to test the differences between my integrated and discrete `GPUs`:
+￼
+
+￼![alt text](https://github.com/MetalKit/images/blob/master/gpuCompare.png?raw=true &quot;GPU comparison&quot;)
+
+All images were taken from `WWDC` presentations and the [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">This year’s WWDC was probably the most important one ever, at least as far as we - the Metal developers - are concerned. I can wholeheartedly say it was the best week of my life, for sure!</summary></entry><entry><title type="html">Working with memory in Metal part 2</title><link href="http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2.html" rel="alternate" type="text/html" title="Working with memory in Metal part 2" /><published>2017-05-26T00:00:00-05:00</published><updated>2017-05-26T00:00:00-05:00</updated><id>http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2</id><content type="html" xml:base="http://localhost:4000/2017/05/26/working-with-memory-in-metal-part-2.html">There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create `MTLBuffer` objects we have 3 options: by creating a new memory allocation with new data, by copying data from an existing allocation into a new allocation and by reusing an existing storage allocation which does not copy data. Since we haven't looked at the memory before, let's check that is actually true. First we copy data into another allocation:
+ 
+{% highlight swift %}let count = 2000
+let length = count * MemoryLayout&lt; Float &gt;.stride
+var myVector = [Float](repeating: 0, count: count)
+let myBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+withUnsafePointer(to: &amp;myVector) { print($0) }
+print(myBuffer.contents())
+{% endhighlight %}
+ 
+&gt; Note: the __withUnsafePointer()__ function gives us the memory address of the actual data on the heap instead of the address of the pointer (from the stack) that wraps that data.
+ 
+Your output should look similar to this:
+ 
+{% highlight swift %}0x000000010043e0e0
+0x0000000102afd000
+{% endhighlight %}
+
+The two data buffers are definitely stored at different memory locations. Now let's use the `no-copy` option:
+ 
+{% highlight swift %}var memory: UnsafeMutableRawPointer? = nil
+let alignment = 0x1000
+let allocationSize = (length + alignment - 1) &amp; (~(alignment - 1))
+posix_memalign(&amp;memory, alignment, allocationSize)
+let myBuffer = device.makeBuffer(bytesNoCopy: memory!, 
+				 length: allocationSize, 
+				 options: [], 
+				 deallocator: { (pointer: UnsafeMutableRawPointer, _: Int) in 
+					free(pointer) 
+				 })
+print(memory!)
+print(myBuffer.contents())
+{% endhighlight %}
+ 
+First, we create a pointer to our data which (data) we'll store on the heap. For this we need to page-align it. We set the page size to be `4K` (`1000` in hexadecimal). We need to also round the buffer size to match the alignment. We used a bitwise `AND` to avoid division which is a very expensive operation. Otherwise we would just round like this: 
+ 
+{% highlight swift %}let allocationSize = ((length + alignment - 1) / alignment) * alignment
+{% endhighlight %}
+ 
+Your output should look similar to this:
+ 
+{% highlight swift %}0x000000010300c000
+0x000000010300c000
+{% endhighlight %}
+ 
+Notice the last three digits in the addresses above? Those come from page-alinging the data because an address is determined by `0 mod pageSize`, hence the last three `0`'s, which makes sense since our page size is `0x1000`.
+ 
+Let's now move to `Storage Modes` which we briefly mentioned last time. There are basically only four main rules to keep in mind, one for each of the storage modes:
+ 
+|Mode|Description|
+|:--|:--|
+|`Shared`|_default_ on `macOS` buffers, `iOS/tvOS` resources; not available on `macOS` textures.|
+|`Private`|mostly use when data is only accessed by `GPU`.|
+|`Memoryless`|only for `iOS/tvOS` on-chip temporary render targets (textures).|
+|`Managed`|_default_ mode for `macOS` textures; not available on `iOS/tvOS` resources.|
+||
+ 
+For a better big picture, here is the full cheat sheet in case you might find it easier to use than remembering the rules above:
+ 
+![alt text](https://github.com/MetalKit/images/blob/master/storage-modes.png?raw=true &quot;Storage Modes&quot;)
+ 
+The most complicated case is when working with `macOS` buffers and when the data needs to be accessed by both the `CPU` and the `GPU`. We choose the storage mode based on whether one or more of the following conditions are true:
+ 
+* __Private__ - for large-sized data that changes at most once, so it is not &quot;dirty&quot; at all. create a source buffer with a `Shared` mode and then blit its data into a destination buffer with a `Private` mode. resource coherency is not necessary in this case as the data is only accessed by the `GPU`. this operation is the least expensive (a one-time cost).
+* __Managed__ - for medium-sized data that changes infrequently (every few frames), so it is partially &quot;dirty&quot;. one copy of the data is stored in system memory for the `CPU` and another copy is stored in `GPU` memory. resource coherency is explicitly managed by synchronizing the two copies.
+* __Shared__ - for small-sized data that is updated every frame, so it is fully dirty. data resides in the system memory and is visible and modifyable by both the `CPU` and the `GPU`. resource coherency is only guaranteed within command buffer boundaries.
+ 
+How to make sure coherency is guaranteed? First, make sure that all the modifications done by the `CPU` finished before the command buffer was committed (check if the command buffer status property is __MTLCommandBufferStatusCommitted__). After the `GPU` finishes executing the command buffer, the `CPU` should only start making modifications again only after the `GPU` is signaling the `CPU` that the command buffer finished executing (check if the command buffer status property is __MTLCommandBufferStatusCompleted__).
+ 
+Finally, let's see how synchronization is done for `macOS` resources. For buffers: after a `CPU` write use __didModifyRange()__ to inform the `GPU` of the changes so `Metal` can update that data region only; after a `GPU` write use __synchronize(resource:)__ within a blit operation, to refresh the caches so the `CPU` can access the updated data. For textures: after a `CPU` write use one of the two __replace()__ region functions to inform the `GPU` of the changes so `Metal` can update that data region only; after a `GPU` write use one of the two __synchronize()__ functions within a blit operation to allow `Metal` to update the system memory copy after the `GPU` finished modifying the data. 
+ 
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+ 
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">There are a couple of topics we need to discuss in more depth about working with memory. Last time we have seen that to create MTLBuffer objects we have 3 options: by creating a new memory allocation with new data, by copying data from an existing allocation into a new allocation and by reusing an existing storage allocation which does not copy data. Since we haven’t looked at the memory before, let’s check that is actually true. First we copy data into another allocation:
+
+let count = 2000
+let length = count * MemoryLayout&amp;lt; Float &amp;gt;.stride
+var myVector = [Float](repeating: 0, count: count)
+let myBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+withUnsafePointer(to: &amp;amp;myVector) { print($0) }
+print(myBuffer.contents())
+
+
+  Note: the withUnsafePointer() function gives us the memory address of the actual data on the heap instead of the address of the pointer (from the stack) that wraps that data.
+
+
+Your output should look similar to this:
+
+0x000000010043e0e0
+0x0000000102afd000</summary></entry><entry><title type="html">Working with memory in Metal</title><link href="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html" rel="alternate" type="text/html" title="Working with memory in Metal" /><published>2017-04-30T00:00:00-05:00</published><updated>2017-04-30T00:00:00-05:00</updated><id>http://localhost:4000/2017/04/30/working-with-memory-in-metal</id><content type="html" xml:base="http://localhost:4000/2017/04/30/working-with-memory-in-metal.html">Today we look at how memory is managed when working with the `GPU`. The `Metal` framework defines memory sources as `MTLBuffer` objects which are typeless and unformatted allocations of memory (any type of data), and `MTLTexture` objects which are formatted allocations of memory holding image data. We only look at buffers in this article.
+
+To create `MTLBuffer` objects we have 3 options:
+
+* __makeBuffer(length:options:)__ creates a `MTLBuffer` object with a new allocation.
+* __makeBuffer(bytes:length:options:)__ copies data from an existing allocation into a new allocation.
+* __makeBuffer(bytesNoCopy:length:options:deallocator:)__ reuses an existing storage allocation.
+
+Let's create a couple of buffers and see how data is being sent to the `GPU` and then sent back to the `CPU`. We first create a buffer for both input and output data and initialize them to some values:
+
+{% highlight swift %}let count = 1500
+var myVector = [Float](repeating: 0, count: count)
+var length = count * MemoryLayout&lt; Float &gt;.stride
+var outBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+for (index, value) in myVector.enumerated() { myVector[index] = Float(index) }
+var inBuffer = device.makeBuffer(bytes: myVector, length: length, options: [])
+{% endhighlight %}
+
+The new __MemoryLayout&lt; Type &gt;.stride__ syntax was introduced in `Swift 3` to replace the old `strideof(Type)` function. By the way, we use `.stride` instead of `.size` for memory alignment reasons. The __stride__ is the number of bytes moved when a pointer is incremented. The next step is to tell the command encoder about our buffers:
+
+{% highlight swift %}encoder.setBuffer(inBuffer, offset: 0, at: 0)
+encoder.setBuffer(outBuffer, offset: 0, at: 1)
+{% endhighlight %}
+
+&gt; Note: the Metal Best Practices Guide states that we should always avoid creating buffers when our data is less than __4 KB__ (up to a thousand `Floats`, for example). In this case we should simply use the __setBytes()__ function instead of creating a buffer. 
+
+The final step is to read the data the `GPU` sent back by using the __contents()__ function to bind the memory data to our output buffer:
+
+{% highlight swift %}let result = outBuffer.contents().bindMemory(to: Float.self, capacity: count)
+var data = [Float](repeating:0, count: count)
+for i in 0 ..&lt; count { data[i] = result[i] }
+{% endhighlight %}
+
+`Metal` resources must be configured for fast memory access and driver performance optimizations. Resource __storage modes__ let us define the storage location and access permissions for our buffers and textures. If you take a look above where we created our buffers, we used the default option (__[]__) as the storage mode. 
+
+All `iOS` and `tvOS` devices support a _unified memory model_ where both the `CPU` and the `GPU` share the system memory, while `macOS` devices support a _discrete memory model_ where the `GPU` has its own memory. In `iOS` and `tvOS`, the __Shared__ mode (`MTLStorageModeShared`) defines system memory accessible to both `CPU` and `GPU`, while __Private__ mode (`MTLStorageModePrivate`) defines system memory accessible only to the GPU. The `Shared` mode is the default storage mode on all three operating systems.
+
+![alt text](https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_iOStvOSMemory_2x.png &quot;iOS and tvOS&quot;)
+
+Besides these two storage modes, `macOS` also has a __Managed__ mode (`MTLStorageModeManaged`) that defines a synchronized memory pair for a resource, with one copy in system memory and another in video memory for faster CPU and GPU local accesses.
+ 
+![alt text](https://developer.apple.com/library/content/documentation/3DDrawing/Conceptual/MTLBestPracticesGuide/Art/ResourceManagement_OSXMemory_2x.png &quot;macOS&quot;)
+
+Now let's look at what happens on the `GPU` when we send it data buffers. Here is a typical vertex shader example:
+
+{% highlight swift %}vertex Vertices vertex_func(const device Vertices *vertices [[buffer(0)]], 
+            		    constant Uniforms &amp;uniforms [[buffer(1)]], 
+            		    uint vid [[vertex_id]]) 
+{
+	...
+}
+{% endhighlight %}
+
+The `Metal Shading Language` implements address space qualifiers to specify the region of memory where a function variable or argument is allocated: 
+
+* __device__ - refers to buffer memory objects allocated from the device memory pool that are both readable and writeable unless the keyword __const__ preceeds it in which case the objects are only readable.
+* __constant__ - refers to buffer memory objects allocated from the device memory pool but that are `read-only`. Variables in program scope must be declared in the constant address space and initialized during the declaration statement. The constant address space is optimized for multiple instances executing a graphics or kernel function accessing the same location in the buffer.
+* __threadgroup__ - is used to allocate variables used by a kernel functions only and they are allocated for each threadgroup executing the kernel, are shared by all threads in a threadgroup and exist only for the lifetime of the threadgroup that is executing the kernel. 
+* __thread__ - refers to the per-thread memory address space. Variables allocated in this address space are not visible to other threads. Variables declared inside a graphics or kernel function are allocated in the thread address space.
+
+As a bonus, let's also look at another way of accessing memory locations in `Swift 3`. This code snippet belongs to a previous article, [The Model I/O framework](http://metalkit.org/2016/08/30/the-model-i-o-framework.html), so we will not go again into details about voxels. Just think of an array that we need to iterate over to get values:
+
+{% highlight swift %}let url = Bundle.main.url(forResource: &quot;teapot&quot;, withExtension: &quot;obj&quot;)
+let asset = MDLAsset(url: url)
+let voxelArray = MDLVoxelArray(asset: asset, divisions: 10, patchRadius: 0)
+if let data = voxelArray.voxelIndices() {
+    data.withUnsafeBytes { (voxels: UnsafePointer&lt;MDLVoxelIndex&gt;) -&gt; Void in
+        let count = data.count / MemoryLayout&lt;MDLVoxelIndex&gt;.size
+        let position = voxelArray.spatialLocation(ofIndex: voxels.pointee)
+        print(position)
+    }
+}
+{% endhighlight %} 
+
+In this case, the `MDLVoxelArray` object has a function named `spatialLocation()` which lets us iterate through the array by using an `UnsafePointer` of the `MDLVoxelIndex` type and accessing the data through the `pointee` at each location. In this example we are only printing out the first value found at that address but a simple loop will let us get all of them like this:
+
+{% highlight swift %}var voxelIndex = voxels
+for _ in 0..&lt;count {
+    let position = voxelArray.spatialLocation(ofIndex: voxelIndex.pointee)
+    print(position)
+    voxelIndex = voxelIndex.successor()
+}
+{% endhighlight %}
+
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+
+Until next time!</content><author><name>&lt;a href = &quot;https://twitter.com/gpu3d&quot; target=&quot;_blank&quot;&gt;Marius Horga&lt;/a&gt;</name></author><summary type="html">Today we look at how memory is managed when working with the GPU. The Metal framework defines memory sources as MTLBuffer objects which are typeless and unformatted allocations of memory (any type of data), and MTLTexture objects which are formatted allocations of memory holding image data. We only look at buffers in this article.</summary></entry></feed>
