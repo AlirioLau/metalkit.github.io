@@ -1,8 +1,8 @@
 ---
 published: true
-title: Raytracing using Metal
+title: Raytracing with Metal
 author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing-mps.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn how to use the newest additions to the Metal Performance Shaders to accelerate ray tracing.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing-mps.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about the newest additions to the Metal Performance Shaders framework for accelerating ray tracing.</div></div>
 layout: post
 ---
 
