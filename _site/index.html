@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The Metal Framework</title>
+  <meta name="description" content="Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/MetalKit/images/master/metal_ico.png" />
+  <link rel="canonical" href="http://localhost:4000/">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="home">
+
+  <!-- <h1 class="page-heading">Posts</h1> -->
+  
+  <div class="home">
+
+  <div class="posts"><br />
+    
+      <div class="post">
+        <a href="/2019/01/31/intro-to-metal-compute.html" class="post-link">
+          <p class="post-meta">Jan 31, 2019</p>
+          <h3 class="h2 post-title">Introduction to compute using Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/egpu.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about Metal compute.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2018/11/30/using-egpus-with-metal.html" class="post-link">
+          <p class="post-meta">Nov 30, 2018</p>
+          <h3 class="h2 post-title">Using eGPUs with Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/egpu.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about using eGPUs with Metal, about switching between integrated, discrete or external GPUs, about telling your app which GPU to use, about choosing the appropriate resource storage mode based on needs, about the bandwidth and which GPU is appropriate for displaying content on screen.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2018/07/14/raytracing-with-metal.html" class="post-link">
+          <p class="post-meta">Jul 14, 2018</p>
+          <h3 class="h2 post-title">Raytracing with Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing-mps.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about the newest additions to the Metal Performance Shaders framework for accelerating ray tracing.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2018/05/29/metal-by-tutorials-book-copy.html" class="post-link">
+          <p class="post-meta">May 29, 2018</p>
+          <h3 class="h2 post-title">Metal By Tutorials book!</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/MbT_logo.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">From the publisher's website - "Build your own low-level 3D game engine as you learn how to program for Metal, Apple’s framework for programming on the GPU. You’ll start at the beginning, learn all about rendering, lighting, textures, maps, post-processing, procedural generation, multipass and deferred rendering, and tie it all together at the end by integrating your engine with SpriteKit and SceneKit!"</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/12/31/metal-2-on-the-a11-gpu.html" class="post-link">
+          <p class="post-meta">Dec 31, 2017</p>
+          <h3 class="h2 post-title">Metal 2 on the A11 GPU</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal2.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about the new GPU Family 4. Learn about the new Apple-designed GPU inside the A11 Bionic processor. Learn about the new features that Metal 2 brings for the A11-powered devices. Imageblocks, Tile Shading, Raster Order Groups, Imageblock Sample Coverage Control, Threadgroup Sharing. Also brifly look at Face Tracking on A11 using ARKit.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/11/30/working-with-particles-in-metal-part-3.html" class="post-link">
+          <p class="post-meta">Nov 30, 2017</p>
+          <h3 class="h2 post-title">Working with Particles in Metal part 3</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/particles3.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Trying a third approach to rendering particles, this time cranking up the number of particles rendered to millions! Using a random generator function to populate the window with particles. Learning about the new dispatchThreads(:) method in Metal 2. Updating positions and velocities on the GPU and drawing "thicker" particles using a basic neighboring formula.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/10/31/working-with-particles-in-metal-part-2.html" class="post-link">
+          <p class="post-meta">Oct 31, 2017</p>
+          <h3 class="h2 post-title">Working with Particles in Metal part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/particles.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Trying a different approach to rendering particles, this time moving away from distance fields to using vertex buffers. Cranking up the number of particles rendered to thousands! Using a Model I/O object as a blueprint for the object to be instanced in the vertex shader. Continuously updating the particles positions on the CPU and sending the updates to the GPU.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/09/30/working-with-particles-in-metal.html" class="post-link">
+          <p class="post-meta">Sep 30, 2017</p>
+          <h3 class="h2 post-title">Working with Particles in Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/particle.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introduction to particle systems. Seeing how a particle is created. Keeping track of its position using a distance function. Using time to emulate gravity. Implementing basic collision detection.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/08/31/using-arkit-with-metal-part-2.html" class="post-link">
+          <p class="post-meta">Aug 31, 2017</p>
+          <h3 class="h2 post-title">Using ARKit with Metal part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/ARKit.jpg" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continuing with implementing the other stages in ARKit. Describing the features needed for Scene Understanding. Enabling plane detection in the ARKit app. Introducing the ARSessionDelegate methods for adding, updating and removing anchors. Creating the plane buffer, mesh and drawing it with a new pair of vertex and fragment functions.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/07/29/using-arkit-with-metal.html" class="post-link">
+          <p class="post-meta">Jul 29, 2017</p>
+          <h3 class="h2 post-title">Using ARKit with Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/ARKit.jpg" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing ARKit - the newest framework from Apple. Defining the three stages in ARKit - Tracking, Scene Understanding and Rendering. Describing the main ARKit classes used - ARSession, ARSessionConfiguration, ARFrame, ARAnchor and ARCamera. Looking into tracking states and interruptions. Implementing a full Metal renderer for ARKit.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/06/30/introducing-metal-2.html" class="post-link">
+          <p class="post-meta">Jun 30, 2017</p>
+          <h3 class="h2 post-title">Introducing Metal 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal2.png" alt="Metal 2" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Read about what's new in Metal, now called Metal 2. MPS has new features but most important - it now works on macOS too. See why the new Argument Buffers are the biggest addition to the framework this year. Read about how Raster Order Groups can help avoiding race conditions in shaders. Find out what the ProMotion and Direct to Display features are, and read about all the other new features introduced this year.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/05/26/working-with-memory-in-metal-part-2.html" class="post-link">
+          <p class="post-meta">May 26, 2017</p>
+          <h3 class="h2 post-title">Working with memory in Metal part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking again at the memory models in Metal. Analyzing data copy vs no-copy methods. Understanding stack vs heap allocations. Page aligning the data using posix_memalign(). Looking again at the resource storage modes - Shared, Private, Memoryless and Managed. Considerations about resource coherency and synchronization between CPU and GPU.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/04/30/working-with-memory-in-metal.html" class="post-link">
+          <p class="post-meta">Apr 30, 2017</p>
+          <h3 class="h2 post-title">Working with memory in Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about the memory model in Metal. Defining Metal resources as Buffers and Textures. Presenting ways to create a Buffer. Defining the Resource Storage Modes. Presenting the address space qualifiers for function variables and arguments. Looking at UnsafePointer and Pointee as another way to aceess memory locations.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/03/22/ambient-occlusion-in-metal.html" class="post-link">
+          <p class="post-meta">Mar 22, 2017</p>
+          <h3 class="h2 post-title">Ambient Occlusion in Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/ao_3.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Ambient Occlusion in Metal. Using more distance functions - rectangular shapes. Introducing cone tracing as a derivative of ray tracing using "thicker" rays. Using spheres with different radii to approximate a cone. Marching along the cone instead of a ray, to determine how much light is occluded. Replacing the circling light source with a moving camera so we can examine the entire scene.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/02/28/shadows-in-metal-part-2.html" class="post-link">
+          <p class="post-meta">Feb 28, 2017</p>
+          <h3 class="h2 post-title">Shadows in Metal part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Soft Shadows in Metal. Returning to Raymarching to build a complex 3D scene using distance operation functions. Learning how to calculate normals and the visualizing them. Learning how to use normals to calculate diffuse and specular lighting. Determining hard shadows as well as soft shadows for objects in a 3D scene.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2017/01/31/shadows-in-metal-part-1.html" class="post-link">
+          <p class="post-meta">Jan 31, 2017</p>
+          <h3 class="h2 post-title">Shadows in Metal part 1</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/shadows.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Shadows in Metal. Building custom functions and operators such as modulus. Creating a light source and animating it around the scene. Creating a shadows function based on the distance and direction to the light. Marching along the light ray and improving the number of steps needed for faster shadows.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/12/30/raymarching-in-metal.html" class="post-link">
+          <p class="post-meta">Dec 30, 2016</p>
+          <h3 class="h2 post-title">Raymarching in Metal</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/raw/master/raymarching.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about Raymarching in Metal. Continue on improving previously used Signed Distance Fields functions. Seeing the similarities and differences from Ray Tracing. Using the ray as camera and marching along with it. Instancing an object to create more complex scenes.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/11/30/new-metal-course.html" class="post-link">
+          <p class="post-meta">Nov 30, 2016</p>
+          <h3 class="h2 post-title">Beginning Metal - a new course</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://github.com/MetalKit/images/blob/master/RayWenderlich_Metal.png?raw=true" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning about the Metal API in the form of a video course that has no less than 15 chapters with well structured material, code samples and challenges to solve. Building your first game completely written in Swift and Metal.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/10/01/using-metalkit-part-2-3-2.html" class="post-link">
+          <p class="post-meta">Oct 1, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 2*3^2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter18.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Prototyping kernels using math functions and the Swift Playgrounds app for iPad. Using sqrt to shape transitions, then cos to create variations of ups and downs in shapes, then exp that allows us to create curves, then smoothstep for thresholding, then abs for symmetry and mix for blending.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/09/24/using-metalkit-part-17.html" class="post-link">
+          <p class="post-meta">Sep 24, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 17</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter17_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how to draw wireframes by setting the triangle fill mode to lines. Disabling the back-face culling for 3D rendering so we can see all the wires, including those in the back.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/08/30/the-model-i-o-framework.html" class="post-link">
+          <p class="post-meta">Aug 30, 2016</p>
+          <h3 class="h2 post-title">The Model I/O framework</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/modelio.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Model I/O - a framework that helps us create more realistic and interactive graphics. Learning how we can use it to import/export 3D assets, to describe lighting, materials and environments, to bake lights, to subdivide and voxelize meshes, and for physical based rendering.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html" class="post-link">
+          <p class="post-meta">Aug 7, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground part 6</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Porting the Raytracing code to the Swift Playgrounds app for iPad. Tweaking the number of samples for getting better quality images vs faster rendering. Adding a viewer for the raytraced content.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/07/31/metal-performance-shaders-for-the-ipad-playground.html" class="post-link">
+          <p class="post-meta">Jul 31, 2016</p>
+          <h3 class="h2 post-title">Metal Performance Shaders for the iPad playground</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/mps_9.png" alt="Metal" height="100" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how to easily import a playground from a Mac to an iPad using the iCloud Drive. Seeing how a MPS object does the command encoding directly, without having to configure any states, descriptors or functions.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/07/06/using-metalkit-part-16.html" class="post-link">
+          <p class="post-meta">Jul 6, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 16</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">The Metal Best Practices Guide offers advices for Resource Management (persistent objects, resource options, triple buffering, buffer bindings), Display Management (drawables, native screen scale, frame rate), Command Generation (load and store actions, render command encoders, command buffers, indirect buffers) and Compilation (functions and libraries, pipelines).</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/06/23/using-metalkit-part-15.html" class="post-link">
+          <p class="post-meta">Jun 23, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 15</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter15_5.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learning how textures can provide object surfaces a greater level of detail. Using the texture loader function to import an image to be used as texture. Fixing the flipped upside-down texture. Introducing samplers that offer advanced control over texture coordinates through addressing modes and filtering methods.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/06/14/what-s-new-in-graphics-and-games-at-wwdc-2016.html" class="post-link">
+          <p class="post-meta">Jun 14, 2016</p>
+          <h3 class="h2 post-title">What's new in graphics and games at WWDC 2016</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/wwdc16.jpeg" alt="Metal" height="120" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Metal gets important updates such as Tessellation, Function Specialization, Resource Heaps, Memoryless Render Targets and the Metal System Trace. Also see what's new in Model I/O, SceneKit, SpriteKit, GameplayKit, ReplayKit, Accelerate and CoreImage.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/06/01/using-metalkit-part-14.html" class="post-link">
+          <p class="post-meta">Jun 1, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 14</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter14_1.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Understanding basic value noise and how randomness plays an essential part in generating it. Creating a custom randomness function. Bilinearly interpolating a grid using a Cubic Hermite Spline and a Fractional Brownian Motion function. Add the timer uniform again to animate the noise content.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/05/25/using-metalkit-part-13.html" class="post-link">
+          <p class="post-meta">May 25, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 13</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter13_7.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving on to 3D objects in the kernel function. Using the sphere equation to get distances to points in space. Calculating normals calculating and then the color at each normalized coordinate. Learning about diffuse (Lambertian) basic light. Using uniforms again to animate the light source position around the sphere.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/05/18/using-metalkit-part-12.html" class="post-link">
+          <p class="post-meta">May 18, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 12</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter12_3.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Continue working on the fractal from the previous part. Using uniforms to send the GPU updated information about a timer and about the mouse click coordinates. Blending the color with the current coordinates to achieve new effects.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/05/10/using-metalkit-part-11.html" class="post-link">
+          <p class="post-meta">May 10, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 11</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter11_5.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Using MSL math functions such as sin, cos, pow, abs, fmod, clamp, mix, step and smoothstep. Understanding how smoothstep helps us fix graphics challenges and issues such as aliasing. Seeing how abs and fmod help us draw repetitive patterns such as lines of various slopes and thickness. Using trigonometric functions such sin, cos, fract, dot and pow to generate fractals.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/05/02/using-metalkit-part-10.html" class="post-link">
+          <p class="post-meta">May 2, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 10</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter10_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing the compute pipeline and functions (kernels). Using MTLSize to determine the size of a threadgroup and the number of groups in a grid. Dispatching the threadgroups to do work in parallel. Using the thread_position_in_grid index to identify each thread. Working with the texture coordinates and dimensions. Introducing distance functions.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/04/18/using-metalkit-part-9.html" class="post-link">
+          <p class="post-meta">Apr 18, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 9</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter09_8.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Moving to 3D rendering. Introducing index buffers that are useful for vertex reusing. Presenting the front-facing winding orders and the culling modes. Introducing the concept of depth. Building a model-view-projection matrix. Describing the viewing frustum. Using rotation updating each frame to create an animated spinning effect.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/04/11/ray-tracing-in-a-swift-playground-part-5.html" class="post-link">
+          <p class="post-meta">Apr 11, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground part 5</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a random scene with a few dozen randomly textured and positioned spheres. Using Grand Central Dispatch threading to speed up rendering times or create images of higher quality by increasing the number of samples.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/04/09/ray-tracing-in-a-swift-playground-part-4.html" class="post-link">
+          <p class="post-meta">Apr 9, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground part 4</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing9_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating a dielectric material. Using the Schlick polynomial approximation for higher reflectivity. Applying Snell's law to compute refraction. Tweaking the normals to get a hollow glass surface. Fixing the camera to get better views from different angles and distances.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/04/05/ray-tracing-in-a-swift-playground-part-3.html" class="post-link">
+          <p class="post-meta">Apr 5, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground part 3</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing7.png" alt="Metal" height="80" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Creating an abstract material protocol that has a scatter function. Creating a lambertian and a metallic class that conform to the material protocol. Recursively computing color definition until a given depth is reached.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/03/28/ray-tracing-in-a-swift-playground-part-2.html" class="post-link">
+          <p class="post-meta">Mar 28, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing6_2.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Switching from our custom built data structures to the more performannt SIMD ones. Creating a timing function to monitor our rendering performance. Noticing that we can easily avoid copying large arrays. Creating two more structs (hit_record and camera). Creating a hitable protocol (with a hit function) and a hitable list. Implementing anti-aliasing and diffuse lighting.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/03/21/ray-tracing-in-a-swift-playground.html" class="post-link">
+          <p class="post-meta">Mar 21, 2016</p>
+          <h3 class="h2 post-title">Ray tracing in a Swift playground</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/raytracing2_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Raytracing. Creating the basic building blocks - a pixel struct and a ray struct. Populating an array of pixels with color and rendering into an image object. Overriding a few basic operators. Creating a hit function and using it in another function that is meant to determine color based on found intersections. Using the color function for each pixel in our view.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/03/07/using-metalkit-part-8.html" class="post-link">
+          <p class="post-meta">Mar 7, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 8</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/Swift_full.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing Metal prototyping in the Swift playgrounds. Making sure the Swift source code is created in the Sources directory while the Metal files (as well as any assets we might have) are created in the Resources directory. Creating the library from a path since a default one cannot be created in a playground.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/02/29/using-metalkit-part-7.html" class="post-link">
+          <p class="post-meta">Feb 29, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 7</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter07.png" alt="Metal" height="120" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Transient vs non-transient Metal objects. Making sure all the Metal objects are reused in multiple draw calls except for the command buffers and encoders. Creating a utilities class for separating responsibilities the view controller should not have.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/02/15/using-metalkit-part-6.html" class="post-link">
+          <p class="post-meta">Feb 15, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 6</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/metal.png" alt="Metal" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking at the differences between using the Metal and MetalKit frameworks. MetalKit provides easy texture loading, a Metal-aware view and interfacing with Model I/O.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/02/08/using-metalkit-part-5.html" class="post-link">
+          <p class="post-meta">Feb 8, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 5</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter05_5.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing 2D/3D transforms - scaling, translation and rotation matrices. Using a Model matrix to combine all transforms and sending it to the GPU as a Uniform using a data buffer. Introducing argument tables for sending multiple data buffers to the GPU. Using the model matrix in the vertex shader for transformations.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/02/01/using-metalkit-part-4.html" class="post-link">
+          <p class="post-meta">Feb 1, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 4</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/part4_1.png" alt="Metal" height="140" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Looking at the graphics pipeline in more detail. Building a Metal application in two stages - Initialization (get device, create command queue, create buffers/textures, create render pipeline, create view) and Drawing (get command buffer, start render pass, draw, commit command buffer).</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/01/25/using-metalkit-part-3.html" class="post-link">
+          <p class="post-meta">Jan 25, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 3</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter04_1.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Using structs of vectors for vertices. Vector swizzling in MSL. Synchronizing struct data between the CPU and the GPU. Vertex and Fragment function syntax - function qualifiers, return types, address space qualifier, attributes. Interpolating color using the information stored in the vertex structs.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/01/18/using-metalkit-part-2.html" class="post-link">
+          <p class="post-meta">Jan 18, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 2</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter03_3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing 2D geometry and using more Metal objects - data buffer, library, function, render pipeline descriptor and state. Introducing the Metal Shading Language. Drawing a triangle on the screen.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/01/11/using-metalkit-part-1.html" class="post-link">
+          <p class="post-meta">Jan 11, 2016</p>
+          <h3 class="h2 post-title">Using MetalKit part 1</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter02-3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Introducing MetalKit and its specialized Metal view - the MTKView. Using the Metal objects - command queue, render pass descriptor, command buffer, command encoder and drawable - to clear the screen to a custom color.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+      <div class="post">
+        <a href="/2016/01/04/introducing-the-metal-framework.html" class="post-link">
+          <p class="post-meta">Jan 4, 2016</p>
+          <h3 class="h2 post-title">Introducing the Metal framework</h3>
+          <p class="post-meta"><div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/chapter01_3.png" alt="Metal" height="150" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">What is Metal? What are its advantages over other frameworks? Which GPUs are supported by Metal? How to initialize a Metal device.</div></div></p>
+        </a>
+      </div><hr><br />
+    
+  </div>
+
+  
+<div class="pagination clearfix mb1 mt4"><br />
+  <div class="footer-col footer-col-1"></div>
+  <div class="footer-col footer-col-2">
+  
+    
+      <span class="pagination-item disabled">Newer posts</span>
+    
+  </div>
+  <div class="footer-col footer-col-3">
+    
+      <span class="pagination-item disabled">Older posts</span>
+    
+  
+  </div>
+  <div class="footer-col footer-col-4"></div>
+</div>
+
+
+  <br /><br /><br />
+</div>
+
+
+  <!-- <ul class="post-list">
+    
+      <li>
+        <span class="post-meta">Jan 31, 2019</span>
+
+        <h2>
+          <a class="post-link" href="/2019/01/31/intro-to-metal-compute.html">Introduction to compute using Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Nov 30, 2018</span>
+
+        <h2>
+          <a class="post-link" href="/2018/11/30/using-egpus-with-metal.html">Using eGPUs with Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jul 14, 2018</span>
+
+        <h2>
+          <a class="post-link" href="/2018/07/14/raytracing-with-metal.html">Raytracing with Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 29, 2018</span>
+
+        <h2>
+          <a class="post-link" href="/2018/05/29/metal-by-tutorials-book-copy.html">Metal By Tutorials book!</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Dec 31, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/12/31/metal-2-on-the-a11-gpu.html">Metal 2 on the A11 GPU</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Nov 30, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/11/30/working-with-particles-in-metal-part-3.html">Working with Particles in Metal part 3</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Oct 31, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/10/31/working-with-particles-in-metal-part-2.html">Working with Particles in Metal part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Sep 30, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/09/30/working-with-particles-in-metal.html">Working with Particles in Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Aug 31, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/08/31/using-arkit-with-metal-part-2.html">Using ARKit with Metal part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jul 29, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/07/29/using-arkit-with-metal.html">Using ARKit with Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jun 30, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/06/30/introducing-metal-2.html">Introducing Metal 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 26, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/05/26/working-with-memory-in-metal-part-2.html">Working with memory in Metal part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Apr 30, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/04/30/working-with-memory-in-metal.html">Working with memory in Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Mar 22, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/03/22/ambient-occlusion-in-metal.html">Ambient Occlusion in Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Feb 28, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/02/28/shadows-in-metal-part-2.html">Shadows in Metal part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jan 31, 2017</span>
+
+        <h2>
+          <a class="post-link" href="/2017/01/31/shadows-in-metal-part-1.html">Shadows in Metal part 1</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Dec 30, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/12/30/raymarching-in-metal.html">Raymarching in Metal</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Nov 30, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/11/30/new-metal-course.html">Beginning Metal - a new course</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Oct 1, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/10/01/using-metalkit-part-2-3-2.html">Using MetalKit part 2*3^2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Sep 24, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/09/24/using-metalkit-part-17.html">Using MetalKit part 17</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Aug 30, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/08/30/the-model-i-o-framework.html">The Model I/O framework</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Aug 7, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/08/07/ray-tracing-in-a-swift-playground-part-6.html">Ray tracing in a Swift playground part 6</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jul 31, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/07/31/metal-performance-shaders-for-the-ipad-playground.html">Metal Performance Shaders for the iPad playground</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jul 6, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/07/06/using-metalkit-part-16.html">Using MetalKit part 16</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jun 23, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/06/23/using-metalkit-part-15.html">Using MetalKit part 15</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jun 14, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/06/14/what-s-new-in-graphics-and-games-at-wwdc-2016.html">What&#39;s new in graphics and games at WWDC 2016</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jun 1, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/06/01/using-metalkit-part-14.html">Using MetalKit part 14</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 25, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/05/25/using-metalkit-part-13.html">Using MetalKit part 13</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 18, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/05/18/using-metalkit-part-12.html">Using MetalKit part 12</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 10, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/05/10/using-metalkit-part-11.html">Using MetalKit part 11</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">May 2, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/05/02/using-metalkit-part-10.html">Using MetalKit part 10</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Apr 18, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/04/18/using-metalkit-part-9.html">Using MetalKit part 9</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Apr 11, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/04/11/ray-tracing-in-a-swift-playground-part-5.html">Ray tracing in a Swift playground part 5</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Apr 9, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/04/09/ray-tracing-in-a-swift-playground-part-4.html">Ray tracing in a Swift playground part 4</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Apr 5, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/04/05/ray-tracing-in-a-swift-playground-part-3.html">Ray tracing in a Swift playground part 3</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Mar 28, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/03/28/ray-tracing-in-a-swift-playground-part-2.html">Ray tracing in a Swift playground part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Mar 21, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/03/21/ray-tracing-in-a-swift-playground.html">Ray tracing in a Swift playground</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Mar 7, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/03/07/using-metalkit-part-8.html">Using MetalKit part 8</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Feb 29, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/02/29/using-metalkit-part-7.html">Using MetalKit part 7</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Feb 15, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/02/15/using-metalkit-part-6.html">Using MetalKit part 6</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Feb 8, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/02/08/using-metalkit-part-5.html">Using MetalKit part 5</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Feb 1, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/02/01/using-metalkit-part-4.html">Using MetalKit part 4</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jan 25, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/01/25/using-metalkit-part-3.html">Using MetalKit part 3</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jan 18, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/01/18/using-metalkit-part-2.html">Using MetalKit part 2</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jan 11, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/01/11/using-metalkit-part-1.html">Using MetalKit part 1</a>
+        </h2>
+      </li>
+    
+      <li>
+        <span class="post-meta">Jan 4, 2016</span>
+
+        <h2>
+          <a class="post-link" href="/2016/01/04/introducing-the-metal-framework.html">Introducing the Metal framework</a>
+        </h2>
+      </li>
+    
+  </ul>
+
+  <p class="rss-subscribe">subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+</div>
+
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>

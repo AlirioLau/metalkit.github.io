@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Using MetalKit part 2*3^2</title>
+  <meta name="description" content="Yes, as the title suggests, we’re going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commutin...">
+
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/MetalKit/images/master/metal_ico.png" />
+  <link rel="canonical" href="http://localhost:4000/2016/10/01/using-metalkit-part-2-3-2.html">
+  <link rel="alternate" type="application/rss+xml" title="The Metal Framework" href="/feed.xml">
+  
+  
+</head>
+
+
+  <body>
+
+    <header class="site-header" role="banner">
+
+  <div class="wrapper">
+
+    <a class="site-title" href="/">The Metal Framework</a>
+
+    <nav class="site-nav">
+    
+    <!--
+      <a href="/archive.html" style="color:grey;">Archives</a>&nbsp;&nbsp;&nbsp;
+    -->
+    
+      <a href="/contact.html" style="color:grey;">Contact</a>&nbsp;&nbsp;&nbsp;
+      <a href="/feed.xml" style="color:grey;">RSS</a>
+    </nav>
+
+  </div>
+
+</header>
+
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Using MetalKit part 2*3^2</h1>
+    <p class="post-meta"><time datetime="2016-10-01T00:00:00-05:00" itemprop="datePublished">Oct 1, 2016</time> • <span itemprop="author" itemscope itemtype="http://schema.org/Person"><span itemprop="name"><a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a></span></span></p>
+  </header>
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style">
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script><br /><br />
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Yes, as the title suggests, we’re going to have another of those posts with math (and fun) in it. I was thinking the other day, what can we do while commuting for an hour or so, without internet and possibly without a laptop as well, just carrying an <code class="highlighter-rouge">iPad</code> with us. Luckily, the <code class="highlighter-rouge">iPad</code> now has the awesome <code class="highlighter-rouge">Swift Playgrounds</code> app.</p>
+
+<p>Let’s start with a new playground that runs a basic compute kernel. Since the current version of the <code class="highlighter-rouge">Swift Playgrounds</code> app does not yet let us edit the <code class="highlighter-rouge">Auxiliary Source Files</code>, where all our <code class="highlighter-rouge">Swift</code> and <code class="highlighter-rouge">Metal</code> files usually reside, we will have to write our code in the main playground page, but it is not that complicated. All we have to do is modify our <code class="highlighter-rouge">MetalView</code> initializer and let it take in an extra argument – our shader/kernel code. Then we start building our code by adding more lines to this long string.</p>
+
+<p>Let’s start with a light blue sky background color:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="k">let</span> <span class="nv">shader</span> <span class="o">=</span>
+<span class="s">"#include &lt;metal_stdlib&gt;</span><span class="se">\n</span><span class="s">"</span> <span class="o">+</span>
+<span class="s">"using namespace metal;"</span> <span class="o">+</span>
+<span class="s">"kernel void k(texture2d&lt;float,access::write&gt; o[[texture(0)]],"</span> <span class="o">+</span>
+<span class="s">"              uint2 gid[[thread_position_in_grid]]) {"</span> <span class="o">+</span>
+<span class="s">"   float3 color = float3(0.5, 0.8, 1.0);"</span> <span class="o">+</span>
+<span class="s">"   o.write(float4(color, 1.0), gid);"</span> <span class="o">+</span>
+<span class="s">"}"</span></code></pre></figure>
+
+<p>If you run the playground now, the output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_1.png" alt="alt text" title="1" /></p>
+
+<p>Next, let’s draw a gradient. we divide the current pixel coordinates to the screen dimensions and we get <strong>UV</strong> – a pair of floats between <strong>(0-1)</strong>. we then multiply the fixed color with <strong>Y</strong> – the vertical component of <code class="highlighter-rouge">UV</code> which gives us the gradient:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   int width = o.get_width();"</span> <span class="o">+</span>
+<span class="s">"   int height = o.get_height();"</span> <span class="o">+</span>
+<span class="s">"   float2 uv = float2(gid) / float2(width, height);"</span> <span class="o">+</span>
+<span class="s">"   color *= uv.y;"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_2.png" alt="alt text" title="2" /></p>
+
+<p>Let’s work on a nicer background next. A smooth gradient would look like a great sunset. We can use <strong>mix</strong> to blend colors. We tell the function to blend vertically, and take the complement of <strong>Y</strong> to switch the colors:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_3.png" alt="alt text" title="3" /></p>
+
+<p>From here we could go to drawing a black hole. We would achieve that by using a distance function (<strong>length</strong>) to draw black in the middle of the screen <strong>(0.5, 0.5)</strong> and add more and more background color outside of it, until we reach the maximum value in the screen corners. Replace the last line with:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float2 q = uv - float2(0.5);"</span> <span class="o">+</span>
+<span class="s">"   color *= length(q);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_4.png.png" alt="alt text" title="4" /></p>
+
+<p>Next we use <strong>smootstep</strong> to draw a round shape that is black inside, blue outside and a blended color between <strong>r</strong> and <strong>(r + 0.01)</strong>. Replace the last line with:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float r = 0.2;"</span> <span class="o">+</span>
+<span class="s">"   color *= smoothstep(r, r + 0.01, length(q));"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_5.png" alt="alt text" title="5" /></p>
+
+<p>If we’re not satisfied with a circular perimeter, we could make it <em>bumpy</em> by using math functions such as <strong>cos</strong> and <strong>atan2</strong>. We generate here <strong>9</strong> spikes (<strong>frequency</strong>) with a spike length (<strong>amplitude</strong>) of <strong>0.1</strong>:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_6.png" alt="alt text" title="6" /></p>
+
+<p>Adding the <strong>X</strong> coordinate to the <em>cosine</em> phase introduces a spike <em>bend-like</em> effect:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_7.png" alt="alt text" title="7" /></p>
+
+<p>You can rotate them by adding a small number such as <strong>1.0</strong> to the <em>cosine</em> value:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float r = 0.2 + 0.1 * cos(atan2(q.x, q.y) * 9.0 + 20.0 * q.x + 1.0);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_8.png" alt="alt text" title="8" /></p>
+
+<p>If you think this is starting to look like a palm tree canopy, I see it too! We can draw its trunk using <strong>abs</strong> which gives us horizontal/vertical distances instead of <em>euclidian</em> distances (to a given point) like <em>length</em> did, so let’s take the <strong>X</strong> distance and add these lines (we are reusing both <strong>r</strong> and <strong>color</strong>) after the existing ones:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   r = 0.015;"</span> <span class="o">+</span>
+<span class="s">"   color *= smoothstep(r, r + 0.002, abs(q.x));"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_9.png" alt="alt text" title="9" /></p>
+
+<p>We can remove the unneeded part of the trunk by using another <strong>smoothstep</strong> on the <strong>Y</strong> coordinate:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x))) * smoothstep(0.0, 0.1, q.y);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_10.png" alt="alt text" title="10" /></p>
+
+<p>Since both the canopy and trunk are using <strong>q</strong>, modifying its value will move both:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float2 q = uv - float2(0.67, 0.29);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_11.png" alt="alt text" title="11" /></p>
+
+<p>By introducing a <strong>sin</strong> function we can bend the trunk. A too small <em>frequency</em> does not bend it enough while a too high <em>frequency</em> bends it too much so <strong>2.0</strong> seems right. An <em>amplitude</em> of <strong>0.25</strong> also moves the base of the trunk towards the edge of the screen so it looks right (as an aside, changing the sign from <strong>+</strong> to <strong>–</strong> will shift the base to the other side):</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   color *= 1.0 - (1.0 - smoothstep(r, r + 0.002, abs(q.x - 0.25 * sin(2.0 * q.y)))) * smoothstep(0.0, 0.1, q.y);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_12.png" alt="alt text" title="12" /></p>
+
+<p>The trunk, however, is too smooth. To add irregularities to its surface we use <strong>cos</strong> again. A high <em>frequency</em> and low <em>amplitude</em> seem to be what we need to make it look right:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   r = 0.015 + 0.002 * cos (120.0 * q.y);"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_13.png" alt="alt text" title="13" /></p>
+
+<p>Also, trunks are usually shaping the ground a little around their base, so an <strong>exp</strong> function is what we need here because it grows slowly in the beginning and then it soars to the skies. We use an <em>attenuation</em> factor of <strong>-50.0</strong>:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   r = 0.015 + 0.002 * cos (120.0 * q.y) + exp(-50.0 * (1.0 - uv.y));"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The output image should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_14.png" alt="alt text" title="14" /></p>
+
+<p>We can increase the presence of the second color by using <strong>sqrt</strong> which gives us bigger numbers (when used on sub-unitary numbers) to work with. The sunset is about to end soon:</p>
+
+<figure class="highlight"><pre><code class="language-swift" data-lang="swift"><span class="s">"   float3 color = mix(float3(1.0, 0.6, 0.1), float3(0.5, 0.8, 1.0), sqrt(1 - uv.y));"</span> <span class="o">+</span></code></pre></figure>
+
+<p>The final image on the iPad should look like this:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_15.png" alt="alt text" title="15" /></p>
+
+<p>In conclusion, we saw how to use <strong>sqrt</strong> to shape transitions, then <strong>cos</strong> to create variations of ups and downs in shapes, then <strong>exp</strong> that allows us to create curves, then <strong>smoothstep</strong> for thresholding, then <strong>abs</strong> for symmetry and <strong>mix</strong> for blending. Still commuting? Why don’t you take a look at how this nice clover was created:</p>
+
+<p><img src="https://github.com/MetalKit/images/raw/master/chapter18_16.png" alt="alt text" title="16" /></p>
+
+<p>I want to say thanks to <a href="https://twitter.com/iquilezles">Inigo Quilez</a> again, for keep inspiring me to write more and more about drawing with math. All the math in this tutorial belongs to him. The <a href="https://github.com/MetalKit/metal">source code</a> is posted on <code class="highlighter-rouge">Github</code> as usual.</p>
+
+<p>Until next time!</p>
+
+  </div>
+
+  <!-- 
+    
+
+   -->
+
+  <div class="a2a_kit a2a_kit_size_32 a2a_default_style"><br />
+    <a class="a2a_button_twitter"></a>
+    <a class="a2a_button_reddit"></a>
+    <a class="a2a_button_facebook"></a>
+    <a class="a2a_button_google_plus"></a>
+    <a class="a2a_button_linkedin"></a>
+    <a class="a2a_button_email"></a>
+  </div>
+  <script async src="https://static.addtoany.com/menu/page.js"></script>
+</article>
+      </div>
+    </main>
+
+    <footer class="site-footer">
+
+  <div class="wrapper" align="center">
+
+    <!-- <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p> -->
+
+    <!-- Begin MailChimp Signup Form --><p>
+    <link href="//cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+    <style type="text/css">
+      #mc_embed_signup{background:#fff; clear:left; font:14px Helvetica,Arial,sans-serif; }
+    </style>
+    <div id="mc_embed_signup">
+      <form action="//github.us12.list-manage.com/subscribe/post?u=5daab344aba23020915a23c29&amp;id=69e4a7c3af" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+        <label for="mce-EMAIL">Subscribe to be notified of new posts.</label>
+        <input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_5daab344aba23020915a23c29_69e4a7c3af" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+    </div>
+    </p><!--End mc_embed_signup-->
+
+    <!-- <h2 class="footer-heading">The Metal Framework</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <p class="rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a></p>
+        <ul class="contact-list">
+          <li>
+            
+              The Metal Framework
+            
+            </li>
+            
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-2">
+        <ul class="social-media-list">
+          
+          <li>
+            <a href="https://github.com/MetalKit"><span class="icon icon--github"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M7.999,0.431c-4.285,0-7.76,3.474-7.76,7.761 c0,3.428,2.223,6.337,5.307,7.363c0.388,0.071,0.53-0.168,0.53-0.374c0-0.184-0.007-0.672-0.01-1.32 c-2.159,0.469-2.614-1.04-2.614-1.04c-0.353-0.896-0.862-1.135-0.862-1.135c-0.705-0.481,0.053-0.472,0.053-0.472 c0.779,0.055,1.189,0.8,1.189,0.8c0.692,1.186,1.816,0.843,2.258,0.645c0.071-0.502,0.271-0.843,0.493-1.037 C4.86,11.425,3.049,10.76,3.049,7.786c0-0.847,0.302-1.54,0.799-2.082C3.768,5.507,3.501,4.718,3.924,3.65 c0,0,0.652-0.209,2.134,0.796C6.677,4.273,7.34,4.187,8,4.184c0.659,0.003,1.323,0.089,1.943,0.261 c1.482-1.004,2.132-0.796,2.132-0.796c0.423,1.068,0.157,1.857,0.077,2.054c0.497,0.542,0.798,1.235,0.798,2.082 c0,2.981-1.814,3.637-3.543,3.829c0.279,0.24,0.527,0.713,0.527,1.437c0,1.037-0.01,1.874-0.01,2.129 c0,0.208,0.14,0.449,0.534,0.373c3.081-1.028,5.302-3.935,5.302-7.362C15.76,3.906,12.285,0.431,7.999,0.431z"/></svg>
+</span><span class="username">MetalKit</span></a>
+
+          </li>
+          
+          
+          <li>
+            <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+          </li>
+          
+        </ul>
+      </div>
+
+      <div class="footer-col footer-col-3">
+        
+          <a href="https://twitter.com/gpu3d"><span class="icon icon--twitter"><svg viewBox="0 0 16 16" width="16px" height="16px"><path fill="#828282" d="M15.969,3.058c-0.586,0.26-1.217,0.436-1.878,0.515c0.675-0.405,1.194-1.045,1.438-1.809c-0.632,0.375-1.332,0.647-2.076,0.793c-0.596-0.636-1.446-1.033-2.387-1.033c-1.806,0-3.27,1.464-3.27,3.27 c0,0.256,0.029,0.506,0.085,0.745C5.163,5.404,2.753,4.102,1.14,2.124C0.859,2.607,0.698,3.168,0.698,3.767 c0,1.134,0.577,2.135,1.455,2.722C1.616,6.472,1.112,6.325,0.671,6.08c0,0.014,0,0.027,0,0.041c0,1.584,1.127,2.906,2.623,3.206 C3.02,9.402,2.731,9.442,2.433,9.442c-0.211,0-0.416-0.021-0.615-0.059c0.416,1.299,1.624,2.245,3.055,2.271 c-1.119,0.877-2.529,1.4-4.061,1.4c-0.264,0-0.524-0.015-0.78-0.046c1.447,0.928,3.166,1.469,5.013,1.469 c6.015,0,9.304-4.983,9.304-9.304c0-0.142-0.003-0.283-0.009-0.423C14.976,4.29,15.531,3.714,15.969,3.058z"/></svg>
+</span><span class="username">gpu3d</span></a>
+
+        
+        <p>Resources and tutorials for Metal, MetalKit and Metal Performance Shaders.
+</p>
+      </div>
+    </div> -->
+
+  </div>
+
+</footer>
+
+
+  </body>
+
+</html>
