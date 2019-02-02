@@ -2,7 +2,7 @@
 published: true
 title: Introduction to compute using Metal
 author: <a href = "https://twitter.com/gpu3d" target="_blank">Marius Horga</a>
-summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/egpu.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about Metal compute.</div></div>
+summary: <div><div style="display:inline-block;"><img src = "https://raw.githubusercontent.com/MetalKit/images/master/nonuniform.png" alt="book" height="160" width="160"></div><div style="display:inline-block; width:75%; padding-left:1.5em; color:grey; vertical-align:middle;">Learn about Metal compute and GPGPU concepts. Understand thread grids and thread groups. Configure the optimal number of threads per thread group and the number of thread groups per grid. Learn how to let Metal figure out the number of thread groups and deal with the underutilization of threads. Have fun with image processing by using a few basic techniques.</div></div>
 layout: post
 ---
 
