@@ -27,7 +27,7 @@ let url = Bundle.main.url(forResource: "nature", withExtension: "jpg")!
 let image = try textureLoader.newTexture(URL: url, options: [:])
 ```
 
-A third thing you need is a `MTLComputeCommandEncoder` object to which you will attach the pipeline state object and the texture you both created earlier: 
+A third thing you need is a `MTLComputeCommandEncoder` object to which you will attach the pipeline state object and the texture both of which you created earlier: 
 
 ```swift
 commandEncoder.setComputePipelineState(pipelineState)
@@ -55,10 +55,10 @@ let groupsPerGrid = MTLSizeMake(15, 90, 1)
 commandEncoder.dispatchThreadgroups(groupsPerGrid, threadsPerThreadgroup: threadsPerGroup)
 ```
 
-So what's going on there? Threads are being dispatched to process data in grids. Grids can be 1-, 2- or 3-dimensional. In this case you are using a 2D grid because you are processing an image. Regardless of dimensionality, however, grids are always split into multiple groups of threads so this equality will always define a grid:
+So what's going on there? Threads are being dispatched to process data in grids. Grids can be 1-, 2- or 3-dimensional. In this case you are using a 2D grid because you are processing an image. Regardless of dimensionality, however, grids are always split into multiple groups of threads so this equality will always hold:
 
 ```
-grid = thread_groups * threads_per_group
+gridSize = groupsPerGrid * threadsPerGroup
 ```
 
 In the case above you defined a group to have `100 x 10` threads and the grid to have `15 x 90` groups. If you run your playground, you should see something like this:
@@ -87,7 +87,7 @@ There is another issue that might happen - underutilization. Take a look at this
 
 > Note: this image belongs to Razeware, the publisher of the Metal by Tutorials book.
 
-Normally, you would think a properly designed grid would be 6 groups of 16 threads (4 x 4) each, so a grid of 12 x 8 threads. Some of the threads at the bottom and right side edges would be underutilized, however, because there is no work for them to do. 
+Normally, you would think a properly designed grid would be 6 groups of 16 threads (4 x 4) each, so since the groups are in a 3 x 2 layout, a grid of 12 x 8 threads. Some of the threads at the bottom and right side edges would be underutilized, however, because there is no work for them to do. 
 
 If you made a smaller grid, say 8 x 4, which would only have whole groups, would result in the red bands you already noticed in the beginning. That means the only acceptable solution is to fix the underutilization problem. You can solve this by making sure you are adding an extra group in each dimension, like this:
 
@@ -95,7 +95,7 @@ If you made a smaller grid, say 8 x 4, which would only have whole groups, would
 let groupsPerGrid = MTLSizeMake((width + w - 1) / w, (height + h - 1) / h, 1) 
 ```
 
-What you did was to practically enlarge the grid size with an extra `(w, h, 1)`. This now poses another risk - accessing out of bounds coordinates. To deal with this you need to add a check routine to your kernel shader, right before reading from the input image:
+What you did was to practically enlarge the grid size with an extra `(w, h, 1)`. This now poses another risk - accessing out of bounds coordinates. To deal with this you need to add a bounds check routine to your kernel shader, right before reading from the input image:
 
 ```cpp
 if (id.x >= output.get_width() || id.y >= output.get_height()) {
@@ -117,6 +117,8 @@ That's great! What about finding a way to avoid having these underutilization an
 
 1. Takes the burden of having to deal with underutilization away from you by auto-creating non-uniform thread groups (eg. `3 x 4`) that will adapt to edge cases.
 2. It will even decide how many groups are needed, provided that you give it the grid size and the group size you want to work with.
+
+> Note: the `dispatchThreads()` function works on all macOS devices but it does not work on iOS devices that use an A10 or older processor.
 
 All you need to do is replace the lines where you calculated the number of groups per grid with this:
 
@@ -167,6 +169,6 @@ Run the playground and the image should look like this:
  
 Did you have fun? I hope you did, just like I did too. This was just a brief introduction to the amazing power of GPGPU and compute capabilities of your GPU. Stay tuned for new topics.
 
-The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual.
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual. Also, this article was inspired from Chapter 16 of the [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) book.
 
 Until next time! 
