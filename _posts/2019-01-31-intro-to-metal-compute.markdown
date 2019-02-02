@@ -113,6 +113,8 @@ var h = pipelineState.maxTotalThreadsPerThreadgroup / w
 let threadsPerGroup = MTLSizeMake(w, h, 1)
 ```
 
+The thread execution width, also referred to as `wavefront` or `warp` in other APIs, is the number of threads the GPU will group together so they can execute the same instruction in parallel but on different data, obviously. The number of threads in a group should be a multiple of `threadExecutionWidth` but it must never be larger than `maxTotalThreadsPerThreadgroup`.
+
 That's great! What about finding a way to avoid having these underutilization and bound checks? Metal's got you covered here too. Instead of using `dispatchThreadgroups()` the API provides the newer `dispatchThreads()` function which achieves two great things: 
 
 1. Takes the burden of having to deal with underutilization away from you by auto-creating non-uniform thread groups (eg. `3 x 4`) that will adapt to edge cases.
@@ -167,7 +169,7 @@ Run the playground and the image should look like this:
 
 <span style="display:block;text-align:center">![alt text](https://raw.githubusercontent.com/MetalKit/images/master/compute4.png?raw=true "Plugged In")</span>
  
-Did you have fun? I hope you did, just like I did too. This was just a brief introduction to the amazing power of GPGPU and compute capabilities of your GPU. Stay tuned for new topics.
+Did you have fun? I hope you did, just like I did too. If you want to learn more about image processing, Simon Gladman has an amazing book, [Core Image for Swift](https://gumroad.com/l/CoreImageForSwift). This was just a brief introduction to the amazing power of GPGPU and compute capabilities of your GPU. Stay tuned for new topics.
 
 The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual. Also, this article is based on Chapter 16 of the [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) book.
 
