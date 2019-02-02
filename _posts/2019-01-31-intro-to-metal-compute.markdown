@@ -169,6 +169,6 @@ Run the playground and the image should look like this:
  
 Did you have fun? I hope you did, just like I did too. This was just a brief introduction to the amazing power of GPGPU and compute capabilities of your GPU. Stay tuned for new topics.
 
-The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual. Also, this article was inspired from Chapter 16 of the [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) book.
+The [source code](https://github.com/MetalKit/metal) is posted on `Github` as usual. Also, this article is based on Chapter 16 of the [Metal by Tutorials](https://store.raywenderlich.com/products/metal-by-tutorials) book.
 
 Until next time! 
