@@ -45,7 +45,12 @@ kernel void compute(texture2d<float, access::read> input [[texture(0)]],
 }
 ```
 
-In the shader, **input** is the `MTLTexture` object you created earlier and called **image** and **output** is the drawable texture you are writing to, so it can be presented to the screen by the command buffer. 
+In the shader, **input** is the `MTLTexture` object you created earlier and called **image** and **output** is the drawable texture you are writing to so it can be presented to the screen by the command buffer:
+
+```swift
+let drawable = view.currentDrawable
+commandEncoder.setTexture(drawable.texture, index: 1)
+```
 
 A fifth and final thing you need is dispatching the threads to do the work. This is where the fun part begins! All you need to do is add these lines before ending the encoding on your `commandEncoder`:
 
@@ -87,7 +92,7 @@ There is another issue that might happen - underutilization. Take a look at this
 
 > Note: this image belongs to Razeware, the publisher of the Metal by Tutorials book.
 
-Normally, you would think a properly designed grid would be 6 groups of 16 threads (4 x 4) each, so since the groups are in a 3 x 2 layout, a grid of 12 x 8 threads. Some of the threads at the bottom and right side edges would be underutilized, however, because there is no work for them to do. 
+Normally, you would think a properly designed grid would be 3 x 2 groups of 4 x 4 threads each, so a grid of 12 x 8 threads. Some of the threads at the bottom and right side edges would be underutilized, however, because there is no work for them to do. 
 
 If you made a smaller grid, say 8 x 4, which would only have whole groups, would result in the red bands you already noticed in the beginning. That means the only acceptable solution is to fix the underutilization problem. You can solve this by making sure you are adding an extra group in each dimension, like this:
 
@@ -95,7 +100,7 @@ If you made a smaller grid, say 8 x 4, which would only have whole groups, would
 let groupsPerGrid = MTLSizeMake((width + w - 1) / w, (height + h - 1) / h, 1) 
 ```
 
-What you did was to practically enlarge the grid size with an extra `(w, h, 1)`. This now poses another risk - accessing out of bounds coordinates. To deal with this you need to add a bounds check routine to your kernel shader, right before reading from the input image:
+What you did was to practically enlarge the grid size with `(w-1, h-1, 1)`. This now poses another risk - accessing out of bounds coordinates. To deal with this you need to add a bounds check routine to your kernel shader, right before reading from the input image:
 
 ```cpp
 if (id.x >= output.get_width() || id.y >= output.get_height()) {
@@ -141,7 +146,7 @@ Run the playground and the image should look like this:
 
 <span style="display:block;text-align:center">![alt text](https://raw.githubusercontent.com/MetalKit/images/master/compute3.png?raw=true "Plugged In")</span>
 
-Replace that previous line with this line which applies an grayscale to the image:
+Replace that previous line with this line which applies a grayscale to the image:
 
 ```cpp
 color.xyz = (color.r * 0.3 + color.g * 0.6 + color.b * 0.1) * 1.5;
